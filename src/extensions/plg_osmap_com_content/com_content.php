@@ -212,7 +212,9 @@ class osmap_com_content
         $expand_categories = ( $expand_categories == 1
             || ( $expand_categories == 2 && $osmap->view == 'xml')
             || ( $expand_categories == 3 && $osmap->view == 'html')
-            || $osmap->view == 'navigator');
+            || $osmap->view == 'navigator'
+            || ($parent->params->get('maxLevel') != 0 && $parent->params->get('maxLevelcat') == -1)
+			);
         $params['expand_categories'] = $expand_categories;
 
         //----- Set expand_featured param
