@@ -59,6 +59,12 @@
             <extension
                 type="plugin"
                 group="osmap"
+                publish="com_tags:*"
+                element="com_tags">plg_osmap_com_tags</extension>
+
+            <extension
+                type="plugin"
+                group="osmap"
                 publish="com_virtuemart:*"
                 element="com_virtuemart">plg_osmap_com_virtuemart</extension>
 
