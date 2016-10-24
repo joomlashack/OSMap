@@ -10,6 +10,7 @@
 defined('_JEXEC') or die();
 
 use Alledia\OSMap;
+use Alledia\Framework;
 
 global $showExternalLinks, $ignoreDuplicatedUIDs, $debug;
 
@@ -77,9 +78,16 @@ if ($this->params->get('add_styling', 1)) {
 // Start the URL set
 echo '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
+$profiler = OSMap\Factory::getContainer()->profiler;
+$profiler->start();
+$profiler->step('Start traversing');
+
 $this->sitemap->traverse($printNodeCallback);
 
 $printNodeCallback = null;
 $this->sitemap->cleanup();
 $this->sitemap = null;
+
+$profiler->step();
+
 echo '</urlset>';
