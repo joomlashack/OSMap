@@ -26,6 +26,7 @@ $printNodeCallback = function ($node) {
         && $node->published
         && (!$node->duplicate || ($node->duplicate && !$ignoreDuplicatedUIDs))
         && $node->visibleForRobots
+        && $node->parentIsVisibleForRobots
         && $node->visibleForXML
         && trim($node->fullLink) != '';
 

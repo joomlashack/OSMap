@@ -7,19 +7,43 @@
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  */
 
-use Alledia\OSMap;
-
 defined('_JEXEC') or die();
 
+use Alledia\OSMap;
 
-/**
- * This class won't be removed to keep backward compatibility with older
- * versions and avoid breaking any submitted URL. The ideal is to use format
- * set to 'xml', to trigger a fix on OSEmbed to the bug where it was being
- * called and delaying the sitemap request.
- *
- * @deprecated Since v1.2.2
- */
-class OSMapViewXml extends OSMap\View\Sitemap\Xml
+jimport('joomla.application.component.view');
+
+
+class OSMapViewXml extends JViewLegacy
 {
+    public function display($tpl = null)
+    {
+        $container = OSMap\Factory::getContainer();
+
+        // Help to show a clean XML without other content
+        $container->input->set('tmpl', 'component');
+
+        try {
+            $id = $container->input->getInt('id');
+
+            $this->type        = OSMap\Helper\General::getSitemapTypeFromInput();
+            $this->params      = JFactory::getApplication()->getParams();
+            $this->osmapParams = JComponentHelper::getParams('com_osmap');
+
+            // Load the sitemap instance
+            $this->sitemap = OSMap\Factory::getSitemap($id, $this->type);
+
+            // Check if the sitemap is published
+            if (!$this->sitemap->isPublished) {
+                throw new Exception(JText::_('COM_OSMAP_MSG_SITEMAP_IS_UNPUBLISHED'));
+            }
+        } catch (Exception $e) {
+            $this->message = $e->getMessage();
+        }
+
+        parent::display($tpl);
+
+        // Force to show a clean XML without other content
+        jexit();
+    }
 }

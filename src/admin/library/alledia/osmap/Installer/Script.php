@@ -55,9 +55,7 @@ class Script extends AbstractScript
         $xmapConverter->saveXmapPluginParamsIfExists();
 
         // Runs the post install/update method
-        if (!parent::postFlight($type, $parent)) {
-            return false;
-        }
+        parent::postFlight($type, $parent);
 
         // Load Alledia Framework
         require_once JPATH_ADMINISTRATOR . '/components/com_osmap/include.php';
@@ -73,6 +71,9 @@ class Script extends AbstractScript
 
         // Check if we have params from Xmap plugins to apply to OSMap plugins
         $xmapConverter->moveXmapPluginsParamsToOSMapPlugins();
+
+        // Check if we have the correct database scheme
+        $this->checkDbScheme();
 
         return true;
     }
@@ -466,5 +467,32 @@ class Script extends AbstractScript
         }
 
         return $uid;
+    }
+
+    /**
+     * Check the database scheme
+     */
+    protected function checkDbScheme()
+    {
+        // Table: #__osmap_items_settings
+        $existentColumns = $this->getColumnsFromTable('#__osmap_items_settings');
+
+        $db = \JFactory::getDbo();
+
+        // URH Hash
+        if (in_array('url_hash', $existentColumns)) {
+            $db->setQuery('ALTER TABLE `#__osmap_items_settings`
+                CHANGE `url_hash` `settings_hash` CHAR(32)
+                CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT ""');
+            $db->execute();
+        }
+
+        // Format
+        if (!in_array('format', $existentColumns)) {
+            $db->setQuery('ALTER TABLE `#__osmap_items_settings`
+                ADD `format` TINYINT(1) UNSIGNED DEFAULT NULL
+                COMMENT \'Format of the setting: 1) Legacy Mode - UID Only; 2) Based on menu ID and UID\'');
+            $db->execute();
+        }
     }
 }

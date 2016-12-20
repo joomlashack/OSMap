@@ -10,6 +10,7 @@
 namespace Alledia\OSMap\Sitemap;
 
 use Alledia\OSMap;
+use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
@@ -26,7 +27,7 @@ class Standard implements SitemapInterface
     public $name;
 
     /**
-     * @var \JRegistry
+     * @var Registry
      */
     public $params;
 
@@ -61,11 +62,19 @@ class Standard implements SitemapInterface
     protected $collector;
 
     /**
+     * Limit in days for news sitemap items
+     *
+     * @var int
+     */
+    public $newsDateLimit = 2;
+
+    /**
      * The constructor
      *
      * @param int $id
      *
      * @return void
+     * @throws \Exception
      */
     public function __construct($id)
     {
@@ -83,7 +92,7 @@ class Standard implements SitemapInterface
         $this->createdOn   = $row->created_on;
         $this->linksCount  = (int)$row->links_count;
 
-        $this->params = new \JRegistry;
+        $this->params = new Registry();
         $this->params->loadString($row->params);
 
         $row = null;
@@ -130,7 +139,6 @@ class Standard implements SitemapInterface
             }
 
             $results     = null;
-            $eventParams = array();
         }
 
         // Fetch the sitemap items

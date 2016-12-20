@@ -27,7 +27,7 @@ class Generic implements AdapterInterface
      *
      * @return void
      */
-    public function __construct(OSMap\Sitemap\Item $item)
+    public function __construct(OSMap\Sitemap\Item &$item)
     {
         $this->item = $item;
     }
@@ -36,22 +36,11 @@ class Generic implements AdapterInterface
      * Gets the visible state for robots. Each adapter will check specific params. Returns
      * true if the item is visible.
      *
-     * @return void
+     * @return bool
      */
     public function checkVisibilityForRobots()
     {
-        $this->item->visibleForRobots = true;
-    }
-
-    /**
-     * Sets the images attribute to the item. This method should be overriden
-     * by child adapters to extract images from the specific content's text or
-     * params.
-     *
-     * @return void
-     */
-    public function extractImages()
-    {
-        // Should be overriden
+        // Always visible for the Free version
+        return true;
     }
 }

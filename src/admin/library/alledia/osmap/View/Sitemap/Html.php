@@ -10,6 +10,7 @@
 namespace Alledia\OSMap\View\Sitemap;
 
 use Alledia\OSMap;
+use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
@@ -17,29 +18,14 @@ defined('_JEXEC') or die();
 class Html extends OSMap\View\Base
 {
     /**
-     * @var \JRegistry
+     * @var Registry
      */
     protected $params;
-
-    /**
-     * @var int
-     */
-    protected $lastMenuId = 0;
 
     /**
      * @var bool
      */
     protected $debug = false;
-
-    /**
-     * @var int
-     */
-    protected $lastLevel = -1;
-
-    /**
-     * @var int
-     */
-    protected $count = 0;
 
     /**
      * @var int
@@ -52,9 +38,23 @@ class Html extends OSMap\View\Base
     protected $showMenuTitles = 1;
 
     /**
-     * @var bool
+     * @var int
      */
-    protected $shouldCloseMenu = false;
+    public $generalCounter = 0;
+
+    /**
+     * List of found items to render the sitemap
+     *
+     * @var array
+     */
+    protected $menus = array();
+
+    /**
+     * A list of last items per level. Used to identify the parent items
+     *
+     * @var array
+     */
+    protected $lastItemsPerLevel = array();
 
     /**
      * The constructor
@@ -101,133 +101,6 @@ class Html extends OSMap\View\Base
     }
 
     /**
-     * Close levels
-     *
-     * @param int
-     *
-     * @return void
-     */
-    public function closeLevels($offset)
-    {
-        if ($offset > 0) {
-            for ($i = 0; $i < $offset; $i++) {
-                echo '</ul></li>';
-            }
-        }
-    }
-
-    /**
-     * Open a menu list
-     *
-     * @param object $node
-     * @param string $cssClass
-     *
-     * @return void
-     */
-    public function openMenu($node, $cssClass = '')
-    {
-        if ($this->showMenuTitles) {
-            echo '<h2>' . $node->menu->name;
-
-            if ($this->debug) {
-                echo '<div><span>' . \JText::_('COM_OSMAP_MENUTYPE') . ':</span>&nbsp;' . $node->menu->id . ': ' . $node->menu->menutype . '</div>';
-            }
-
-            echo '</h2>';
-        }
-
-        echo '<ul class="level_0 ' . $cssClass . '">';
-
-        // It says we opened at least one menu, so we need to close it after traverse the sitemap
-        $this->shouldCloseMenu = true;
-    }
-
-    /**
-     * Close a menu
-     *
-     * @return void
-     */
-    public function closeMenu()
-    {
-        echo '</ul>';
-    }
-
-    /**
-     * Open a new sub level
-     *
-     * @param object $node
-     *
-     * @return void
-     */
-    public function openSubLevel($node)
-    {
-        echo '<li><ul class="level_' . $node->level . '">';
-    }
-
-    /**
-     * Print debug info for a note
-     *
-     * @param object $node
-     * @param int    $count
-     *
-     * @return void
-     */
-    public function printDebugInfo($node, $count)
-    {
-        echo '<div class="osmap-debug-box">';
-        echo '<div><span>#:</span>&nbsp;' . $count . '</div>';
-        echo '<div><span>' . \JText::_('COM_OSMAP_UID') . ':</span>&nbsp;' . $node->uid . '</div>';
-        echo '<div><span>' . \JText::_('COM_OSMAP_FULL_LINK') . ':</span>&nbsp;' . htmlspecialchars($node->fullLink) . '</div>';
-        echo '<div><span>' . \JText::_('COM_OSMAP_LINK') . ':</span>&nbsp;' . htmlspecialchars($node->link) . '</div>';
-        echo '<div><span>' . \JText::_('COM_OSMAP_MODIFIED') . ':</span>&nbsp;' . htmlspecialchars($node->modified) . '</div>';
-        echo '<div><span>' . \JText::_('COM_OSMAP_LEVEL') . ':</span>&nbsp;' . $node->level . '</div>';
-        echo '<div><span>' . \JText::_('COM_OSMAP_DUPLICATE') . ':</span>&nbsp;' . \JText::_($node->duplicate ? 'JYES' : 'JNO') . '</div>';
-        echo '<div><span>' . \JText::_('COM_OSMAP_VISIBLE_FOR_ROBOTS') . ':</span>&nbsp;' . \JText::_($node->visibleForRobots ? 'JYES' : 'JNO') . '</div>';
-        echo '<div><span>' . \JText::_('COM_OSMAP_ADAPTER_CLASS') . ':</span>&nbsp;' . get_class($node->adapter) . '</div>';
-
-        $adminNotes = $node->getAdminNotesString();
-        if (!empty($adminNotes)) {
-            echo '<div><span>' . \JText::_('COM_OSMAP_ADMIN_NOTES') . ':</span>&nbsp;' . nl2br($adminNotes) . '</div>';
-        }
-        echo '</div>';
-    }
-
-    /**
-     * Print an item
-     *
-     * @param object $node
-     * @param int    $count
-     *
-     * @return void
-     */
-    public function printItem($node, $count)
-    {
-        $liClass = $this->debug ? 'osmap-debug-item' : '';
-        $liClass .= $count % 2 == 0 ? ' even' : '';
-
-        echo "<li class=\"{$liClass}\">";
-
-        // Some items are just separator, without a link. Do not print as link then
-        if (trim($node->fullLink) === '') {
-            $type = isset($node->type) ? $node->type : 'separator';
-            echo '<span class="osmap-item-' . $type . '">';
-            echo htmlspecialchars($node->name);
-            echo '</span>';
-        } else {
-            echo '<a href="' . $node->fullLink . '" target="_self" class="osmap-link">';
-            echo htmlspecialchars($node->name);
-            echo '</a>';
-        }
-
-        // Debug box
-        if ($this->debug) {
-            $this->printDebugInfo($node, $count);
-        }
-
-        echo '</li>';
-    }
-
-    /**
      * The callback called to print each node. Returns true if it was
      * able to print. False, if not.
      *
@@ -235,7 +108,7 @@ class Html extends OSMap\View\Base
      *
      * @return bool
      */
-    public function printNodeCallback($node)
+    public function registerNodeIntoList($node)
     {
         $ignoreDuplicatedUIDs = (int)$this->osmapParams->get('ignore_duplicated_uids', 1);
 
@@ -257,36 +130,197 @@ class Html extends OSMap\View\Base
             return false;
         }
 
-        $this->count++;
+        // Check if the menu was already registered and register if needed
+        if ($node->level === 0 && !isset($this->menus[$node->menuItemType])) {
+            $queueItem = (object)array(
+                'menuItemId'    => $node->menuItemId,
+                'menuItemTitle' => $node->menuItemTitle,
+                'menuItemType'  => $node->menuItemType,
+                'level'         => -1,
+                'children'      => array()
+            );
 
-        if ($this->lastMenuId !== $node->menu->id) {
-            // Make sure we need to close the last menu
-            if ($this->lastMenuId > 0) {
-                $this->closeLevels($this->lastLevel);
-                $this->closeMenu();
-            }
+            // Add the menu to the main list of items
+            $this->menus[$node->menuItemType] = $queueItem;
 
-            $this->openMenu($node);
-            $this->lastLevel = 0;
+            // Add this menu as the last one on the list of menus
+            $this->lastItemsPerLevel[-1] = $queueItem;
         }
 
-        // Check if we have a different level to start or close tags
-        if ($this->lastLevel !== $node->level) {
-            if ($node->level > $this->lastLevel) {
-                $this->openSubLevel($node);
-            }
+        // Instantiate the current item
+        $queueItem           = new \stdClass;
+        $queueItem->rawLink  = $node->rawLink;
+        $queueItem->type     = $node->type;
+        $queueItem->level    = $node->level;
+        $queueItem->name     = $node->name;
+        $queueItem->uid      = $node->uid;
+        $queueItem->children = array();
 
-            if ($node->level < $this->lastLevel) {
-                // Make sure we close the stack of prior levels
-                $this->closeLevels($this->lastLevel - $node->level);
-            }
+        // Add debug information, if debug is enabled
+        if ($this->debug) {
+            $queueItem->fullLink         = $node->fullLink;
+            $queueItem->link             = $node->link;
+            $queueItem->modified         = $node->modified;
+            $queueItem->duplicate        = $node->duplicate;
+            $queueItem->visibleForRobots = $node->visibleForRobots;
+            $queueItem->adapter          = get_class($node->adapter);
+            $queueItem->menuItemType     = $node->menuItemType;
         }
 
-        $this->printItem($node, $this->count);
+        // Add this item to its parent children list
+        $this->lastItemsPerLevel[$queueItem->level - 1]->children[] = $queueItem;
 
-        $this->lastLevel  = $node->level;
-        $this->lastMenuId = $node->menu->id;
+        // Add this item as the last one on the its level
+        $this->lastItemsPerLevel[$queueItem->level] = $queueItem;
+
+        unset($node);
 
         return true;
+    }
+
+    /**
+     * Print debug info for a note
+     *
+     * @param object $node
+     *
+     * @return void
+     */
+    public function printDebugInfo($node)
+    {
+        echo '<div class="osmap-debug-box">';
+        echo '<div><span>#:</span>&nbsp;' . $this->generalCounter . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_UID') . ':</span>&nbsp;' . $node->uid . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_FULL_LINK') . ':</span>&nbsp;' . htmlspecialchars($node->fullLink) . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_RAW_LINK') . ':</span>&nbsp;' . htmlspecialchars($node->rawLink) . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_LINK') . ':</span>&nbsp;' . htmlspecialchars($node->link) . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_MODIFIED') . ':</span>&nbsp;' . htmlspecialchars($node->modified) . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_LEVEL') . ':</span>&nbsp;' . $node->level . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_DUPLICATE') . ':</span>&nbsp;' . \JText::_($node->duplicate ? 'JYES' : 'JNO') . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_VISIBLE_FOR_ROBOTS') . ':</span>&nbsp;' . \JText::_($node->visibleForRobots ? 'JYES' : 'JNO') . '</div>';
+        echo '<div><span>' . \JText::_('COM_OSMAP_ADAPTER_CLASS') . ':</span>&nbsp;' . $node->adapter . '</div>';
+
+        if (method_exists($node, 'getAdminNotesString')) {
+            $adminNotes = $node->getAdminNotesString();
+            if (!empty($adminNotes)) {
+                echo '<div><span>' . \JText::_('COM_OSMAP_ADMIN_NOTES') . ':</span>&nbsp;' . nl2br($adminNotes) . '</div>';
+            }
+        }
+        echo '</div>';
+    }
+
+    /**
+     * Print an item
+     *
+     * @param object $item
+     *
+     * @return void
+     */
+    public function printItem($item)
+    {
+        $this->generalCounter++;
+
+        $liClass = $this->debug ? 'osmap-debug-item' : '';
+        $liClass .= $this->generalCounter % 2 == 0 ? ' even' : '';
+
+        if (!empty($item->children)) {
+            $liClass .= ' osmap-has-children';
+        }
+
+        $sanitizedUID = \JApplicationHelper::stringURLSafe($item->uid);
+
+        echo "<li class=\"{$liClass}\" id=\"osmap-li-uid-{$sanitizedUID}\">";
+
+        // Some items are just separator, without a link. Do not print as link then
+        if (trim($item->rawLink) === '') {
+            $type = isset($item->type) ? $item->type : 'separator';
+            echo '<span class="osmap-item-' . $type . '">';
+            echo htmlspecialchars($item->name);
+            echo '</span>';
+        } else {
+            echo '<a href="' . $item->rawLink . '" target="_self" class="osmap-link">';
+            echo htmlspecialchars($item->name);
+            echo '</a>';
+        }
+
+        // Debug box
+        if ($this->debug) {
+            $this->printDebugInfo($item);
+        }
+
+        // Check if we have children items to print
+        if (!empty($item->children)) {
+            $this->printMenu($item);
+        }
+
+        echo "</li>";
+    }
+
+    /**
+     * Renders the list of items as a html sitemap
+     */
+    public function renderSitemap()
+    {
+        if (!empty($this->menus)) {
+            $columns = max((int)$this->params->get('columns', 1), 1);
+
+            foreach ($this->menus as $menuType => $menu) {
+                if (isset($menu->menuItemTitle)
+                    && $this->showMenuTitles
+                    && !empty($menu->children)
+                ) {
+                    if ($this->debug) {
+                        $debug = sprintf(
+                            '<div><span>%s:</span>&nbsp;%s: %s</div>',
+                            \JText::_('COM_OSMAP_MENUTYPE'),
+                            $menu->menuItemId,
+                            $menu->menuItemType
+                        );
+                    }
+
+                    echo sprintf(
+                        '<h2 id="osmap-menu-uid-%s">%s%s</h2>',
+                        \JApplicationHelper::stringURLSafe($menu->menuItemType),
+                        $menu->menuItemTitle,
+                        empty($debug) ? '' : $debug
+                    );
+                }
+
+                $this->printMenu($menu, $columns);
+            }
+        }
+    }
+
+    /**
+     * Render the menu item and its children items
+     *
+     * @param object $menu
+     * @param int    $columns
+     *
+     * @return void
+     */
+    protected function printMenu($menu, $columns = null)
+    {
+        if (isset($menu->menuItemType)) {
+            $sanitizedUID = \JApplicationHelper::stringURLSafe($menu->menuItemType);
+        } else {
+            $sanitizedUID = \JApplicationHelper::stringURLSafe($menu->uid);
+        }
+
+        $class = array('level_' . ($menu->level + 1));
+        if ($columns && $columns > 1) {
+            $class[] = 'columns_' . $columns;
+        }
+
+        echo sprintf(
+            '<ul class="%s" id="osmap-ul-uid-%s">',
+            join(' ', $class),
+            $sanitizedUID
+        );
+
+        foreach ($menu->children as $item) {
+            $this->printItem($item);
+        }
+
+        echo '</ul>';
     }
 }
