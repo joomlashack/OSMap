@@ -34,5 +34,33 @@ if (file_exists(__DIR__ . '/admin/library/alledia/osmap/Installer/Script.php')) 
 }
 
 class com_osmapInstallerScript extends Script
-{
+{   
+
+	public function postFlight($type, $parent)
+    {
+        parent::postFlight($type, $parent);
+
+        switch ($type) {
+            case 'install':
+            case 'discover_install':
+            case 'update':
+                $this->clearLanguageFiles();
+                break;
+        }
+    }
+
+    /**
+     * Remove any language files left in core
+     */
+	protected function clearLanguageFiles()
+    {
+        $files = array_merge(
+            Folder::files(JPATH_ADMINISTRATOR . '/language', '_osmap', true, true),
+            Folder::files(JPATH_SITE . '/language', '_osmap', true, true)
+        );
+
+        foreach ($files as $file) {
+            @unlink($file);
+        }
+    }
 }
