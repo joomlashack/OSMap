@@ -35,7 +35,6 @@ $printNodeCallback = function (Item $node) {
         && $node->published
         && (!$node->duplicate || ($node->duplicate && !$this->osmapParams->get('ignore_duplicated_uids', 1)))
         && isset($node->newsItem)
-        && !empty($node->newsItem)
         && $node->visibleForRobots
         && $node->parentIsVisibleForRobots
         && $node->visibleForXML
