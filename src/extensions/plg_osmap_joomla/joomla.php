@@ -440,7 +440,7 @@ class PlgOSMapJoomla extends OSMap\Plugin\Base implements OSMap\Plugin\ContentIn
                         'name'                     => $item->title,
                         'expandible'               => true,
                         'secure'                   => $parent->secure,
-                        'newsItem'                 => 0,
+                        'newsItem'                 => 1,
                         'adapterName'              => 'JoomlaCategory',
                         'pluginParams'             => &$params,
                         'parentIsVisibleForRobots' => $parent->visibleForRobots,
