@@ -25,6 +25,7 @@
 namespace Alledia\OSMap;
 
 use Alledia\Framework\Profiler;
+use Alledia\OSMap\Helper\Images;
 use Joomla\CMS\Uri\Uri;
 
 defined('_JEXEC') or die();
@@ -43,6 +44,7 @@ defined('_JEXEC') or die();
  * @property Profiler          $profiler
  * @property Router            $router
  * @property Uri               $uri
+ * @property Images            $imagesHelper
  *
  * @method \JEventDispatcher getEvents()
  * @method \JApplicationWeb  getApp()

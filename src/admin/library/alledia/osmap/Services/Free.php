@@ -24,11 +24,14 @@
 
 namespace Alledia\OSMap\Services;
 
+use Alledia\Framework\Profiler;
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Helper\Images;
+use Alledia\OSMap\Router;
+use JEventDispatcher;
 use Joomla\CMS\Uri\Uri;
 use Pimple\Container as Pimple;
 use Pimple\ServiceProviderInterface;
-use Alledia\OSMap;
-use Alledia\Framework;
 
 defined('_JEXEC') or die();
 
@@ -58,54 +61,54 @@ class Free implements ServiceProviderInterface
      */
     public function register(Pimple $pimple)
     {
-        // Events class
-        $pimple['events'] = function (OSMap\Container $c) {
-            return \JEventDispatcher::getInstance();
+        $pimple['events'] = function () {
+            return JEventDispatcher::getInstance();
         };
 
-        $pimple['app'] = function (OSMap\Container $c) {
-            return OSMap\Factory::getApplication();
+        $pimple['app'] = function () {
+            return Factory::getApplication();
         };
 
-        $pimple['db'] = function (OSMap\Container $c) {
-            return OSMap\Factory::getDbo();
+        $pimple['db'] = function () {
+            return Factory::getDbo();
         };
 
-        $pimple['input'] = function (OSMap\Container $c) {
-            return OSMap\Factory::getApplication()->input;
+        $pimple['input'] = function () {
+            return Factory::getApplication()->input;
         };
 
-        $pimple['user'] = function (OSMap\Container $c) {
-            return OSMap\Factory::getUser();
+        $pimple['user'] = function () {
+            return Factory::getUser();
         };
 
-        $pimple['language'] = function (OSMap\Container $c) {
-            return OSMap\Factory::getLanguage();
+        $pimple['language'] = function () {
+            return Factory::getLanguage();
         };
 
-        $pimple['profiler'] = function (OSMap\Container $c) {
-            return new Framework\Profiler;
+        $pimple['profiler'] = function () {
+            return new Profiler();
         };
 
-        $pimple['router'] = function (OSMap\Container $c) {
-            return new OSMap\Router;
+        $pimple['router'] = function () {
+            return new Router();
         };
 
-        $pimple['uri'] = function (OSMap\Container $c) {
+        $pimple['uri'] = function () {
             return new Uri();
         };
-
 
         $this->registerHelper($pimple);
     }
 
     /**
-     * Registers the image helper
+     * @param Pimple $pimple
+     *
+     * @return void
      */
     protected function registerHelper(Pimple $pimple)
     {
-        $pimple['imagesHelper'] = function (OSMap\Container $c) {
-            return new OSMap\Helper\Images;
+        $pimple['imagesHelper'] = function () {
+            return new Images();
         };
     }
 }
