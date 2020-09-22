@@ -105,4 +105,23 @@ abstract class Base extends CMSPlugin
             throw new Exception($message, 500);
         }
     }
+
+    /**
+     * @param string $url
+     *
+     * @return string
+     */
+    protected static function getViewFromUrl($url)
+    {
+        $linkUrl = parse_url($url);
+        if (isset($linkUrl['query'])) {
+            parse_str($linkUrl['query'], $linkQuery);
+
+            if (isset($linkQuery['view'])) {
+                return $linkQuery['view'];
+            }
+        }
+
+        return null;
+    }
 }
