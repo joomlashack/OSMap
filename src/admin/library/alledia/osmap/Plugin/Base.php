@@ -25,14 +25,12 @@
 namespace Alledia\OSMap\Plugin;
 
 use Alledia\Framework\Exception;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\CMSPlugin;
 
 defined('_JEXEC') or die();
 
-
-/**
- * Base plugin
- */
-abstract class Base extends \JPlugin
+abstract class Base extends CMSPlugin
 {
     /**
      * @var int
@@ -46,7 +44,10 @@ abstract class Base extends \JPlugin
      */
     protected static $memoryMinimum = 4;
 
-    public function __construct(&$subject, $config = array())
+    /**
+     * @inheritDoc
+     */
+    public function __construct(&$subject, $config = [])
     {
         require_once JPATH_ADMINISTRATOR . '/components/com_osmap/include.php';
 
@@ -66,11 +67,11 @@ abstract class Base extends \JPlugin
             $limit = @ini_set('memory_limit', -1);
 
             if (empty($limit) || $limit === false) {
-                $mags  = array(
+                $mags  = [
                     'K' => 1024,
                     'M' => 1024 * 1024,
-                    'G' => 1024 * 1024 *1024
-                );
+                    'G' => 1024 * 1024 * 1024
+                ];
                 $limit = ini_get('memory_limit');
                 $regex = sprintf('/(\d*)([%s])/', join(array_keys($mags)));
                 if (preg_match($regex, $limit, $match)) {
@@ -100,7 +101,7 @@ abstract class Base extends \JPlugin
         }
 
         if (static::$memoryLimit && (static::$memoryLimit - memory_get_usage(true) < static::$memoryMinimum)) {
-            $message = \JText::sprintf('COM_OSMAP_WARNING_OOM', get_called_class());
+            $message = Text::sprintf('COM_OSMAP_WARNING_OOM', get_called_class());
             throw new Exception($message, 500);
         }
     }
