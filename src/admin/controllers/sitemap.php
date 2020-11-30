@@ -22,40 +22,25 @@
  * along with OSMap.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Controller\Form;
+use Alledia\OSMap\Factory;
 
 defined('_JEXEC') or die();
 
 
-class OSMapControllerSitemap extends OSMap\Controller\Form
+class OSMapControllerSitemap extends Form
 {
     /**
-     * Method override to check if the user can edit an existing record.
-     *
-     * @param    array    An array of input data.
-     * @param    string   The name of the key for the primary key.
-     *
-     * @return   boolean
-     */
-    protected function _allowEdit($data = array(), $key = 'id')
-    {
-        // Initialise variables.
-        $recordId = (int) isset($data[$key]) ? $data[$key] : 0;
-
-        // Assets are being tracked, so no need to look into the category.
-        return \JFactory::getUser()->authorise('core.edit', 'com_osmap.sitemap.' . $recordId);
-    }
-
-    /**
-     * Mark the sitemap as default
+     * @return void
+     * @throws Exception
      */
     public function setAsDefault()
     {
-        $cid = OSMap\Factory::getApplication()->input->get('cid', array(), 'array');
+        $cid = Factory::getApplication()->input->get('cid', [], 'array');
 
         if (isset($cid[0])) {
             // Cleanup the is_default field
-            $db = OSMap\Factory::getDbo();
+            $db = Factory::getDbo();
 
             $query = $db->getQuery(true)
                 ->set('is_default = 0')
@@ -67,11 +52,7 @@ class OSMapControllerSitemap extends OSMap\Controller\Form
             $row   = $model->getTable();
 
             $row->load($cid[0]);
-            $row->save(
-                array(
-                    'is_default' => true
-                )
-            );
+            $row->save(['is_default' => true]);
         }
 
         $this->setRedirect('index.php?option=com_osmap&view=sitemaps');

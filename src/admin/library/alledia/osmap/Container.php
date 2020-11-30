@@ -26,7 +26,14 @@ namespace Alledia\OSMap;
 
 use Alledia\Framework\Profiler;
 use Alledia\OSMap\Helper\Images;
+use JDatabaseDriver;
+use JEventDispatcher;
+use Joomla\CMS\Application\WebApplication;
+use Joomla\CMS\Language\Language;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\User\User;
+use Joomla\Input\Input;
+use ReflectionClass;
 
 defined('_JEXEC') or die();
 
@@ -35,26 +42,26 @@ defined('_JEXEC') or die();
  *
  * @package OSMap
  *
- * @property \JEventDispatcher $events
- * @property \JApplicationWeb  $app
- * @property \JDatabaseDriver  $db
- * @property \JInput           $input
- * @property \JUser            $user
- * @property \JLanguage        $language
- * @property Profiler          $profiler
- * @property Router            $router
- * @property Uri               $uri
- * @property Images            $imagesHelper
+ * @property JEventDispatcher $events
+ * @property WebApplication   $app
+ * @property JDatabaseDriver  $db
+ * @property Input            $input
+ * @property User             $user
+ * @property Language         $language
+ * @property Profiler         $profiler
+ * @property Router           $router
+ * @property Uri              $uri
+ * @property Images           $imagesHelper
  *
- * @method \JEventDispatcher getEvents()
- * @method \JApplicationWeb  getApp()
- * @method \JDatabaseDriver  getDb()
- * @method \JInput           getInput()
- * @method \JUser            getUser()
- * @method \JLanguage        getLanguage()
- * @method Profiler          getProfiler()
- * @method Router            getRouter()
- * @method Uri               getUri()
+ * @method JEventDispatcher getEvents()
+ * @method WebApplication   getApp()
+ * @method JDatabaseDriver  getDb()
+ * @method Input            getInput()
+ * @method User             getUser()
+ * @method Language         getLanguage()
+ * @method Profiler         getProfiler()
+ * @method Router           getRouter()
+ * @method Uri              getUri()
  *
  */
 class Container extends \Pimple\Container
@@ -82,25 +89,26 @@ class Container extends \Pimple\Container
     /**
      * Get instance of a class using parameter autodetect
      *
-     * @param $className
+     * @param string $className
      *
      * @return object
+     * @throws \Exception
      */
     public function getInstance($className)
     {
-        $class = new \ReflectionClass($className);
+        $class = new ReflectionClass($className);
         if ($instance = $this->getServiceEntry($class)) {
             return $instance;
         }
 
-        $dependencies = array();
+        $dependencies = [];
         if (!is_null($class->getConstructor())) {
             $params = $class->getConstructor()->getParameters();
             foreach ($params as $param) {
                 $dependentClass = $param->getClass();
                 if ($dependentClass) {
                     $dependentClassName  = $dependentClass->name;
-                    $dependentReflection = new \ReflectionClass($dependentClassName);
+                    $dependentReflection = new ReflectionClass($dependentClassName);
                     if ($dependentReflection->isInstantiable()) {
                         //use recursion to get dependencies
                         $dependencies[] = $this->getInstance($dependentClassName);
@@ -123,13 +131,13 @@ class Container extends \Pimple\Container
      * Classes can be registered either through their short name
      * or full class name. Short name take precedence.
      *
-     * @param \ReflectionClass $class
-     * @param bool             $require
+     * @param ReflectionClass $class
+     * @param bool            $require
      *
      * @return object|null
      * @throws \Exception
      */
-    protected function getServiceEntry(\ReflectionClass $class, $require = false)
+    protected function getServiceEntry(ReflectionClass $class, $require = false)
     {
         $key = strtolower($class->getShortName());
         if (isset($this[$key])) {

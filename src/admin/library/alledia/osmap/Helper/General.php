@@ -24,16 +24,16 @@
 
 namespace Alledia\OSMap\Helper;
 
-use Alledia\Framework;
 use Alledia\OSMap;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
-
 abstract class General
 {
-    protected static $plugins = array();
+    protected static $plugins = [];
 
     /**
      * Build the submenu in admin if needed. Triggers the
@@ -47,33 +47,34 @@ abstract class General
      *    "view" => unique view name
      * ]
      *
-     * @param $viewName
+     * @param string $viewName
      *
      * @return void
+     * @throws \Exception
      */
     public static function addSubmenu($viewName)
     {
-        $submenus = array(
-            array(
+        $submenus = [
+            [
                 'text' => 'COM_OSMAP_SUBMENU_SITEMAPS',
                 'link' => 'index.php?option=com_osmap&view=sitemaps',
                 'view' => 'sitemaps'
-            ),
-            array(
+            ],
+            [
                 'text' => 'COM_OSMAP_SUBMENU_EXTENSIONS',
                 'link' => 'index.php?option=com_plugins&view=plugins&filter_folder=osmap',
                 'view' => 'extensions'
-            )
-        );
+            ]
+        ];
 
         $events = OSMap\Factory::getContainer()->getEvents();
-        $events->trigger('onOSMapAddAdminSubmenu', array(&$submenus));
+        $events->trigger('onOSMapAddAdminSubmenu', [&$submenus]);
 
         if (!empty($submenus)) {
             foreach ($submenus as $submenu) {
                 if (is_array($submenu)) {
                     \JHtmlSidebar::addEntry(
-                        \JText::_($submenu['text']),
+                        Text::_($submenu['text']),
                         $submenu['link'],
                         $viewName == $submenu['view']
                     );
@@ -90,16 +91,17 @@ abstract class General
      *   - news
      *
      * @return string
+     * @throws \Exception
      */
     public static function getSitemapTypeFromInput()
     {
         $input = OSMap\Factory::getContainer()->input;
 
-        if ((bool)$input->getStr('images', 0)) {
+        if ((bool)$input->getString('images', 0)) {
             return 'images';
         }
 
-        if ((bool)$input->getStr('news', 0)) {
+        if ((bool)$input->getString('news', 0)) {
             return 'news';
         }
 
@@ -111,9 +113,8 @@ abstract class General
      * will be returned first, than, OSMap plugins. Always respecting the
      * ordering.
      *
-     * @param string $option
-     *
      * @return array
+     * @throws \Exception
      */
     public static function getPluginsFromDatabase()
     {
@@ -122,13 +123,11 @@ abstract class General
         // Get all the OSMap and XMap plugins. Get first the XMap plugins and
         // than OSMap. Always respecting the ordering.
         $query = $db->getQuery(true)
-            ->select(
-                array(
-                    'folder',
-                    'params',
-                    'element'
-                )
-            )
+            ->select([
+                'folder',
+                'params',
+                'element'
+            ])
             ->from('#__extensions')
             ->where('type = ' . $db->quote('plugin'))
             ->where('folder IN (' . $db->quote('osmap') . ',' . $db->quote('xmap') . ')')
@@ -152,14 +151,14 @@ abstract class General
             return false;
         }
 
-        $path = JPATH_PLUGINS . '/' . $plugin->folder . '/' . $plugin->element . '/' . $plugin->element . '.php';
+        $path       = JPATH_PLUGINS . '/' . $plugin->folder . '/' . $plugin->element . '/' . $plugin->element . '.php';
         $compatible = false;
 
         // Check if the plugin file exists
-        if (\JFile::exists($path)) {
+        if (File::exists($path)) {
             // Legacy plugins have plugins element equals the option. But it still doesn't mean is compatible with
             // the current content/option
-            $isLegacy  = $plugin->element === $option;
+            $isLegacy = $plugin->element === $option;
 
             $className = $isLegacy ? ($plugin->folder . '_' . $option) :
                 ('Plg' . ucfirst($plugin->folder) . ucfirst($plugin->element));
@@ -172,14 +171,14 @@ abstract class General
             // Instantiate the plugin if the class exists
             if (class_exists($className)) {
                 $dispatcher = \JEventDispatcher::getInstance();
-                $instance = method_exists($className, 'getInstance') ?
+                $instance   = method_exists($className, 'getInstance') ?
                     $className::getInstance() : new $className($dispatcher);
 
                 // If is legacy, we know it is compatible since the element and option were already validated
                 $compatible = $isLegacy
                     || (
                         method_exists($instance, 'getComponentElement')
-                            && $instance->getComponentElement() === $option
+                        && $instance->getComponentElement() === $option
                     );
 
                 if ($compatible) {
@@ -200,6 +199,7 @@ abstract class General
      * @param string $option
      *
      * @return object
+     * @throws \Exception
      */
     public static function getPluginsForComponent($option)
     {
@@ -208,9 +208,9 @@ abstract class General
             return static::$plugins[$option];
         }
 
-        $compatiblePlugins = array();
+        $compatiblePlugins = [];
 
-        $plugins = static::getPluginsFromDatabase($option);
+        $plugins = static::getPluginsFromDatabase();
 
         if (!empty($plugins)) {
             jimport('joomla.filesystem.file');
@@ -239,7 +239,7 @@ abstract class General
      */
     public static function getPagebreaks($text, $baseLink, $uid = '')
     {
-        $matches = $subnodes = array();
+        $matches = $subnodes = [];
 
         if (preg_match_all(
             '/<hr\s*[^>]*?(?:(?:\s*alt="(?P<alt>[^"]+)")|(?:\s*title="(?P<title>[^"]+)"))+[^>]*>/i',
@@ -257,10 +257,10 @@ abstract class General
                     } elseif (@$match['title']) {
                         $title = stripslashes($match['title']);
                     } else {
-                        $title = \JText::sprintf('Page #', $i);
+                        $title = Text::sprintf('Page #', $i);
                     }
 
-                    $subnode = new \stdClass();
+                    $subnode             = new \stdClass();
                     $subnode->name       = $title;
                     $subnode->uid        = $uid . '.' . ($i - 1);
                     $subnode->expandible = false;
@@ -284,12 +284,13 @@ abstract class General
      * @param string $date
      *
      * @return bool
+     * @throws \Exception
      */
     public static function isEmptyDate($date)
     {
         $db = OSMap\Factory::getContainer()->db;
 
-        $invalidDates = array(
+        $invalidDates = [
             '',
             null,
             false,
@@ -299,7 +300,7 @@ abstract class General
             '-1',
             $db->getNullDate(),
             '0000-00-00'
-        );
+        ];
 
         return in_array($date, $invalidDates);
     }
@@ -313,11 +314,12 @@ abstract class General
      * @param bool $asString
      *
      * @return mixed
+     * @throws \Exception
      */
     public static function getAuthorisedViewLevels($asString = true)
     {
         $container = OSMap\Factory::getContainer();
-        $levels    = array();
+        $levels    = [];
 
         // Check if we need to return all levels, if it was called from the admin to edit the link list
         if ($container->input->get('view') === 'adminsitemapitems') {
@@ -353,7 +355,7 @@ abstract class General
      * @param string $sitePath
      *
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     public static function loadOptionLanguage($option, $adminPath, $sitePath)
     {
@@ -381,22 +383,17 @@ abstract class General
      * @param array  $params
      *
      * @return mixed
+     * @throws \Exception
      */
-    public static function callUserFunc($class, $instance, $method, Array &$params = array())
+    public static function callUserFunc($class, $instance, $method, array $params = [])
     {
         $reflection = new \ReflectionMethod($class, $method);
         $result     = null;
 
         if ($reflection->isStatic()) {
-            $result = call_user_func_array(
-                array($class, $method),
-                $params
-            );
+            $result = call_user_func_array([$class, $method], $params);
         } else {
-            $result = call_user_func_array(
-                array($instance, $method),
-                $params
-            );
+            $result = call_user_func_array([$instance, $method], $params);
         }
 
         return $result;

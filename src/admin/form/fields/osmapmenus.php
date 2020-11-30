@@ -22,44 +22,29 @@
  * along with OSMap.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
-jimport('joomla.html.html');
+FormHelper::loadFieldClass('List');
 
-require_once JPATH_LIBRARIES . '/joomla/form/fields/list.php';
+HTMLHelper::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
 
-JHtml::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
-
-/**
- * Menus Form Field class for the OSMap Component
- *
- * @package      OSMap
- * @subpackage   com_osmap
- * @since        2.0
- */
 class JFormFieldOSMapMenus extends JFormFieldList
 {
-
-    /**
-     * The field type.
-     *
-     * @var string
-     */
     public $type = 'osmapmenus';
 
     /**
-     * Method to get a list of options for a list input.
-     *
-     * @return   array        An array of JHTML options.
+     * @inheritDoc
+     * @throws Exception
      */
-    protected function _getOptions()
+    protected function getOptions()
     {
-        $db = JFactory::getDbo();
-
-        $currentMenus = array();
+        $db = Factory::getDbo();
 
         // Get the list of menus from the database
         $query = $db->getQuery(true)
@@ -67,30 +52,20 @@ class JFormFieldOSMapMenus extends JFormFieldList
             ->select('title AS text')
             ->from('#__menu_types AS menus')
             ->order('menus.title');
-        $db->setQuery($query);
 
-        $menus = $db->loadObjectList('value');
+        $menus = $db->setQuery($query)->loadObjectList('value');
 
-        // Get the options
-        $options = array();
-
-        // Add the current sitemap menus in the defined order to the list
-        foreach ($currentMenus as $menuId) {
-            if (!empty($menus[$menuId])) {
-                $options[] = $menus[$menuId];
-            }
-        }
-
-        // Add the rest of the menus to the list (if any)
+        // Add the sitemap menus in the defined order to the list
+        $options      = [];
+        $currentMenus = [];
         foreach ($menus as $menuId => $menu) {
             if (!in_array($menuId, $currentMenus)) {
                 $options[] = $menu;
             }
         }
 
-        // Check for a database error.
         if ($db->getErrorNum()) {
-            JError::raiseWarning(500, $db->getErrorMsg());
+            Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'error');
         }
 
         $options = array_merge(parent::getOptions(), $options);
@@ -99,14 +74,13 @@ class JFormFieldOSMapMenus extends JFormFieldList
     }
 
     /**
-     * Method to get the field input.
-     *
-     * @return      string      The field input.
+     * @inheritDoc
+     * @throws Exception
      */
     protected function getInput()
     {
-        $disabled   = $this->element['disabled'] == 'true' ? true : false;
-        $readonly   = $this->element['readonly'] == 'true' ? true : false;
+        $disabled   = ($this->element['disabled'] == 'true');
+        $readonly   = ($this->element['readonly'] == 'true');
         $attributes = ' ';
 
         $type = 'radio';
@@ -138,9 +112,9 @@ class JFormFieldOSMapMenus extends JFormFieldList
         $this->inputId = 'menus';
 
         // Depends on jQuery UI
-        JHtml::_('jquery.ui', array('core', 'sortable'));
-        JHtml::_('script', 'jui/sortablelist.js', false, true);
-        JHtml::_('stylesheet', 'jui/sortablelist.css', false, true, false);
+        HTMLHelper::_('jquery.ui', ['core', 'sortable']);
+        HTMLHelper::_('script', 'jui/sortablelist.js', false, true);
+        HTMLHelper::_('stylesheet', 'jui/sortablelist.css', false, true, false);
 
         $doc->addScriptDeclaration("
             ;(function ($){
@@ -165,12 +139,12 @@ class JFormFieldOSMapMenus extends JFormFieldList
         if ($disabled || $readonly) {
             $attributes .= 'disabled="disabled"';
         }
-        $options = (array) $this->_getOptions();
+        $options = (array)$this->getOptions();
 
-        $textSelected         = JText::_('COM_OSMAP_SELECTED_LABEL');
-        $textTitle            = JText::_('COM_OSMAP_TITLE_LABEL');
-        $textChangePriority   = JText::_('COM_OSMAP_PRIORITY_LABEL');
-        $textChangeChangeFreq = JText::_('COM_OSMAP_CHANGE_FREQUENCY_LABEL');
+        $textSelected         = Text::_('COM_OSMAP_SELECTED_LABEL');
+        $textTitle            = Text::_('COM_OSMAP_TITLE_LABEL');
+        $textChangePriority   = Text::_('COM_OSMAP_PRIORITY_LABEL');
+        $textChangeChangeFreq = Text::_('COM_OSMAP_CHANGE_FREQUENCY_LABEL');
 
         $return = <<<HTML
             <div class="osmap-table">
@@ -190,21 +164,34 @@ HTML;
         //Lets show the enabled menus first
         $this->currentItems = array_keys($value);
         // Sort the menu options
-        uasort($options, array($this, 'myCompare'));
+        uasort($options, [$this, 'myCompare']);
 
         foreach ($options as $option) {
-            $prioritiesName        = preg_replace('/(jform\[[^\]]+)(\].*)/', '$1_priority$2', $this->name);
-            $changefreqName        = preg_replace('/(jform\[[^\]]+)(\].*)/', '$1_changefreq$2', $this->name);
+            $prioritiesName        = preg_replace('/(jform\[[^]]+)(].*)/', '$1_priority$2', $this->name);
+            $changefreqName        = preg_replace('/(jform\[[^]]+)(].*)/', '$1_changefreq$2', $this->name);
             $selected              = (isset($value[$option->value]) ? ' checked="checked"' : '');
-            $changePriorityField   = JHTML::_('osmap.priorities', $prioritiesName, ($selected ? $value[$option->value]['priority'] : '0.5'), $i);
-            $changeChangeFreqField = JHTML::_('osmap.changefrequency', $changefreqName, ($selected ? $value[$option->value]['changefreq'] : 'weekly'), $i);
+            $changePriorityField   = HTMLHelper::_(
+                'osmap.priorities',
+                $prioritiesName,
+                ($selected ? $value[$option->value]['priority'] : '0.5'),
+                $i
+            );
+            $changeChangeFreqField = HTMLHelper::_(
+                'osmap.changefrequency',
+                $changefreqName,
+                ($selected ? $value[$option->value]['changefreq'] : 'weekly'),
+                $i
+            );
 
             $i++;
 
             $return .= <<<HTML
                 <li id="menu_{$option->value}" class="osmap-menu-item">
                     <div class="osmap-cell osmap-col-selected" data-title="{$textSelected}">
-                        <input type="{$type}" id="{$this->id}_{$i}" name="{$this->name}" value="{$option->value}" {$attributes} {$selected} />
+                        <input type="{$type}" 
+                               id="{$this->id}_{$i}"
+                               name="{$this->name}"
+                               value="{$option->value}" {$attributes} {$selected}/>
                     </div>
                     <div class="osmap-cell osmap-col-title" data-title="{$textTitle}">
                         <label for="{$this->id}_{$i}" class="menu_label">{$option->text}</label>
@@ -214,7 +201,8 @@ HTML;
                         <div class="controls">{$changePriorityField}</div>
                     </div>
 
-                    <div class="osmap-cell osmap-col-changefreq osmap-menu-options" data-title="{$textChangeChangeFreq}">
+                    <div class="osmap-cell osmap-col-changefreq osmap-menu-options"
+                         data-title="{$textChangeChangeFreq}">
                         <div class="controls">{$changeChangeFreqField}</div>
                     </div>
                 </li>

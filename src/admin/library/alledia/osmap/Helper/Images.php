@@ -44,7 +44,7 @@ class Images
     public function getImagesFromText($text, $max = 9999)
     {
         $container = Factory::getContainer();
-        $images    = array();
+        $images    = [];
 
         // Look <img> tags
         preg_match_all(
@@ -77,14 +77,14 @@ class Images
                             $src = $container->router->convertRelativeUriToFullUri($src);
                         }
 
-                        $image = (object)array(
+                        $image = (object)[
                             'src'   => $src,
                             'title' => empty($matches[$i]['title'])
                                 ? (empty($matches[$i]['alt'])
                                     ? ''
                                     : $matches[$i]['alt'])
                                 : $matches[$i]['title']
-                        );
+                        ];
 
                         $images[] = $image;
 
@@ -109,20 +109,20 @@ class Images
     {
         $container   = Factory::getContainer();
         $imagesParam = json_decode($item->images);
-        $images      = array();
+        $images      = [];
 
         if (isset($imagesParam->image_intro) && !empty($imagesParam->image_intro)) {
-            $images[] = (object)array(
+            $images[] = (object)[
                 'src'   => $container->router->convertRelativeUriToFullUri($imagesParam->image_intro),
                 'title' => $imagesParam->image_intro_caption
-            );
+            ];
         }
 
         if (isset($imagesParam->image_fulltext) && !empty($imagesParam->image_fulltext)) {
-            $images[] = (object)array(
+            $images[] = (object)[
                 'src'   => $container->router->convertRelativeUriToFullUri($imagesParam->image_fulltext),
                 'title' => $imagesParam->image_fulltext_caption
-            );
+            ];
         }
 
         return $images;

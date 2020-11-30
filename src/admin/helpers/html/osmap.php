@@ -22,9 +22,12 @@
  * along with OSMap.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+
 defined('_JEXEC') or die();
 
-JTable::addIncludePath(JPATH_COMPONENT . '/tables');
+Table::addIncludePath(JPATH_COMPONENT . '/tables');
 
 abstract class JHtmlOSMap
 {
@@ -37,7 +40,7 @@ abstract class JHtmlOSMap
      */
     public static function priorities($name, $selected = '0.5', $j = 0)
     {
-        $options = array();
+        $options = [];
         foreach (static::priorityList() as $priority) {
             $options[] = JHTML::_('select.option', $priority, $priority);
         }
@@ -54,7 +57,7 @@ abstract class JHtmlOSMap
      */
     public static function changefrequency($name, $selected = 'weekly', $j = 0)
     {
-        $options = array();
+        $options = [];
         foreach (static::frequencyList() as $value => $text) {
             $options[] = JHTML::_('select.option', $value, $text);
         }
@@ -67,7 +70,7 @@ abstract class JHtmlOSMap
      */
     public static function priorityList()
     {
-        $priorities = array();
+        $priorities = [];
         for ($i = 0.1; $i <= 1; $i += 0.1) {
             $priorities[] = sprintf('%03.1f', $i);
         }
@@ -80,16 +83,14 @@ abstract class JHtmlOSMap
      */
     public static function frequencyList()
     {
-        $frequencies = array(
-            'always'  => JText::_('COM_OSMAP_ALWAYS'),
-            'hourly'  => JText::_('COM_OSMAP_HOURLY'),
-            'daily'   => JText::_('COM_OSMAP_DAILY'),
-            'weekly'  => JText::_('COM_OSMAP_WEEKLY'),
-            'monthly' => JText::_('COM_OSMAP_MONTHLY'),
-            'yearly'  => JText::_('COM_OSMAP_YEARLY'),
-            'never'   => JText::_('COM_OSMAP_NEVER')
-        );
-
-        return $frequencies;
+        return [
+            'always'  => Text::_('COM_OSMAP_ALWAYS'),
+            'hourly'  => Text::_('COM_OSMAP_HOURLY'),
+            'daily'   => Text::_('COM_OSMAP_DAILY'),
+            'weekly'  => Text::_('COM_OSMAP_WEEKLY'),
+            'monthly' => Text::_('COM_OSMAP_MONTHLY'),
+            'yearly'  => Text::_('COM_OSMAP_YEARLY'),
+            'never'   => Text::_('COM_OSMAP_NEVER')
+        ];
     }
 }

@@ -26,6 +26,11 @@ defined('_JEXEC') or die();
 
 use Alledia\Framework;
 use Alledia\OSMap;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Table\Table;
 
 // Alledia Framework
 if (!defined('ALLEDIA_FRAMEWORK_LOADED')) {
@@ -55,27 +60,15 @@ if (!defined('OSMAP_LOADED')) {
     Framework\AutoLoader::register('Alledia\OSMap', OSMAP_LIBRARY_PATH . '/alledia/osmap');
     Framework\AutoLoader::register('Pimple', OSMAP_LIBRARY_PATH . '/pimple/pimple');
 
-    // Load OSMap Plugins
-    JPluginHelper::importPlugin('osmap');
+    PluginHelper::importPlugin('osmap');
 
     // Load the language files
     OSMap\Helper\General::loadOptionLanguage('com_osmap', OSMAP_ADMIN_PATH, OSMAP_SITE_PATH);
 
-    JTable::addIncludePath(OSMAP_ADMIN_PATH . '/tables');
-    JForm::addFieldPath(OSMAP_ADMIN_PATH . '/fields');
-    JForm::addFormPath(OSMAP_ADMIN_PATH . '/form');
-    JHtml::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
+    Table::addIncludePath(OSMAP_ADMIN_PATH . '/tables');
+    Form::addFieldPath(OSMAP_ADMIN_PATH . '/fields');
+    Form::addFormPath(OSMAP_ADMIN_PATH . '/form');
+    HTMLHelper::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
 
-    JLog::addLogger(
-        array(
-            // Sets file name
-            'text_file' => 'com_osmap.errors.php'
-        ),
-        // Sets messages of all log levels to be sent to the file
-        JLog::ALL,
-        // The log category/categories which should be recorded in this file
-        // In this case, it's just the one category from our extension, still
-        // we need to put it inside an array
-        array('com_osmap')
-    );
+    Log::addLogger(['text_file' => 'com_osmap.errors.php'], Log::ALL, ['com_osmap']);
 }

@@ -24,7 +24,6 @@
 
 namespace Alledia\OSMap;
 
-use Alledia\Framework;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Uri\Uri;
 
@@ -68,7 +67,7 @@ class Router
         }
 
         // Build route
-        $scheme = array('path', 'query', 'fragment');
+        $scheme = ['path', 'query', 'fragment'];
         $uri    = $this->joomlaRouter->build($url);
         $url    = $uri->toString($scheme);
 
@@ -95,10 +94,10 @@ class Router
     public function isInternalURL($url)
     {
         $uri      = Uri::getInstance($url);
-        $base     = $uri->toString(array('scheme', 'host', 'port', 'path'));
-        $host     = $uri->toString(array('scheme', 'host', 'port'));
-        $path     = $uri->toString(array('path'));
-        $baseHost = Uri::getInstance($uri->root())->toString(array('host'));
+        $base     = $uri->toString(['scheme', 'host', 'port', 'path']);
+        $host     = $uri->toString(['scheme', 'host', 'port']);
+        $path     = $uri->toString(['path']);
+        $baseHost = Uri::getInstance($uri->root())->toString(['host']);
 
         if ($path === $url) {
             return true;
@@ -143,7 +142,7 @@ class Router
 
         $uri = $container->uri->getInstance($url);
 
-        return $uri->toString(array('path')) === $url;
+        return $uri->toString(['path']) === $url;
     }
 
     /**
@@ -157,7 +156,7 @@ class Router
     public function convertRelativeUriToFullUri($path)
     {
         if ($path[0] == '/') {
-            $scheme = array('scheme', 'user', 'pass', 'host', 'port');
+            $scheme = ['scheme', 'user', 'pass', 'host', 'port'];
             $path   = Factory::getContainer()->uri->getInstance()->toString($scheme) . $path;
 
         } elseif ($this->isRelativeUri($path)) {

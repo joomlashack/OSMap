@@ -40,7 +40,7 @@ class Configuration
      */
     protected $settings = null;
 
-    public function __construct(array $settings = array())
+    public function __construct(array $settings = [])
     {
         $this->settings = $settings;
     }
@@ -75,8 +75,8 @@ class Configuration
             $key = $levels[$i];
             if (is_array($value) && isset($value[$key])) {
                 $value = &$value[$key];
-            } elseif (is_object($value) && isset($value->$key)) {
-                $value = $value->$key;
+            } elseif (is_object($value) && isset($value->{$key})) {
+                $value = $value->{$key};
             } else {
                 return $default;
             }
@@ -96,7 +96,7 @@ class Configuration
      * @param mixed  $newValue
      *
      * @return mixed
-     * @throws Exception
+     * @throws \Exception
      */
     public function set($name, $newValue)
     {
@@ -110,7 +110,7 @@ class Configuration
             for ($i = 0; $i < count($keys) - 1; $i++) {
                 $key = $keys[$i];
                 if (empty($tree[$key]) || !is_array($tree[$key])) {
-                    $tree[$key] = array();
+                    $tree[$key] = [];
                 }
                 $tree = &$tree[$key];
             }
@@ -135,7 +135,7 @@ class Configuration
     public function toConfig($key = null)
     {
         if ($key) {
-            return new static($this->get($key, array()));
+            return new static($this->get($key, []));
         }
 
         return clone $this;

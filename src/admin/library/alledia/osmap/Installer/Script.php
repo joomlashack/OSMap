@@ -59,15 +59,12 @@ class Script extends AbstractScript
     protected $isXmapDataFound = false;
 
     /**
-     * Post installation actions
-     *
-     * @return void
-     * @throws \Exception
+     * @inheritDoc
      */
     public function postFlight($type, $parent)
     {
         // Check if XMap is installed, to start a migration
-        $xmapConverter = new XmapConverter;
+        $xmapConverter = new XmapConverter();
 
         // This attribute will be used by the cusotm template to display the option to migrate legacy sitemaps
         $this->isXmapDataFound = $this->tableExists('#__xmap_sitemap') ?
@@ -133,11 +130,11 @@ class Script extends AbstractScript
             // Get all menus
             $menus = \ModMenuHelper::getMenus();
             if (!empty($menus)) {
-                $data = array(
+                $data = [
                     'name'       => 'Default Sitemap',
                     'is_default' => 1,
                     'published'  => 1
-                );
+                ];
 
                 // Create the sitemap
                 Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_osmap/tables');
@@ -196,17 +193,15 @@ class Script extends AbstractScript
 
                 // Get legacy sitemaps
                 $query    = $db->getQuery(true)
-                    ->select(
-                        array(
-                            'id',
-                            'title',
-                            'is_default',
-                            'state',
-                            'created',
-                            'selections',
-                            'excluded_items'
-                        )
-                    )
+                    ->select([
+                        'id',
+                        'title',
+                        'is_default',
+                        'state',
+                        'created',
+                        'selections',
+                        'excluded_items'
+                    ])
                     ->from('#__osmap_sitemap');
                 $sitemaps = $db->setQuery($query)->loadObjectList();
 
@@ -220,15 +215,13 @@ class Script extends AbstractScript
 
                         $query = $db->getQuery(true)
                             ->insert('#__osmap_sitemaps')
-                            ->set(
-                                array(
-                                    'id = ' . $db->quote($sitemap->id),
-                                    'name = ' . $db->quote($sitemap->title),
-                                    'is_default = ' . $db->quote($sitemap->is_default),
-                                    'published = ' . $db->quote($sitemap->state),
-                                    'created_on = ' . $db->quote($sitemap->created)
-                                )
-                            );
+                            ->set([
+                                'id = ' . $db->quote($sitemap->id),
+                                'name = ' . $db->quote($sitemap->title),
+                                'is_default = ' . $db->quote($sitemap->is_default),
+                                'published = ' . $db->quote($sitemap->state),
+                                'created_on = ' . $db->quote($sitemap->created)
+                            ]);
                         $db->setQuery($query)->execute();
 
                         // Add the selected menus to the correct table
@@ -243,25 +236,23 @@ class Script extends AbstractScript
                                     // Convert the selection of menus into a row
                                     $query = $db->getQuery(true)
                                         ->insert('#__osmap_sitemap_menus')
-                                        ->columns(
-                                            array(
-                                                'sitemap_id',
-                                                'menutype_id',
-                                                'priority',
-                                                'changefreq',
-                                                'ordering'
-                                            )
-                                        )
+                                        ->columns([
+                                            'sitemap_id',
+                                            'menutype_id',
+                                            'priority',
+                                            'changefreq',
+                                            'ordering'
+                                        ])
                                         ->values(
                                             implode(
                                                 ',',
-                                                array(
+                                                [
                                                     $db->quote($sitemap->id),
                                                     $db->quote($menuTypeId),
                                                     $db->quote($menu['priority']),
                                                     $db->quote($menu['changefreq']),
                                                     $db->quote($menu['ordering'])
-                                                )
+                                                ]
                                             )
                                         );
                                     $db->setQuery($query)->execute();
@@ -269,9 +260,8 @@ class Script extends AbstractScript
                             }
                         }
 
-                        // Convert settings about excluded items
-                        $excludedItems = array();
                         if (!empty($sitemap->excluded_items)) {
+                            // Convert settings about excluded items
                             $excludedItems = json_decode($sitemap->excluded_items, true);
 
                             if (!empty($excludedItems)) {
@@ -282,37 +272,33 @@ class Script extends AbstractScript
                                     $query = $db->getQuery(true)
                                         ->select('COUNT(*)')
                                         ->from('#__osmap_items_settings')
-                                        ->where(
-                                            array(
-                                                'sitemap_id = ' . $db->quote($sitemap->id),
-                                                'uid = ' . $db->quote($uid)
-                                            )
-                                        );
+                                        ->where([
+                                            'sitemap_id = ' . $db->quote($sitemap->id),
+                                            'uid = ' . $db->quote($uid)
+                                        ]);
                                     $count = $db->setQuery($query)->loadResult();
 
                                     if ($count == 0) {
                                         // Insert the settings
                                         $query = $db->getQuery(true)
                                             ->insert('#__osmap_items_settings')
-                                            ->columns(
-                                                array(
-                                                    'sitemap_id',
-                                                    'uid',
-                                                    'published',
-                                                    'changefreq',
-                                                    'priority'
-                                                )
-                                            )
+                                            ->columns([
+                                                'sitemap_id',
+                                                'uid',
+                                                'published',
+                                                'changefreq',
+                                                'priority'
+                                            ])
                                             ->values(
                                                 implode(
                                                     ',',
-                                                    array(
+                                                    [
                                                         $sitemap->id,
                                                         $db->quote($uid),
                                                         0,
                                                         $db->quote('weekly'),
                                                         $db->quote('0.5')
-                                                    )
+                                                    ]
                                                 )
                                             );
                                         $db->setQuery($query)->execute();
@@ -321,12 +307,10 @@ class Script extends AbstractScript
                                         $query = $db->getQuery(true)
                                             ->update('#__osmap_items_settings')
                                             ->set('published = 0')
-                                            ->where(
-                                                array(
-                                                    'sitemap_id = ' . $db->quote($sitemap->id),
-                                                    'uid = ' . $db->quote($uid)
-                                                )
-                                            );
+                                            ->where([
+                                                'sitemap_id = ' . $db->quote($sitemap->id),
+                                                'uid = ' . $db->quote($uid)
+                                            ]);
                                         $db->setQuery($query)->execute();
                                     }
                                 }
@@ -336,12 +320,10 @@ class Script extends AbstractScript
                         // Convert custom settings for items
                         if ($this->tableExists('#__osmap_items')) {
                             $query         = $db->getQuery(true)
-                                ->select(
-                                    array(
-                                        'uid',
-                                        'properties'
-                                    )
-                                )
+                                ->select([
+                                    'uid',
+                                    'properties'
+                                ])
                                 ->from('#__osmap_items')
                                 ->where('sitemap_id = ' . $db->quote($sitemap->id))
                                 ->where('view = ' . $db->quote('xml'));
@@ -358,17 +340,15 @@ class Script extends AbstractScript
                                     $query  = $db->getQuery(true)
                                         ->select('COUNT(*)')
                                         ->from('#__osmap_items_settings')
-                                        ->where(
-                                            array(
-                                                'sitemap_id = ' . $db->quote($sitemap->id),
-                                                'uid = ' . $db->quote($item->uid)
-                                            )
-                                        );
+                                        ->where([
+                                            'sitemap_id = ' . $db->quote($sitemap->id),
+                                            'uid = ' . $db->quote($item->uid)
+                                        ]);
                                     $exists = (bool)$db->setQuery($query)->loadResult();
 
 
                                     if ($exists) {
-                                        $fields = array();
+                                        $fields = [];
 
                                         // Check if the changefreq is set and set to update
                                         if (isset($properties['changefreq'])) {
@@ -384,27 +364,25 @@ class Script extends AbstractScript
                                         $query = $db->getQuery(true)
                                             ->update('#__osmap_items_settings')
                                             ->set($fields)
-                                            ->where(
-                                                array(
-                                                    'sitemap_id = ' . $db->quote($sitemap->id),
-                                                    'uid = ' . $db->quote($item->uid)
-                                                )
-                                            );
+                                            ->where([
+                                                'sitemap_id = ' . $db->quote($sitemap->id),
+                                                'uid = ' . $db->quote($item->uid)
+                                            ]);
                                         $db->setQuery($query)->execute();
                                     }
 
                                     if (!$exists) {
-                                        $columns = array(
+                                        $columns = [
                                             'sitemap_id',
                                             'uid',
                                             'published'
-                                        );
+                                        ];
 
-                                        $values = array(
+                                        $values = [
                                             $db->quote($sitemap->id),
                                             $db->quote($item->uid),
                                             1
-                                        );
+                                        ];
 
                                         // Check if the changefreq is set and set to update
                                         if (isset($properties['changefreq'])) {
@@ -546,19 +524,17 @@ class Script extends AbstractScript
         $query = $db->getQuery(true)
             ->select('id, link')
             ->from('#__menu')
-            ->where(
-                array(
-                    'client_id = ' . $siteApp->getClientId(),
-                    sprintf('link LIKE %s', $db->quote('%com_osmap%')),
-                    sprintf('link LIKE %s', $db->quote('%view=xml%')),
-                    sprintf('link NOT LIKE %s', $db->quote('%format=xml%'))
-                )
-            );
+            ->where([
+                'client_id = ' . $siteApp->getClientId(),
+                sprintf('link LIKE %s', $db->quote('%com_osmap%')),
+                sprintf('link LIKE %s', $db->quote('%view=xml%')),
+                sprintf('link NOT LIKE %s', $db->quote('%format=xml%'))
+            ]);
 
         $menus = $db->setQuery($query)->loadObjectList();
         foreach ($menus as $menu) {
             $menu->link .= '&format=xml';
-            $db->updateObject('#__menu', $menu, array('id'));
+            $db->updateObject('#__menu', $menu, ['id']);
         }
     }
 

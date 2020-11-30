@@ -49,18 +49,14 @@ class Factory extends Framework\Factory
     public static function getContainer()
     {
         if (empty(static::$container)) {
-            $config = array();
+            $config = [];
 
-            $container = new Container(
-                array(
-                    'configuration' => new Configuration($config)
-                )
-            );
+            $container = new Container(['configuration' => new Configuration($config)]);
 
             // Load the Service class according to the current license
             $serviceClass = '\\Alledia\\OSMap\\Services\\' . ucfirst(OSMAP_LICENSE);
 
-            $container->register(new $serviceClass);
+            $container->register(new $serviceClass());
 
             static::$container = $container;
         }

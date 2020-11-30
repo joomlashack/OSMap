@@ -22,18 +22,19 @@
  * along with OSMap.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Controller\Admin;
+use Alledia\OSMap\Factory;
 
 defined('_JEXEC') or die();
 
 
-class OSMapControllerSitemaps extends OSMap\Controller\Admin
+class OSMapControllerSitemaps extends Admin
 {
     protected $text_prefix = 'COM_OSMAP_SITEMAP';
 
     public function editItems()
     {
-        $id = OSMap\Factory::getApplication()->input->getInt('id');
+        $id = Factory::getApplication()->input->getInt('id');
 
         $this->redirect('index.php?option=com_osmap&view=sitemapitems&id=' . $id);
     }

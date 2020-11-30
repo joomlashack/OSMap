@@ -24,24 +24,18 @@
 
 namespace Alledia\OSMap\Controller;
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
 use Exception;
-use JPluginHelper;
-use JText;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Plugin\PluginHelper;
 
 defined('_JEXEC') or die();
 
-abstract class Admin extends \JControllerAdmin
+abstract class Admin extends AdminController
 {
     /**
-     * Execute a task by triggering a method in the derived class. Triggers events before and after execute the task
-     *
-     * @param string $task The task to perform. If no matching task is found, the '__default' task is executed, if
-     *                     defined.
-     *
-     * @return  mixed   The value returned by the called method, false in error case.
-     *
-     * @throws  Exception
+     * @inheritDoc
      */
     public function execute($task)
     {
@@ -49,17 +43,17 @@ abstract class Admin extends \JControllerAdmin
 
         $task = strtolower($task);
 
-        // Prepare the plugins
-        JPluginHelper::importPlugin('osmap');
+        PluginHelper::importPlugin('osmap');
 
         $controllerName = strtolower(str_replace('OSMapController', '', get_class($this)));
-        $eventParams    = array($controllerName, $task);
+        $eventParams    = [$controllerName, $task];
         $results        = \JEventDispatcher::getInstance()->trigger('osmapOnBeforeExecuteTask', $eventParams);
 
         // Check if any of the plugins returned the exit signal
         if (is_array($results) && in_array('exit', $results, true)) {
-            OSMap\Factory::getApplication()->enqueueMessage('COM_OSMAP_MSG_TASK_STOPPED_BY_PLUGIN', 'warning');
-            return;
+            Factory::getApplication()->enqueueMessage('COM_OSMAP_MSG_TASK_STOPPED_BY_PLUGIN', 'warning');
+
+            return null;
         }
 
         if (isset($this->taskMap[$task])) {
@@ -69,7 +63,7 @@ abstract class Admin extends \JControllerAdmin
             $doTask = $this->taskMap['__default'];
 
         } else {
-            throw new Exception(JText::sprintf('JLIB_APPLICATION_ERROR_TASK_NOT_FOUND', $task), 404);
+            throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_TASK_NOT_FOUND', $task), 404);
         }
 
         // Record the actual task being fired
@@ -90,7 +84,7 @@ abstract class Admin extends \JControllerAdmin
             return parent::checkToken($method, $redirect);
         }
 
-        \JSession::checkToken() or jexit(\JText::_('JINVALID_TOKEN'));
+        \JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         return true;
     }
