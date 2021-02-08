@@ -410,6 +410,20 @@ class Collector
             throw new \Exception($db->getErrorMsg(), 021);
         }
 
+        if ($this->params->get('ignore_hidden_menus', false)) {
+            $items = array_filter(
+                $items,
+                function ($menu) {
+                    $params = json_decode($menu['params']);
+                    if (empty($params->menu_show)) {
+                        return false;
+                    }
+
+                    return true;
+                }
+            );
+        }
+
         return $items;
     }
 

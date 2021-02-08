@@ -32,6 +32,13 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+
+        <field name="ignore_hidden_menus"
+               label="COM_OSMAP_OPTION_IGNORE_HIDDEN_MENUS_LABEL"
+               description="COM_OSMAP_OPTION_IGNORE_HIDDEN_MENUS_DESC"
+               type="radio"
+               class="btn-group btn-group-yesno"
+               default="0">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
