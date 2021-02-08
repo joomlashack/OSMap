@@ -65,11 +65,10 @@
                     description="JACTION_MANAGE_COMPONENT_DESC"/>
         </field>
 
-        <field
-            type="customfooter"
-            name="customfooter"
-            media="com_osmap"
-            showgoproad="https://www.joomlashack.com/joomla-extensions/osmap/"
-            jedurl="https://extensions.joomla.org/extension/osmap/"/>
+        <field type="customfooter"
+               name="customfooter"
+               media="com_osmap"
+               showgoproad="https://www.joomlashack.com/joomla-extensions/osmap/"
+               jedurl="https://extensions.joomla.org/extension/osmap/"/>
     </fieldset>
 </config>
