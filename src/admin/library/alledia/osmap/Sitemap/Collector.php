@@ -24,8 +24,9 @@
 
 namespace Alledia\OSMap\Sitemap;
 
-use Alledia\OSMap;
-use Alledia\Framework;
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Helper\General;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
@@ -43,12 +44,12 @@ class Collector
     /**
      * @var array
      */
-    protected $uidList = array();
+    protected $uidList = [];
 
     /**
      * @var array
      */
-    protected $urlHashList = array();
+    protected $urlHashList = [];
 
     /**
      * Callback used to trigger the desired action while fetching items.
@@ -109,10 +110,10 @@ class Collector
     /**
      * @var array
      */
-    protected $tmpItemDefaultSettings = array(
+    protected $tmpItemDefaultSettings = [
         'changefreq' => 'weekly',
         'priority'   => '0.5'
-    );
+    ];
 
     /**
      * The current items level
@@ -144,12 +145,17 @@ class Collector
     public $params;
 
     /**
-     * The constructor
+     * Collector constructor.
+     *
+     * @param SitemapInterface $sitemap
+     *
+     * @return void
+     * @throws \Exception
      */
     public function __construct($sitemap)
     {
         $this->sitemap = $sitemap;
-        $this->params  = \JComponentHelper::getParams('com_osmap');
+        $this->params  = ComponentHelper::getParams('com_osmap');
 
         /*
          * Try to detect the current view. This is just for backward compatibility
@@ -157,7 +163,7 @@ class Collector
          * They always calculate the visibility for both views and the view is
          * the one who decides to whow or not. If not equals HTML, is always XML.
          */
-        $inputView = OSMap\Factory::getContainer()->input->get('view', 'xml');
+        $inputView = Factory::getContainer()->input->get('view', 'xml');
         if ($inputView === 'html') {
             $this->view = 'html';
         }
@@ -229,7 +235,7 @@ class Collector
                     // Make sure the memory is cleaned up
                     $item = null;
                 }
-                $items = array();
+                $items = [];
                 unset($items);
             }
 
@@ -237,7 +243,7 @@ class Collector
         }
 
         $this->currentMenu            = null;
-        $this->tmpItemDefaultSettings = array();
+        $this->tmpItemDefaultSettings = [];
         $callback                     = null;
 
         return $this->counter;
@@ -248,11 +254,12 @@ class Collector
      * the counter. It can receive an array or object and returns true or false
      * according to the result of the callback.
      *
-     * @param mixed    $item
-     * @param callable $callback
-     * @param bool     $prepareItem
+     * @param array|object $item
+     * @param callable     $callback
+     * @param bool         $prepareItem
      *
      * @return bool
+     * @throws \Exception
      */
     public function submitItemToCallback(&$item, $callback, $prepareItem = false)
     {
@@ -263,6 +270,7 @@ class Collector
             $item['menuItemId']    = $this->currentMenu->id;
             $item['menuItemTitle'] = $this->currentMenu->name;
             $item['menuItemType']  = $this->currentMenu->menutype;
+
         } else {
             $item->menuItemId    = $this->currentMenu->id;
             $item->menuItemTitle = $this->currentMenu->name;
@@ -304,10 +312,7 @@ class Collector
             }
         }
 
-        // Call the given callback function
-        $result = (bool)call_user_func_array($callback, array(&$item));
-
-        return $result;
+        return (bool)call_user_func_array($callback, [&$item]);
     }
 
     /**
@@ -324,19 +329,17 @@ class Collector
      */
     protected function getSitemapMenus()
     {
-        $db = OSMap\Factory::getDbo();
+        $db = Factory::getDbo();
 
         $query = $db->getQuery(true)
-            ->select(
-                array(
-                    'mt.id',
-                    'mt.title AS ' . $db->quoteName('name'),
-                    'mt.menutype',
-                    'osm.changefreq',
-                    'osm.priority',
-                    'osm.ordering'
-                )
-            )
+            ->select([
+                'mt.id',
+                'mt.title AS ' . $db->quoteName('name'),
+                'mt.menutype',
+                'osm.changefreq',
+                'osm.priority',
+                'osm.ordering'
+            ])
             ->from('#__osmap_sitemap_menus AS osm')
             ->join('LEFT', '#__menu_types AS mt ON (osm.menutype_id = mt.id)')
             ->where('osm.sitemap_id = ' . $db->quote($this->sitemap->id))
@@ -344,7 +347,6 @@ class Collector
 
         $list = $db->setQuery($query)->loadObjectList('menutype');
 
-        // Check for a database error
         if ($db->getErrorNum()) {
             throw new \Exception($db->getErrorMsg(), 021);
         }
@@ -358,55 +360,68 @@ class Collector
      * @param object $menu
      *
      * @return array
+     * @throws \Exception
      */
     protected function getMenuItems($menu)
     {
-        $container = OSMap\Factory::getContainer();
+        $container = Factory::getContainer();
         $db        = $container->db;
         $app       = $container->app;
         $lang      = $container->language;
 
         $query = $db->getQuery(true)
-            ->select(
-                array(
-                    'm.id',
-                    'm.title AS ' . $db->quoteName('name'),
-                    'm.alias',
-                    'm.path',
-                    'm.level',
-                    'm.type',
-                    'm.home',
-                    'm.params',
-                    'm.parent_id',
-                    'm.browserNav',
-                    'm.link',
-                    // Say that the menu came from a menu
-                    '1 AS ' . $db->quoteName('isMenuItem'),
-                    // Flag that allows to children classes choose to ignore items
-                    '0 AS ' . $db->quoteName('ignore')
-                )
-            )
+            ->select([
+                'm.id',
+                'm.title AS ' . $db->quoteName('name'),
+                'm.alias',
+                'm.path',
+                'm.level',
+                'm.type',
+                'm.home',
+                'm.params',
+                'm.parent_id',
+                'm.browserNav',
+                'm.link',
+                '1 AS ' . $db->quoteName('isMenuItem'), // Say that the menu came from a menu
+                '0 AS ' . $db->quoteName('ignore')     // Flag that allows child classes choose to ignore items
+            ])
             ->from('#__menu AS m')
             ->join('INNER', '#__menu AS p ON (p.lft = 0)')
-            ->where('m.menutype = ' . $db->quote($menu->menutype))
-            // Only published menu items
-            ->where('m.published = 1')
-            // Only public/guest menu items
-            ->where('m.access IN (' . OSMap\Helper\General::getAuthorisedViewLevels() . ')')
-            ->where('m.lft > p.lft')
-            ->where('m.lft < p.rgt')
+            ->where([
+                'm.menutype = ' . $db->quote($menu->menutype),
+                'm.published = 1',
+                sprintf('m.access IN (%s)', General::getAuthorisedViewLevels()),
+                'm.lft > p.lft',
+                'm.lft < p.rgt'
+            ])
             ->order('m.lft');
 
-        // Filter by language
-        if ($app->isSite() && $app->getLanguageFilter()) {
-            $query->where('m.language IN (' . $db->quote($lang->getTag()) . ',' . $db->quote('*') . ')');
+        if ($app->isClient('site')) {
+            if ($app->getLanguageFilter()) {
+                $languageTags = array_map([$db, 'quote'], [$lang->getTag(), '*']);
+
+                $query->where(sprintf('m.language IN (%s)', join(',', $languageTags)));
+            }
         }
 
         $items = $db->setQuery($query)->loadAssocList();
 
-        // Check for a database error
         if ($db->getErrorNum()) {
-            throw new Exception($db->getErrorMsg(), 021);
+            throw new \Exception($db->getErrorMsg(), 021);
+        }
+
+        if ($this->params->get('ignore_hidden_menus', false)) {
+            $items = array_filter(
+                $items,
+                function ($menu) {
+                    $params = json_decode($menu['params']);
+                    if (empty($params->menu_show)) {
+                        return false;
+                    }
+
+                    return true;
+                }
+            );
         }
 
         return $items;
@@ -451,11 +466,12 @@ class Collector
      * @param object $item
      *
      * @return bool
+     * @throws \Exception
      */
     protected function checkDuplicatedURLToIgnore($item)
     {
         if (!empty($item->fullLink)) {
-            $container = OSMap\Factory::getContainer();
+            $container = Factory::getContainer();
 
             // We need to make sure to have an URL free of hash chars
             $url  = $container->router->removeHashFromURL($item->fullLink);
@@ -485,16 +501,16 @@ class Collector
      * @param Item $item
      *
      * @return void
+     * @throws \Exception
      */
     protected function callPluginsPreparingTheItem($item)
     {
         // Call the OSMap and XMap legacy plugins, if exists
-        $plugins = OSMap\Helper\General::getPluginsForComponent($item->component);
+        $plugins = General::getPluginsForComponent($item->component);
 
         if (!empty($plugins)) {
             foreach ($plugins as $plugin) {
                 $className = '\\' . $plugin->className;
-                $result    = true;
 
                 if (method_exists($className, 'prepareMenuItem')) {
                     if ($plugin->isLegacy) {
@@ -503,13 +519,13 @@ class Collector
                         $params =& $plugin->params;
                     }
 
-                    $arguments = array(
+                    $arguments = [
                         &$item,
                         &$params
-                    );
+                    ];
 
                     // If a legacy plugin doesn't specify this method as static, fix the plugin to avoid warnings
-                    $result = OSMap\Helper\General::callUserFunc(
+                    $result = General::callUserFunc(
                         $className,
                         $plugin->instance,
                         'prepareMenuItem',
@@ -537,6 +553,7 @@ class Collector
      * @param Callable $callback
      *
      * @return void
+     * @throws \Exception
      */
     protected function callPluginsGetItemTree($item, $callback)
     {
@@ -544,7 +561,7 @@ class Collector
         $this->printNodeCallback = $callback;
 
         // Call the OSMap and XMap legacy plugins, if exists
-        $plugins = OSMap\Helper\General::getPluginsForComponent($item->component);
+        $plugins = General::getPluginsForComponent($item->component);
 
         if (!empty($plugins)) {
             foreach ($plugins as $plugin) {
@@ -556,13 +573,13 @@ class Collector
                         $params = $plugin->params;
                     }
 
-                    $arguments = array(
+                    $arguments = [
                         &$this,
                         &$item,
                         &$params
-                    );
+                    ];
 
-                    OSMap\Helper\General::callUserFunc(
+                    General::callUserFunc(
                         $className,
                         $plugin->instance,
                         'getTree',
@@ -582,9 +599,9 @@ class Collector
      */
     protected function itemIsBlackListed($item)
     {
-        $blackList = array(
+        $blackList = [
             'administrator' => 1
-        );
+        ];
 
         $link = $item['link'];
 
@@ -615,6 +632,7 @@ class Collector
      * @param object $node
      *
      * @return bool
+     * @throws \Exception
      */
     public function printNode($node)
     {
@@ -629,20 +647,18 @@ class Collector
     protected function getItemsSettings()
     {
         if (empty($this->itemsSettings)) {
-            $db = OSMap\Factory::getDbo();
+            $db = Factory::getDbo();
 
             $query = $db->getQuery(true)
-                ->select(
-                    array(
-                        '*',
-                        sprintf(
-                            'IF (IFNULL(settings_hash, %1$s) = %1$s, uid, CONCAT(uid, %2$s, settings_hash)) AS %3$s',
-                            $db->quote(''),
-                            $db->quote(':'),
-                            $db->quoteName('key')
-                        )
+                ->select([
+                    '*',
+                    sprintf(
+                        'IF (IFNULL(settings_hash, %1$s) = %1$s, uid, CONCAT(uid, %2$s, settings_hash)) AS %3$s',
+                        $db->quote(''),
+                        $db->quote(':'),
+                        $db->quoteName('key')
                     )
-                )
+                ])
                 ->from('#__osmap_items_settings')
                 ->where('sitemap_id = ' . $db->quote($this->sitemap->id))
                 ->where($db->quoteName('format') . ' = 2');
@@ -678,7 +694,7 @@ class Collector
     protected function getLegacyItemsSettings()
     {
         if (!isset($this->legacyItemsSettings)) {
-            $db = OSMap\Factory::getDbo();
+            $db = Factory::getDbo();
 
             $query = $db->getQuery(true)
                 ->select('*')
@@ -715,6 +731,10 @@ class Collector
      * (from plugins), we consider it already set the respective settings. But
      * if there is a custom setting for the item, we use that overriding what
      * was set in the plugin.
+     *
+     * @param Item $item
+     *
+     * @return void
      */
     public function setItemCustomSettings($item)
     {
@@ -748,7 +768,7 @@ class Collector
         } else {
             // Apply the custom settings
             $item->changefreq = $settings['changefreq'];
-            $item->priority   = is_float($settings['priority']) ? $settings['priority'] : $settings['priority'];
+            $item->priority   = (float)$settings['priority'];
             $item->published  = (bool)$settings['published'];
         }
     }
@@ -777,7 +797,8 @@ class Collector
         }
 
         // If the item won't be ignored, make sure to reset the ignore level
-        if ($item->published
+        if (
+            $item->published
             && !$item->ignore
             && (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1)))
         ) {
