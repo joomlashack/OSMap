@@ -134,9 +134,6 @@ class Html extends Base
                 $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
             }
             $this->document->setTitle($title);
-
-            $pathway = $app->getPathWay();
-            $pathway->addItem($title, '');
         }
 
         if ($description = $this->params->get('menu-meta_description')) {
