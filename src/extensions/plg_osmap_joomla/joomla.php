@@ -189,14 +189,14 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                         // Images from text
                         $node->images = array_merge(
                             $node->images,
-                            (array)$container->imagesHelper->getImagesFromText($text, $maxImages)
+                            $container->imagesHelper->getImagesFromText($text, $maxImages)
                         );
 
                         // Images from params
                         if (!empty($item->images)) {
                             $node->images = array_merge(
                                 $node->images,
-                                (array)$container->imagesHelper->getImagesFromParams($item)
+                                $container->imagesHelper->getImagesFromParams($item)
                             );
                         }
                     }
@@ -219,19 +219,17 @@ class PlgOSMapJoomla extends Base implements ContentInterface
      * Expands a com_content menu item
      *
      * @param Collector $collector
-     * @param Item      $menuItem
+     * @param Item      $parent
      * @param Registry  $params
      *
      * @return void
      * @throws Exception
      */
-    public static function getTree($collector, $menuItem, $params)
+    public static function getTree($collector, $parent, $params)
     {
         $db = Factory::getDbo();
 
-        $result = null;
-
-        $linkQuery = parse_url($menuItem->link);
+        $linkQuery = parse_url($parent->link);
 
         if (!isset($linkQuery['query'])) {
             return;
@@ -250,27 +248,27 @@ class PlgOSMapJoomla extends Base implements ContentInterface
 
         $paramAddPageBreaks = $params->get('add_pagebreaks', 1);
 
-        $paramCatPriority   = $params->get('cat_priority', $menuItem->priority);
-        $paramCatChangefreq = $params->get('cat_changefreq', $menuItem->changefreq);
+        $paramCatPriority   = $params->get('cat_priority', $parent->priority);
+        $paramCatChangefreq = $params->get('cat_changefreq', $parent->changefreq);
 
         if ($paramCatPriority == '-1') {
-            $paramCatPriority = $menuItem->priority;
+            $paramCatPriority = $parent->priority;
         }
         if ($paramCatChangefreq == '-1') {
-            $paramCatChangefreq = $menuItem->changefreq;
+            $paramCatChangefreq = $parent->changefreq;
         }
         $params->set('cat_priority', $paramCatPriority);
         $params->set('cat_changefreq', $paramCatChangefreq);
 
-        $paramArtPriority   = $params->get('art_priority', $menuItem->priority);
-        $paramArtChangefreq = $params->get('art_changefreq', $menuItem->changefreq);
+        $paramArtPriority   = $params->get('art_priority', $parent->priority);
+        $paramArtChangefreq = $params->get('art_changefreq', $parent->changefreq);
 
         if ($paramArtPriority == '-1') {
-            $paramArtPriority = $menuItem->priority;
+            $paramArtPriority = $parent->priority;
         }
 
         if ($paramArtChangefreq == '-1') {
-            $paramArtChangefreq = $menuItem->changefreq;
+            $paramArtChangefreq = $parent->changefreq;
         }
 
         $params->set('art_priority', $paramArtPriority);
@@ -291,14 +289,14 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                 }
 
                 if ($paramExpandCategories && $id) {
-                    self::expandCategory($collector, $menuItem, $id, $params, $menuItem->id);
+                    self::expandCategory($collector, $parent, $id, $params, $parent->id);
                 }
 
                 break;
 
             case 'featured':
                 if ($paramExpandFeatured) {
-                    static::includeCategoryContent($collector, $menuItem, 'featured', $params);
+                    static::includeCategoryContent($collector, $parent, 'featured', $params);
                 }
 
                 break;
@@ -309,14 +307,14 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                         $id = 1;
                     }
 
-                    self::expandCategory($collector, $menuItem, $id, $params, $menuItem->id);
+                    self::expandCategory($collector, $parent, $id, $params, $parent->id);
                 }
 
                 break;
 
             case 'archive':
                 if ($paramIncludeArchived) {
-                    static::includeCategoryContent($collector, $menuItem, 'archived', $params);
+                    static::includeCategoryContent($collector, $parent, 'archived', $params);
                 }
 
                 break;
@@ -338,22 +336,22 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                             $db->quoteName('publish_up')
                         ])
                         ->from($db->quoteName('#__content'))
-                        ->where($db->quoteName('id') . '=' . (int)$id);
+                        ->where($db->quoteName('id') . '=' . $id);
                     $db->setQuery($query);
 
                     $item = $db->loadObject();
 
                     $item->uid = 'joomla.article.' . $id;
 
-                    $menuItem->slug = $item->alias ? ($id . ':' . $item->alias) : $id;
-                    $menuItem->link = ContentHelperRoute::getArticleRoute($menuItem->slug, $item->catid);
+                    $parent->slug = $item->alias ? ($id . ':' . $item->alias) : $id;
+                    $parent->link = ContentHelperRoute::getArticleRoute($parent->slug, $item->catid);
 
-                    $menuItem->subnodes = General::getPagebreaks(
+                    $parent->subnodes = General::getPagebreaks(
                         $item->introtext . $item->fulltext,
-                        $menuItem->link,
+                        $parent->link,
                         $item->uid
                     );
-                    self::printSubNodes($collector, $menuItem, $params, $menuItem->subnodes, $item);
+                    self::printSubNodes($collector, $parent, $params, $parent->subnodes, $item);
                 }
         }
     }
@@ -382,7 +380,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     ) {
         static::checkMemory();
 
-        $db = Factory::getDBO();
+        $db = Factory::getDbo();
 
         $where = [
             'a.parent_id = ' . $catid,
@@ -415,7 +413,6 @@ class PlgOSMapJoomla extends Base implements ContentInterface
 
         $curlevel++;
 
-        $node     = null;
         $maxLevel = $parent->params->get('max_category_level', 100);
 
         if ($curlevel <= $maxLevel) {
@@ -644,14 +641,14 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                     // Images from text
                     $node->images = array_merge(
                         $node->images,
-                        (array)$container->imagesHelper->getImagesFromText($text, $maxImages)
+                        $container->imagesHelper->getImagesFromText($text, $maxImages)
                     );
 
                     // Images from params
                     if (!empty($item->images)) {
                         $node->images = array_merge(
                             $node->images,
-                            (array)$container->imagesHelper->getImagesFromParams($item)
+                            $container->imagesHelper->getImagesFromParams($item)
                         );
                     }
                 }
