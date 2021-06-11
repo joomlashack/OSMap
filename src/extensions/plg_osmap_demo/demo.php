@@ -26,7 +26,7 @@ use Alledia\OSMap\Sitemap\Collector;
 use Alledia\OSMap\Sitemap\Item;
 use Joomla\Registry\Registry;
 
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die();
 
 class PlgOsmapDemo extends Base
 {

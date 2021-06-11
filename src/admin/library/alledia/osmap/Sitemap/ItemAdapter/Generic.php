@@ -4,7 +4,7 @@
  * @contact   www.joomlashack.com, help@joomlashack.com
  * @copyright 2007-2014 XMap - Joomla! Vargas - Guillermo Vargas. All rights reserved.
  * @copyright 2016-2021 Joomlashack.com. All rights reserved.
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ * @license   https://www.gnu.org/licenses/gpl.html GNU/GPL
  *
  * This file is part of OSMap.
  *
@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with OSMap.  If not, see <http://www.gnu.org/licenses/>.
+ * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 namespace Alledia\OSMap\Sitemap\ItemAdapter;
