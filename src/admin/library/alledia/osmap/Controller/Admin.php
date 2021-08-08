@@ -47,7 +47,7 @@ abstract class Admin extends AdminController
 
         $controllerName = strtolower(str_replace('OSMapController', '', get_class($this)));
         $eventParams    = [$controllerName, $task];
-        $results        = \JEventDispatcher::getInstance()->trigger('osmapOnBeforeExecuteTask', $eventParams);
+        $results        = JFactory::getApplication()->triggerEvent('osmapOnBeforeExecuteTask', $eventParams);
 
         // Check if any of the plugins returned the exit signal
         if (is_array($results) && in_array('exit', $results, true)) {
@@ -73,7 +73,7 @@ abstract class Admin extends AdminController
 
         // Runs the event after the task was executed
         $eventParams[] = &$result;
-        \JEventDispatcher::getInstance()->trigger('osmapOnAfterExecuteTask', $eventParams);
+        JFactory::getApplication()->triggerEvent('osmapOnAfterExecuteTask', $eventParams);
 
         return $result;
     }

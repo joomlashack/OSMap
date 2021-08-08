@@ -144,7 +144,7 @@ class Standard implements SitemapInterface
             \JPluginHelper::importPlugin('osmap');
 
             $eventParams = array(&$this, &$callback);
-            $results     = \JEventDispatcher::getInstance()->trigger('osmapOnBeforeCollectItems', $eventParams);
+            $results     = JFactory::getApplication()->triggerEvent('osmapOnBeforeCollectItems', $eventParams);
 
             // A plugin asked to stop the traverse
             if (in_array(true, $results)) {

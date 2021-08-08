@@ -111,7 +111,7 @@ class Html extends Base
      */
     public function display($tpl = null)
     {
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         $id = $container->input->getInt('id');
 

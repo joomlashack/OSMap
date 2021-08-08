@@ -67,7 +67,7 @@ abstract class General
             ]
         ];
 
-        $events = OSMap\Factory::getContainer()->getEvents();
+        $events = OSMap\Factory::getPimpleContainer()->getEvents();
         $events->trigger('onOSMapAddAdminSubmenu', [&$submenus]);
 
         if (!empty($submenus)) {
@@ -95,7 +95,7 @@ abstract class General
      */
     public static function getSitemapTypeFromInput()
     {
-        $input = OSMap\Factory::getContainer()->input;
+        $input = OSMap\Factory::getPimpleContainer()->input;
 
         if ((bool)$input->getString('images', 0)) {
             return 'images';
@@ -118,7 +118,7 @@ abstract class General
      */
     public static function getPluginsFromDatabase()
     {
-        $db = OSMap\Factory::getContainer()->db;
+        $db = OSMap\Factory::getPimpleContainer()->db;
 
         // Get all the OSMap and XMap plugins. Get first the XMap plugins and
         // than OSMap. Always respecting the ordering.
@@ -288,7 +288,7 @@ abstract class General
      */
     public static function isEmptyDate($date)
     {
-        $db = OSMap\Factory::getContainer()->db;
+        $db = OSMap\Factory::getPimpleContainer()->db;
 
         $invalidDates = [
             '',
@@ -318,7 +318,7 @@ abstract class General
      */
     public static function getAuthorisedViewLevels($asString = true)
     {
-        $container = OSMap\Factory::getContainer();
+        $container = OSMap\Factory::getPimpleContainer();
         $levels    = [];
 
         // Check if we need to return all levels, if it was called from the admin to edit the link list

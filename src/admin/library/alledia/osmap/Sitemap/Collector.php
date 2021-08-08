@@ -163,7 +163,7 @@ class Collector
          * They always calculate the visibility for both views and the view is
          * the one who decides to whow or not. If not equals HTML, is always XML.
          */
-        $inputView = Factory::getContainer()->input->get('view', 'xml');
+        $inputView = Factory::getPimpleContainer()->input->get('view', 'xml');
         if ($inputView === 'html') {
             $this->view = 'html';
         }
@@ -364,7 +364,7 @@ class Collector
      */
     protected function getMenuItems($menu)
     {
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
         $db        = $container->db;
         $app       = $container->app;
         $lang      = $container->language;
@@ -471,7 +471,7 @@ class Collector
     protected function checkDuplicatedURLToIgnore($item)
     {
         if (!empty($item->fullLink)) {
-            $container = Factory::getContainer();
+            $container = Factory::getPimpleContainer();
 
             // We need to make sure to have an URL free of hash chars
             $url  = $container->router->removeHashFromURL($item->fullLink);
