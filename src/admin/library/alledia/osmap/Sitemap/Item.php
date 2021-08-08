@@ -74,7 +74,7 @@ class Item extends BaseItem
         $this->rawLink = $this->fullLink;
 
         // Removes the hash segment from the Full link, if exists
-        $container      = OSMap\Factory::getContainer();
+        $container      = OSMap\Factory::getPimpleContainer();
         $this->fullLink = $container->router->removeHashFromURL($this->fullLink);
 
         // Make sure to have a unique hash for the settings
@@ -141,7 +141,7 @@ class Item extends BaseItem
      */
     protected function checkLinkIsInternal()
     {
-        $container = OSMap\Factory::getContainer();
+        $container = OSMap\Factory::getPimpleContainer();
 
         return $container->router->isInternalURL($this->link)
             || in_array(
@@ -257,7 +257,7 @@ class Item extends BaseItem
      */
     protected function sanitizeFullLink()
     {
-        $container = OSMap\Factory::getContainer();
+        $container = OSMap\Factory::getPimpleContainer();
 
         $this->fullLink = $container->router->sanitizeURL($this->fullLink);
     }
@@ -273,7 +273,7 @@ class Item extends BaseItem
      */
     protected function setFullLink()
     {
-        $container = OSMap\Factory::getContainer();
+        $container = OSMap\Factory::getPimpleContainer();
 
         if ((bool)$this->home) {
             // Correct the URL for the home page.

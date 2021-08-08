@@ -38,7 +38,7 @@ class OSMapViewAdminSitemapItems extends JViewLegacy
     {
         $this->checkAccess();
 
-        $container = OSMap\Factory::getContainer();
+        $container = OSMap\Factory::getPimpleContainer();
 
         try {
             $id = $container->input->getInt('id');

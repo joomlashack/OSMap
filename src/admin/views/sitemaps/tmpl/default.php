@@ -34,7 +34,7 @@ JHtml::_('formbehavior.chosen', 'select');
 
 JHtml::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
 
-$container = OSMap\Factory::getContainer();
+$container = OSMap\Factory::getPimpleContainer();
 
 $baseUrl   = $container->router->sanitizeURL(Uri::root());
 $listOrder = $this->state->get('list.ordering');

@@ -52,7 +52,7 @@ OSMap\Factory::getDocument()->addScriptDeclaration($jscript);
 
 JHtml::_('script', 'com_osmap/sitemapitems.min.js', array('relative' => true));
 
-$container = OSMap\Factory::getContainer();
+$container = OSMap\Factory::getPimpleContainer();
 ?>
 
 <form

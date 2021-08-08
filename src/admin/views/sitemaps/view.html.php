@@ -166,7 +166,7 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
             $query['lang'] = $lang;
         }
 
-        $router = OSMap\Factory::getContainer()->router;
+        $router = OSMap\Factory::getPimpleContainer()->router;
 
         return $router->routeURL('index.php?' . http_build_query($query));
     }

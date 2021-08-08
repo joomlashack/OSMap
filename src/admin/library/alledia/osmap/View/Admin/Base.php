@@ -124,7 +124,7 @@ class Base extends OSMap\View\Base
         $eventParams = array(
             $viewName
         );
-        \JEventDispatcher::getInstance()->trigger('osmapOnAfterSetToolBar', $eventParams);
+        JFactory::getApplication()->triggerEvent('osmapOnAfterSetToolBar', $eventParams);
     }
 
     /**

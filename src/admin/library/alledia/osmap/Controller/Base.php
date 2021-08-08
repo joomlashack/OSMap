@@ -36,7 +36,7 @@ class Base extends \JControllerLegacy
         if (!$valid && $redirect) {
             if ($redirect) {
                 $home      = OSMap\Factory::getApplication()->getMenu()->getDefault();
-                $container = OSMap\Factory::getContainer();
+                $container = OSMap\Factory::getPimpleContainer();
 
                 OSMap\Factory::getApplication()->redirect(
                     $container->router->routeURL('index.php?Itemid=' . $home->id),

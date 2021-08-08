@@ -99,7 +99,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         static::checkMemory();
 
         $db        = Factory::getDbo();
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         $linkQuery = parse_url($node->link);
 
@@ -486,7 +486,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         static::checkMemory();
 
         $db        = Factory::getDbo();
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         if ($params->get('include_archived', 2)) {
             $where = ['(a.state = 1 or a.state = 2)'];

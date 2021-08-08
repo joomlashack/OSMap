@@ -125,7 +125,7 @@ class Router
      */
     public function getFrontendBase()
     {
-        return Factory::getContainer()->uri->root();
+        return Factory::getPimpleContainer()->uri->root();
     }
 
     /**
@@ -138,7 +138,7 @@ class Router
      */
     public function isRelativeUri($url)
     {
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         $uri = $container->uri->getInstance($url);
 
@@ -157,7 +157,7 @@ class Router
     {
         if ($path[0] == '/') {
             $scheme = ['scheme', 'user', 'pass', 'host', 'port'];
-            $path   = Factory::getContainer()->uri->getInstance()->toString($scheme) . $path;
+            $path   = Factory::getPimpleContainer()->uri->getInstance()->toString($scheme) . $path;
 
         } elseif ($this->isRelativeUri($path)) {
             $path = $this->getFrontendBase() . $path;
@@ -209,6 +209,6 @@ class Router
      */
     public function createUrlHash($url)
     {
-        return md5(str_replace(Factory::getContainer()->uri->root(), '', $url));
+        return md5(str_replace(Factory::getPimpleContainer()->uri->root(), '', $url));
     }
 }
