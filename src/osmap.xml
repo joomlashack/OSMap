@@ -85,13 +85,13 @@
 
         <relatedExtensions>
             <extension type="library"
-                       element="allediaframework">AllediaFramework</extension>
+                       element="allediaframework">ShackFramework</extension>
 
             <extension type="plugin"
                        group="system"
-                       element="ossystem"
+                       element="osmylicensesmanager"
                        publish="true"
-                       ordering="first">OSSystem</extension>
+                       ordering="last">ShackExtensionSupport</extension>
 
             <extension type="plugin"
                        group="osmap"
@@ -101,7 +101,7 @@
                        uninstall="true">plg_osmap_joomla</extension>
         </relatedExtensions>
 
-        <include>AllediaFreeDefaultFiles</include>
+        <include>ShackDefaultFiles</include>
 
         <obsolete>
             <extension type="plugin"
