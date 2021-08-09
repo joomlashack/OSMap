@@ -38,7 +38,7 @@ class Factory extends Framework\Factory
     /**
      * @var Container
      */
-    protected static $container;
+    protected static $pimpleContainer;
 
     /**
      * Get a OSMap container class
@@ -46,9 +46,9 @@ class Factory extends Framework\Factory
      * @return Container
      * @throws \Exception
      */
-    public static function getContainer()
+    public static function getPimpleContainer()
     {
-        if (empty(static::$container)) {
+        if (empty(static::$pimpleContainer)) {
             $config = [];
 
             $container = new Container(['configuration' => new Configuration($config)]);
@@ -58,10 +58,10 @@ class Factory extends Framework\Factory
 
             $container->register(new $serviceClass());
 
-            static::$container = $container;
+            static::$pimpleContainer = $container;
         }
 
-        return static::$container;
+        return static::$pimpleContainer;
     }
 
     /**
