@@ -347,10 +347,6 @@ class Collector
 
         $list = $db->setQuery($query)->loadObjectList('menutype');
 
-        if ($db->getErrorNum()) {
-            throw new \Exception($db->getErrorMsg(), 021);
-        }
-
         return $list;
     }
 
@@ -405,10 +401,6 @@ class Collector
         }
 
         $items = $db->setQuery($query)->loadAssocList();
-
-        if ($db->getErrorNum()) {
-            throw new \Exception($db->getErrorMsg(), 021);
-        }
 
         if ($this->params->get('ignore_hidden_menus', false)) {
             $items = array_filter(

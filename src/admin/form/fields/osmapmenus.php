@@ -64,10 +64,6 @@ class JFormFieldOSMapMenus extends JFormFieldList
             }
         }
 
-        if ($db->getErrorNum()) {
-            Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'error');
-        }
-
         $options = array_merge(parent::getOptions(), $options);
 
         return $options;

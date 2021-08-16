@@ -67,8 +67,7 @@ abstract class General
             ]
         ];
 
-        $events = OSMap\Factory::getPimpleContainer()->getEvents();
-        $events->trigger('onOSMapAddAdminSubmenu', [&$submenus]);
+        OSMap\Factory::getApplication()->triggerEvent('onOSMapAddAdminSubmenu', [&$submenus]);
 
         if (!empty($submenus)) {
             foreach ($submenus as $submenu) {
@@ -170,7 +169,7 @@ abstract class General
 
             // Instantiate the plugin if the class exists
             if (class_exists($className)) {
-                $dispatcher = \JEventDispatcher::getInstance();
+                $dispatcher = OSMap\Factory::getDispatcher();
                 $instance   = method_exists($className, 'getInstance') ?
                     $className::getInstance() : new $className($dispatcher);
 

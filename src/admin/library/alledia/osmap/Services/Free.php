@@ -61,10 +61,6 @@ class Free implements ServiceProviderInterface
      */
     public function register(Pimple $pimple)
     {
-        $pimple['events'] = function () {
-            return JEventDispatcher::getInstance();
-        };
-
         $pimple['app'] = function () {
             return Factory::getApplication();
         };

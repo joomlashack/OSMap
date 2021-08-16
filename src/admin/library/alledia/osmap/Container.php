@@ -53,7 +53,6 @@ defined('_JEXEC') or die();
  * @property Uri              $uri
  * @property Images           $imagesHelper
  *
- * @method JEventDispatcher getEvents()
  * @method WebApplication   getApp()
  * @method JDatabaseDriver  getDb()
  * @method Input            getInput()

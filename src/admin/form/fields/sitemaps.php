@@ -63,10 +63,6 @@ class JFormFieldSitemaps extends JFormField
                 ->from('#__osmap_sitemaps')
                 ->where('id = ' . (int)$this->value);
             $name = $db->setQuery($query)->loadResult();
-
-            if ($error = $db->getErrorMsg()) {
-                JError::raiseWarning(500, $error);
-            }
         } else {
             $name = '';
         }

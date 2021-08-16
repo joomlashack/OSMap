@@ -67,7 +67,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     public static function getInstance()
     {
         if (empty(static::$instance)) {
-            $dispatcher       = JEventDispatcher::getInstance();
+            $dispatcher = Factory::getDispatcher();
             static::$instance = new self($dispatcher);
         }
 
