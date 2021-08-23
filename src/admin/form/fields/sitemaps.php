@@ -22,6 +22,9 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\Version;
+use Joomla\CMS\HTML\HTMLHelper;
+
 defined('_JEXEC') or die();
 
 jimport('joomla.form.field');
@@ -53,8 +56,7 @@ class JFormFieldSitemaps extends JFormField
         $db  = JFactory::getDBO();
         $doc = JFactory::getDocument();
 
-        // Load the modal behavior.
-        JHtml::_('behavior.modal', 'a.modal');
+        HTMLHelper::_('bootstrap.renderModal', 'a.btn-modal');
 
         // Get the name of the linked chart
         if ($this->value) {
@@ -71,23 +73,49 @@ class JFormFieldSitemaps extends JFormField
             $name = JText::_('COM_OSMAP_SELECT_AN_SITEMAP');
         }
 
-        $doc->addScriptDeclaration(
-            "function jSelectSitemap_" . $this->id . "(id, name, object) {
+
+
+        $link = 'index.php?option=com_osmap&amp;view=sitemaps&amp;layout=modal&amp;tmpl=component&amp;function=jSelectSitemap_' . $this->id;
+
+        if (Version::MAJOR_VERSION < 4) {
+            $doc->addScriptDeclaration(
+                "function jSelectSitemap_" . $this->id . "(id, name, object) {
                    $('" . $this->id . "_id').value = id;
                    $('" . $this->id . "_name').value = name;
                    SqueezeBox.close();
               }"
-        );
+            );
+            JHtmlDraggablelist::draggable();
+            $html = '<span class="input-append">' . "\n";
+            $html .= '<input class="input-medium" type="text" id="' . $this->id . '_name" value="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '" disabled="disabled" />';
+            $html .= '<a class="btn-modal btn" title="' . JText::_('COM_OSMAP_CHANGE_SITEMAP') . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 450}}"><i class="icon-file"></i> ' . JText::_('COM_OSMAP_CHANGE_SITEMAP_BUTTON') . '</a>' . "\n";
+            $html .= '</span>' . "\n";
+            $html .= '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="' . (int) $this->value . '" />';
+        } else {
 
-        $link = 'index.php?option=com_osmap&amp;view=sitemaps&amp;layout=modal&amp;tmpl=component&amp;function=jSelectSitemap_' . $this->id;
+            $modalId = 'ModalSelectSitemapModal_' . $this->id;
 
-        JHtml::_('behavior.modal', 'a.modal');
+            $html = '<div class="input-group">' . "\n";
+            $html .= '<input class="form-control" type="text" id="' . $this->id . '_name" value="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '" disabled="disabled" />';
+            $html .= '<a class="btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#' . $modalId . '" title="' . JText::_('COM_OSMAP_CHANGE_SITEMAP') . '"  href="' . $link . '"><i class="icon-file"></i> ' . JText::_('COM_OSMAP_CHANGE_SITEMAP_BUTTON') . '</a>' . "\n";
+            $html .= '</div>' . "\n";
+            $html .= '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="' . (int) $this->value . '" />';
 
-        $html = '<span class="input-append">' . "\n";
-        $html .= '<input class="input-medium" type="text" id="' . $this->id . '_name" value="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '" disabled="disabled" />';
-        $html .= '<a class="modal btn" title="' . JText::_('COM_OSMAP_CHANGE_SITEMAP') . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 450}}"><i class="icon-file"></i> ' . JText::_('COM_OSMAP_CHANGE_SITEMAP_BUTTON') . '</a>' . "\n";
-        $html .= '</span>' . "\n";
-        $html .= '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="' . (int) $this->value . '" />';
+            $html .= HTMLHelper::_(
+                'bootstrap.renderModal',
+                $modalId,
+                array(
+                    'title'       => JText::_('COM_OSMAP_CHANGE_SITEMAP'),
+                    'url'         => $link,
+                    'height'      => '400px',
+                    'width'       => '800px',
+                    'bodyHeight'  => 70,
+                    'modalWidth'  => 80,
+                    'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+                        . JText::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>',
+                )
+            );
+        }
 
         return $html;
     }

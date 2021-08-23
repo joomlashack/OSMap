@@ -27,6 +27,7 @@ use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
+use Joomla\CMS\Version;
 
 defined('_JEXEC') or die();
 
@@ -107,12 +108,13 @@ class JFormFieldOSMapMenus extends JFormFieldList
 
         $this->inputId = 'menus';
 
-        // Depends on jQuery UI
-        HTMLHelper::_('jquery.ui', ['core', 'sortable']);
-        HTMLHelper::_('script', 'jui/sortablelist.js', false, true);
-        HTMLHelper::_('stylesheet', 'jui/sortablelist.css', false, true, false);
+        if (Version::MAJOR_VERSION < 4) {
+            // Depends on jQuery UI
+            HTMLHelper::_('jquery.ui', ['core', 'sortable']);
+            HTMLHelper::_('script', 'jui/sortablelist.js', false, true);
+            HTMLHelper::_('stylesheet', 'jui/sortablelist.css', false, true, false);
 
-        $doc->addScriptDeclaration("
+            $doc->addScriptDeclaration("
             ;(function ($){
                 $(document).ready(function (){
                     $('#ul_" . $this->inputId . "').sortable({
@@ -131,6 +133,13 @@ class JFormFieldOSMapMenus extends JFormFieldList
                 });
             })(jQuery);
         ");
+        } else {
+
+
+
+        }
+
+
 
         if ($disabled || $readonly) {
             $attributes .= 'disabled="disabled"';

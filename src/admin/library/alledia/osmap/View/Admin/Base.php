@@ -27,11 +27,12 @@ namespace Alledia\OSMap\View\Admin;
 use Alledia\OSMap;
 use Alledia\Framework\Joomla\Extension;
 use Joomla\CMS\Object\CMSObject;
+use Alledia\Framework\Joomla\View\Admin\AbstractList;
 
 defined('_JEXEC') or die();
 
 
-class Base extends OSMap\View\Base
+class Base extends AbstractList
 {
     /**
      * @var CMSObject
@@ -72,8 +73,6 @@ class Base extends OSMap\View\Base
         echo join("\n", $start) . "\n";
         parent::display($tpl);
         echo "\n</div>";
-
-        $this->displayFooter();
     }
 
     /**
@@ -197,16 +196,5 @@ class Base extends OSMap\View\Base
     protected function displayHeader()
     {
         // To be set in subclasses
-    }
-
-    /**
-     * Display a standard footer on all admin pages
-     *
-     * @return void
-     */
-    protected function displayFooter()
-    {
-        $extension = new Extension\Licensed('OSMap', 'component');
-        echo $extension->getFooterMarkup();
     }
 }

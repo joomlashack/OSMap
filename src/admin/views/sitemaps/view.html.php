@@ -27,6 +27,7 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
+use Joomla\CMS\Version;
 
 defined('_JEXEC') or die();
 
@@ -101,6 +102,10 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
     {
         $this->setTitle('COM_OSMAP_SUBMENU_SITEMAPS');
 
+        /**
+         * Submenu only on J3
+         */
+        if (Version::MAJOR_VERSION < 4)
         OSMap\Helper\General::addSubmenu('sitemaps');
 
         ToolbarHelper::addNew('sitemap.add');

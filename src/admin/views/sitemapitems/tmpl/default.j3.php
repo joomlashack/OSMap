@@ -63,7 +63,7 @@ $container = OSMap\Factory::getPimpleContainer();
     class="form-validate">
 
     <div class="row-fluid">
-        <div class="col-12">
+        <div class="span12">
             <div id="osmap-items-container">
                 <div class="osmap-loading">
                     <span class="icon-loop spin"></span>

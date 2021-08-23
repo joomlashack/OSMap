@@ -43,19 +43,19 @@ $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDir   = $this->escape($this->state->get('list.direction'));
 ?>
 <form
-        action="<?php echo Route::_('index.php?option=com_osmap&view=sitemaps');?>"
-        method="post"
-        name="adminForm"
-        id="adminForm">
+    action="<?php echo Route::_('index.php?option=com_osmap&view=sitemaps');?>"
+    method="post"
+    name="adminForm"
+    id="adminForm">
 
-    <?php if (empty($this->items)) : ?>
-        <div class="alert alert-no-items">
-            <?php echo Text::_('COM_OSMAP_NO_MATCHING_RESULTS'); ?>
-        </div>
-    <?php else : ?>
-        <div id="j-main-container">
-            <table class="adminlist table table-striped" id="sitemapList">
-                <thead>
+<?php if (empty($this->items)) : ?>
+    <div class="alert alert-no-items">
+        <?php echo Text::_('COM_OSMAP_NO_MATCHING_RESULTS'); ?>
+    </div>
+<?php else : ?>
+    <div id="j-main-container">
+        <table class="adminlist table table-striped" id="sitemapList">
+            <thead>
                 <tr>
                     <th class="title">
                         <?php
@@ -95,54 +95,54 @@ $listDir   = $this->escape($this->state->get('list.direction'));
                         ); ?>
                     </th>
                 </tr>
-                </thead>
+            </thead>
 
-                <tbody>
-                <?php foreach ($this->items as $i => $item) :
-                    $onClick = sprintf(
-                        "if (window.parent) window.parent.%s('%s', '%s');",
-                        $function,
-                        $item->id,
-                        $this->escape($item->name)
-                    );
-                    ?>
-                    <tr class="<?php echo 'row' . ($i % 2); ?>">
-                        <td>
-                            <a
-                                    style="cursor: pointer;"
-                                    onclick="<?php echo $onClick; ?>">
+            <tbody>
+            <?php foreach ($this->items as $i => $item) :
+                $onClick = sprintf(
+                    "if (window.parent) window.parent.%s('%s', '%s');",
+                    $function,
+                    $item->id,
+                    $this->escape($item->name)
+                );
+                ?>
+                <tr class="<?php echo 'row' . ($i % 2); ?>">
+                    <td>
+                         <a
+                            style="cursor: pointer;"
+                            onclick="<?php echo $onClick; ?>">
 
-                                <?php echo $this->escape($item->name); ?>
-                            </a>
-                        </td>
+                            <?php echo $this->escape($item->name); ?>
+                        </a>
+                    </td>
 
-                        <td class="center">
-                            <div class="btn-group osmap-modal-status">
-                                <?php if ($item->published) : ?>
-                                    <i class="icon-save"></i>
-                                <?php else : ?>
-                                    <i class="icon-remove"></i>
-                                <?php endif; ?>
+                    <td class="center">
+                        <div class="btn-group osmap-modal-status">
+                            <?php if ($item->published) : ?>
+                                <i class="icon-save"></i>
+                            <?php else : ?>
+                                <i class="icon-remove"></i>
+                            <?php endif; ?>
 
-                                <?php if ($item->is_default) : ?>
-                                    <i class="icon-star"></i>
-                                <?php endif; ?>
-                            </div>
-                        </td>
+                            <?php if ($item->is_default) : ?>
+                                <i class="icon-star"></i>
+                            <?php endif; ?>
+                        </div>
+                    </td>
 
-                        <td class="center">
-                            <?php echo (int) $item->links_count; ?>
-                        </td>
+                    <td class="center">
+                        <?php echo (int) $item->links_count; ?>
+                    </td>
 
-                        <td class="center">
-                            <?php echo (int) $item->id; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php endif; ?>
+                    <td class="center">
+                        <?php echo (int) $item->id; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>
 
     <input type="hidden" name="tmpl" value="component" />
     <input type="hidden" name="layout" value="modal" />

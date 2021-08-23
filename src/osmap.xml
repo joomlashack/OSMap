@@ -49,7 +49,10 @@
 
     <administration>
         <menu>COM_OSMAP_TITLE</menu>
-
+        <submenu>
+            <menu view="sitemaps">COM_OSMAP_SUBMENU_SITEMAPS</menu>
+            <menu link="option=com_plugins&amp;filter[folder]=osmap">COM_OSMAP_SUBMENU_EXTENSIONS</menu>
+        </submenu>
         <files folder="admin">
             <filename>config.xml</filename>
             <filename>controller.php</filename>

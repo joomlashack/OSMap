@@ -24,7 +24,7 @@
 
 defined('_JEXEC') or die();
 
-JHtml::_('behavior.formvalidator');
+JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
 JHtml::_('formbehavior.chosen', 'select');
 
@@ -42,7 +42,7 @@ $actionQuery = array(
     ;(function($) {
         Joomla.submitbutton = function(task) {
             if (task === 'sitemap.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
-                var ordering = jQuery('#ul_menus li').first().attr('id')
+                var ordering = $('#ul_menus').sortable('toArray').toString();
                 $('#menus_ordering').val(ordering);
 
                 Joomla.submitform(task, document.getElementById('adminForm'));
@@ -61,17 +61,17 @@ $actionQuery = array(
 
     <div class="form-horizontal">
         <div class="row-fluid">
-            <div class="col-9">
+            <div class="span9">
                 <?php echo $this->form->getField('menus')->renderField(array('hiddenLabel' => true)); ?>
             </div>
 
-            <div class="col-3">
+            <div class="span3">
                 <?php echo $this->form->renderFieldset('params'); ?>
             </div>
         </div>
     </div>
 
-    <input type="hidden" id="menus_ordering" name="jform[menus_ordering]" value="" />
+    <input type="hidden" id="menus_ordering" name="jform[menus_ordering]" value=""/>
     <input type="hidden" name="task" value=""/>
     <input type="hidden" name="return" value="<?php echo $input->getCmd('return'); ?>"/>
     <?php echo JHtml::_('form.token'); ?>
