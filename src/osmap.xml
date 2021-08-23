@@ -80,7 +80,7 @@
         <namespace>OSMap</namespace>
         <license>free</license>
         <targetplatform>3.9</targetplatform>
-        <phpminimum>5.6</phpminimum>
+        <phpminimum>7.2</phpminimum>
 
         <minify>
             <script>media/js/sitemapitems.js</script>
