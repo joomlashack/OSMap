@@ -32,7 +32,7 @@ defined('_JEXEC') or die();
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
-HTMLHelper::_('behavior.tooltip');
+HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
 HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
