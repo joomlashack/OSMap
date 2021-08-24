@@ -78,6 +78,8 @@ class JFormFieldSitemaps extends JFormField
         $link = 'index.php?option=com_osmap&amp;view=sitemaps&amp;layout=modal&amp;tmpl=component&amp;function=jSelectSitemap_' . $this->id;
 
         if (Version::MAJOR_VERSION < 4) {
+            JHtml:_('behavior.framework');
+
             $doc->addScriptDeclaration(
                 "function jSelectSitemap_" . $this->id . "(id, name, object) {
                    $('" . $this->id . "_id').value = id;
@@ -92,6 +94,7 @@ class JFormFieldSitemaps extends JFormField
             $html .= '</span>' . "\n";
             $html .= '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="' . (int) $this->value . '" />';
         } else {
+            HTMLHelper::_('jquery.framework');
 
             $modalId = 'ModalSelectSitemapModal_' . $this->id;
 
@@ -114,6 +117,15 @@ class JFormFieldSitemaps extends JFormField
                     'footer'      => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
                         . JText::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>',
                 )
+            );
+
+            $doc->addScriptDeclaration(
+                "
+                function jSelectSitemap_" . $this->id . "(id, name, object) {
+                   $('#" . $this->id . "_id').val(id);
+                   $('#" . $this->id . "_name').val(name);
+                   $('[data-bs-dismiss=\"modal\"]').trigger('click');
+              }"
             );
         }
 
