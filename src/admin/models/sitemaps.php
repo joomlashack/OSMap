@@ -165,7 +165,7 @@ class OSMapModelSitemaps extends JModelList
                         ->delete($table)
                         ->where('sitemap_id NOT IN (SELECT id FROM #__osmap_sitemaps)')
                 )->execute();
-                JFactory::getApplication()->enqueueMessage($table . ':: ' . $db->getAffectedRows());
+                // JFactory::getApplication()->enqueueMessage($table . ':: ' . $db->getAffectedRows());
             }
 
             return true;

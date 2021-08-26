@@ -39,6 +39,7 @@ foreach ($languages as $language) :
             sprintf('target="_blank" title="%s"', JText::_('COM_OSMAP_XML_LINK_TOOLTIP', true))
         );
         ?>
+        <span class="icon-new-tab"></span>
     </span>
 
     <span class="osmap-link">
@@ -50,6 +51,7 @@ foreach ($languages as $language) :
             sprintf('target="_blank" title="%s"', JText::_('COM_OSMAP_HTML_LINK_TOOLTIP', true))
         );
         ?>
+        <span class="icon-new-tab"></span>
     </span>
 
     <span class="osmap-link">
@@ -61,6 +63,7 @@ foreach ($languages as $language) :
             sprintf('target="_blank" title="%s"', JText::_('COM_OSMAP_NEWS_LINK_TOOLTIP', true))
         );
         ?>
+        <span class="icon-new-tab"></span>
     </span>
 
     <span class="osmap-link">
@@ -72,6 +75,7 @@ foreach ($languages as $language) :
             sprintf('target="_blank" title="%s"', JText::_('COM_OSMAP_IMAGES_LINK_TOOLTIP', true))
         );
         ?>
+        <span class="icon-new-tab"></span>
     </span>
     <br/>
     <?php
