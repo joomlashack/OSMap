@@ -62,6 +62,8 @@ class Script extends AbstractScript
      */
     public function postFlight($type, $parent)
     {
+        if ($type == 'uninstall') return;
+
         // Check if XMap is installed, to start a migration
         $xmapConverter = new XmapConverter();
 
