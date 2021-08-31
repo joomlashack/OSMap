@@ -79,6 +79,8 @@ class JFormFieldSitemaps extends JFormField
 
         if (Version::MAJOR_VERSION < 4) {
             JHtml:_('behavior.framework');
+            // Load the modal behavior.
+            JHtml::_('behavior.modal', 'a.modal');
 
             $doc->addScriptDeclaration(
                 "function jSelectSitemap_" . $this->id . "(id, name, object) {
@@ -87,7 +89,7 @@ class JFormFieldSitemaps extends JFormField
                    SqueezeBox.close();
               }"
             );
-            JHtmlDraggablelist::draggable();
+
             $html = '<span class="input-append">' . "\n";
             $html .= '<input class="input-medium" type="text" id="' . $this->id . '_name" value="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '" disabled="disabled" />';
             $html .= '<a class="btn-modal btn" title="' . JText::_('COM_OSMAP_CHANGE_SITEMAP') . '"  href="' . $link . '" rel="{handler: \'iframe\', size: {x: 800, y: 450}}"><i class="icon-file"></i> ' . JText::_('COM_OSMAP_CHANGE_SITEMAP_BUTTON') . '</a>' . "\n";
