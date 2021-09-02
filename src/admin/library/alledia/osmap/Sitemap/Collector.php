@@ -407,7 +407,7 @@ class Collector
                 $items,
                 function ($menu) {
                     $params = json_decode($menu['params']);
-                    if (empty($params->menu_show)) {
+                    if (isset($params->menu_show) && $params->menu_show == 0) {
                         return false;
                     }
 
