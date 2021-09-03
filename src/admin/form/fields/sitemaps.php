@@ -80,7 +80,7 @@ class JFormFieldSitemaps extends JFormField
         if (Version::MAJOR_VERSION < 4) {
             JHtml:_('behavior.framework');
             // Load the modal behavior.
-            JHtml::_('behavior.modal', 'a.modal');
+            JHtml::_('behavior.modal', 'a.btn-modal');
 
             $doc->addScriptDeclaration(
                 "function jSelectSitemap_" . $this->id . "(id, name, object) {

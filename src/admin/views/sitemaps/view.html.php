@@ -85,7 +85,7 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
         }
 
         // We don't need toolbar or submenus in the modal window
-        if ($this->getLayout() !== 'modal') {
+        if (!in_array($this->getLayout(),['modal','modal.j3'])) {
             $this->setToolbar();
         }
 
