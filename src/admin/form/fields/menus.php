@@ -22,21 +22,26 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Joomla\CMS\Factory;
+use Alledia\OSMap\Factory;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Version;
+use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
+require_once 'TraitOsmapField.php';
+
 FormHelper::loadFieldClass('List');
 
-HTMLHelper::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
-
-class JFormFieldOSMapMenus extends JFormFieldList
+class OsmapFormFieldMenus extends JFormFieldList
 {
+    use TraitOsmapField;
+
+    /**
+     * @inheritdoc
+     */
     public $type = 'osmapmenus';
 
     /**
@@ -65,9 +70,7 @@ class JFormFieldOSMapMenus extends JFormFieldList
             }
         }
 
-        $options = array_merge(parent::getOptions(), $options);
-
-        return $options;
+        return array_merge(parent::getOptions(), $options);
     }
 
     /**
@@ -104,47 +107,40 @@ class JFormFieldOSMapMenus extends JFormFieldList
             $value = $registry->toArray();
         }
 
-        $doc = JFactory::getDocument();
-
         $this->inputId = 'menus';
 
         if (Version::MAJOR_VERSION < 4) {
-            // Depends on jQuery UI
             HTMLHelper::_('jquery.ui', ['core', 'sortable']);
             HTMLHelper::_('script', 'jui/sortablelist.js', false, true);
             HTMLHelper::_('stylesheet', 'jui/sortablelist.css', false, true, false);
 
-            $doc->addScriptDeclaration("
-            ;(function ($){
-                $(document).ready(function (){
-                    $('#ul_" . $this->inputId . "').sortable({
-                        'appendTo': document.body
-                    });
+            $script = <<<JSCRIPT
+;(function ($){
+    $(document).ready(function (){
+        $('#ul_{$this->inputId}').sortable({
+            'appendTo': document.body
+        });
 
-                    // Toggle checkbox clicking on the line
-                    $('#ul_" . $this->inputId . " li').on('click', function(event) {
-                        if ($(event.srcElement).hasClass('osmap-menu-item')
-                            || $(event.srcElement).hasClass('control-label')
-                            || $(event.srcElement).hasClass('osmap-menu-options')) {
+        // Toggle checkbox clicking on the line
+        $('#ul_{$this->inputId} li').on('click', function(event) {
+            if ($(event.srcElement).hasClass('osmap-menu-item')
+                || $(event.srcElement).hasClass('control-label')
+                || $(event.srcElement).hasClass('osmap-menu-options')) {
 
-                            $(this).children('input').click();
-                        }
-                    });
-                });
-            })(jQuery);
-        ");
-        } else {
+                $(this).children('input').click();
+            }
+        });
+    });
+})(jQuery);
+JSCRIPT;
 
-
-
+            Factory::getDocument()->addScriptDeclaration($script);
         }
-
-
 
         if ($disabled || $readonly) {
             $attributes .= 'disabled="disabled"';
         }
-        $options = (array)$this->getOptions();
+        $options = $this->getOptions();
 
         $textSelected         = Text::_('COM_OSMAP_SELECTED_LABEL');
         $textTitle            = Text::_('COM_OSMAP_TITLE_LABEL');
@@ -166,14 +162,13 @@ HTML;
         // Create a regular list.
         $i = 0;
 
-        //Lets show the enabled menus first
+        // Show the enabled menus first
         $this->currentItems = array_keys($value);
-        // Sort the menu options
         uasort($options, [$this, 'myCompare']);
 
         foreach ($options as $option) {
             $prioritiesName        = preg_replace('/(jform\[[^]]+)(].*)/', '$1_priority$2', $this->name);
-            $changefreqName        = preg_replace('/(jform\[[^]]+)(].*)/', '$1_changefreq$2', $this->name);
+            $changeFrequencyName   = preg_replace('/(jform\[[^]]+)(].*)/', '$1_changefreq$2', $this->name);
             $selected              = (isset($value[$option->value]) ? ' checked="checked"' : '');
             $changePriorityField   = HTMLHelper::_(
                 'osmap.priorities',
@@ -183,7 +178,7 @@ HTML;
             );
             $changeChangeFreqField = HTMLHelper::_(
                 'osmap.changefrequency',
-                $changefreqName,
+                $changeFrequencyName,
                 ($selected ? $value[$option->value]['changefreq'] : 'weekly'),
                 $i
             );
@@ -214,12 +209,18 @@ HTML;
 HTML;
         }
 
-        $return .= "</ul></div>";
+        $return .= '</ul></div>';
 
         return $return;
     }
 
-    public function myCompare($a, $b)
+    /**
+     * @param object $a
+     * @param object $b
+     *
+     * @return int
+     */
+    public function myCompare(object $a, object $b): int
     {
         $indexA = array_search($a->value, $this->currentItems);
         $indexB = array_search($b->value, $this->currentItems);

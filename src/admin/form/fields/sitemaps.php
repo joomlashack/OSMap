@@ -36,7 +36,7 @@ jimport('joomla.form.field');
  * @subpackage          com_osmap
  * @since               2.0
  */
-class JFormFieldSitemaps extends JFormField
+class OsmapFormFieldSitemaps extends JFormField
 {
     /**
      * The field type.
