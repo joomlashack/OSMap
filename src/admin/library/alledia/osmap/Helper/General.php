@@ -356,8 +356,11 @@ abstract class General
      * @return void
      * @throws \Exception
      */
-    public static function loadOptionLanguage($option, $adminPath, $sitePath)
-    {
+    public static function loadOptionLanguage(
+        string $option = 'com_osmap',
+        string $adminPath = OSMAP_ADMIN_PATH,
+        string $sitePath = OSMAP_SITE_PATH
+    ) {
         $app = OSMap\Factory::getApplication();
 
         switch ($app->getName()) {

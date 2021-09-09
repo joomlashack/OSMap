@@ -22,19 +22,21 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Controller\Base;
+use Alledia\OSMap\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
-require_once JPATH_COMPONENT_ADMINISTRATOR . '/include.php';
+include JPATH_COMPONENT_ADMINISTRATOR . '/include.php';
 
 // Access check
-if (!OSMap\Factory::getUser()->authorise('core.manage', 'com_osmap')) {
-    throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'), 404);
+if (!Factory::getUser()->authorise('core.manage', 'com_osmap')) {
+    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 404);
 }
 
-$input = OSMap\Factory::getApplication()->input;
+$input = Factory::getApplication()->input;
 
-$controller = OSMap\Controller\Base::getInstance('OSMap');
+$controller = Base::getInstance('OSMap');
 $controller->execute($input->getCmd('task'));
 $controller->redirect();

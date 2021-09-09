@@ -24,6 +24,7 @@
 
 use Alledia\OSMap\Controller\Form;
 use Alledia\OSMap\Factory;
+use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
@@ -55,6 +56,6 @@ class OSMapControllerSitemap extends Form
             $row->save(['is_default' => true]);
         }
 
-        $this->setRedirect('index.php?option=com_osmap&view=sitemaps');
+        $this->setRedirect(Route::_('index.php?option=com_osmap&view=sitemaps'));
     }
 }

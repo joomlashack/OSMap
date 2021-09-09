@@ -24,29 +24,27 @@
 
 use Alledia\OSMap\Controller\Form;
 use Alledia\OSMap\Factory;
-use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
 
 class OSMapControllerSitemapItems extends Form
 {
+    /**
+     * @inheritDoc
+     */
     public function cancel($key = null)
     {
         $this->setRedirect('index.php?option=com_osmap&view=sitemaps');
     }
 
     /**
-     * @param string $key
-     * @param null   $urlVar
-     *
-     * @return bool
-     * @throws Exception
+     * @inheritDoc
      */
     public function save($key = null, $urlVar = null)
     {
-        // Check for request forgeries.
-        JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->checkToken();
 
         $app = Factory::getApplication();
 
@@ -56,10 +54,10 @@ class OSMapControllerSitemapItems extends Form
 
         $model = $this->getModel();
 
-        if (!empty($updateData)) {
+        if ($updateData) {
             $updateData = json_decode($updateData, true);
 
-            if (!empty($updateData) && is_array($updateData)) {
+            if ($updateData && is_array($updateData)) {
                 foreach ($updateData as $data) {
                     $row = $model->getTable();
                     $row->load([
@@ -76,18 +74,25 @@ class OSMapControllerSitemapItems extends Form
             }
         }
 
-        if ($this->getTask() === 'apply') {
-            $url = 'index.php?option=com_osmap&view=sitemapitems&id=' . $sitemapId;
+        $query = [
+            'option' => 'com_osmap',
+            'view'   => 'sitemaps'
+        ];
 
-            if (!empty($language)) {
-                $url .= '&lang=' . $language;
+        if ($this->getTask() === 'apply') {
+            $query = array_merge(
+                $query,
+                [
+                    'view' => 'sitemapitems',
+                    'id'   => $sitemapId
+                ]
+            );
+
+            if ($language) {
+                $query['lang'] = $language;
             }
 
-            $this->setRedirect($url);
-        } else {
-            $this->setRedirect('index.php?option=com_osmap&view=sitemaps');
+            $this->setRedirect(Route::_('index.php?' . http_build_query($query)));
         }
-
-        return true;
     }
 }

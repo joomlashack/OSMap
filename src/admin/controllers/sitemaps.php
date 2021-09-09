@@ -23,23 +23,21 @@
  */
 
 use Alledia\OSMap\Controller\Admin;
-use Alledia\OSMap\Factory;
 
 defined('_JEXEC') or die();
 
 
 class OSMapControllerSitemaps extends Admin
 {
+    /**
+     * @inheritdoc
+     */
     protected $text_prefix = 'COM_OSMAP_SITEMAP';
 
-    public function editItems()
-    {
-        $id = Factory::getApplication()->input->getInt('id');
-
-        $this->redirect('index.php?option=com_osmap&view=sitemapitems&id=' . $id);
-    }
-
-    public function getModel($name = 'Sitemaps', $prefix = 'OSMapModel', $config = array())
+    /**
+     * @inheritDoc
+     */
+    public function getModel($name = 'Sitemaps', $prefix = 'OSMapModel', $config = [])
     {
         return parent::getModel($name, $prefix, $config);
     }

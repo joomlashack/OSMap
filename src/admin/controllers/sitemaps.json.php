@@ -22,18 +22,20 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+
+use Alledia\OSMap\Controller\Json;
+use Alledia\OSMap\Installer\XmapConverter;
 
 defined('_JEXEC') or die();
 
 
-class OSMapControllerSitemaps extends OSMap\Controller\Json
+class OSMapControllerSitemaps extends Json
 {
     protected $text_prefix = 'COM_OSMAP_SITEMAP';
 
     public function migrateXmapData()
     {
-        $converter = new OSMap\Installer\XmapConverter;
+        $converter = new XmapConverter();
         $converter->migrateData();
     }
 }
