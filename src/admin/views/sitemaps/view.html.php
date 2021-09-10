@@ -25,9 +25,8 @@
 use Alledia\OSMap;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Version;
+use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
@@ -80,12 +79,8 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
         $this->filterForm    = $model->getFilterForm();
         $this->activeFilters = $model->getActiveFilters();
 
-        if ($errors = $model->getErrors()) {
-            throw new Exception(implode("\n", $errors));
-        }
-
         // We don't need toolbar or submenus in the modal window
-        if (!in_array($this->getLayout(),['modal','modal.j3'])) {
+        if (stripos($this->getLayout(), 'modal') !== 0) {
             $this->setToolbar();
         }
 
@@ -105,8 +100,9 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
         /**
          * Submenu only on J3
          */
-        if (Version::MAJOR_VERSION < 4)
-        OSMap\Helper\General::addSubmenu('sitemaps');
+        if (Version::MAJOR_VERSION < 4) {
+            OSMap\Helper\General::addSubmenu('sitemaps');
+        }
 
         ToolbarHelper::addNew('sitemap.add');
         ToolbarHelper::custom('sitemap.edit', 'edit.png', 'edit_f2.png', 'JTOOLBAR_EDIT', true);
