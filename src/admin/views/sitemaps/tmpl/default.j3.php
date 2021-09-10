@@ -22,48 +22,50 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 defined('_JEXEC') or die();
 
-JHtml::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('formbehavior.chosen', 'select');
 
-JHtml::_('bootstrap.tooltip');
-JHtml::_('formbehavior.chosen', 'select');
+HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
 
-JHtml::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
-
-$container = OSMap\Factory::getPimpleContainer();
+$container = Factory::getPimpleContainer();
 
 $baseUrl   = $container->router->sanitizeURL(Uri::root());
 $listOrder = $this->state->get('list.ordering');
 $listDir   = $this->state->get('list.direction');
 ?>
-<form
-    action="<?php echo JRoute::_('index.php?option=com_osmap&view=sitemaps'); ?>"
-    method="post"
-    name="adminForm"
-    id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_osmap&view=sitemaps'); ?>"
+      method="post"
+      name="adminForm"
+      id="adminForm">
 
-    <?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+    <?php
+    echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
 
-    <?php if (empty($this->items)) : ?>
+    if (empty($this->items)) : ?>
         <div class="alert alert-no-items">
-            <?php echo JText::_('COM_OSMAP_NO_MATCHING_RESULTS'); ?>
+            <?php echo Text::_('COM_OSMAP_NO_MATCHING_RESULTS'); ?>
         </div>
     <?php else : ?>
         <div id="j-main-container">
             <table class="adminlist table table-striped" id="sitemapList">
                 <thead>
                 <tr>
-                    <th width="1%">
-                        <?php echo JHtml::_('grid.checkall'); ?>
+                    <th style="width: 1%">
+                        <?php echo HTMLHelper::_('grid.checkall'); ?>
                     </th>
 
-                    <th width="1%" style="min-width:55px" class="nowrap center">
+                    <th style="width: 1%; min-width:55px" class="nowrap center">
                         <?php
-                        echo JHtml::_(
+                        echo HTMLHelper::_(
                             'searchtools.sort',
                             'COM_OSMAP_HEADING_STATUS',
                             'sitemap.published',
@@ -75,7 +77,7 @@ $listDir   = $this->state->get('list.direction');
 
                     <th class="title">
                         <?php
-                        echo JHtml::_(
+                        echo HTMLHelper::_(
                             'searchtools.sort',
                             'COM_OSMAP_HEADING_NAME',
                             'sitemap.name',
@@ -88,23 +90,22 @@ $listDir   = $this->state->get('list.direction');
                     $editLinksWidth = empty($this->languages) ? '63' : '130';
                     $editLinksClass = empty($this->languages) ? 'center' : '';
                     ?>
-                    <th width="8%"
-                        style="min-width: <?php echo $editLinksWidth . 'px'; ?>"
+                    <th style="width: 8%; min-width: <?php echo $editLinksWidth . 'px'; ?>"
                         class="<?php echo $editLinksClass; ?>">
-                        <?php echo JText::_('COM_OSMAP_HEADING_SITEMAP_EDIT_LINKS'); ?>
+                        <?php echo Text::_('COM_OSMAP_HEADING_SITEMAP_EDIT_LINKS'); ?>
                     </th>
 
-                    <th width="260" class="center">
-                        <?php echo JText::_('COM_OSMAP_HEADING_SITEMAP_LINKS'); ?>
+                    <th style="width: 260px" class="center">
+                        <?php echo Text::_('COM_OSMAP_HEADING_SITEMAP_LINKS'); ?>
                     </th>
 
-                    <th width="8%" class="nowrap center">
-                        <?php echo JText::_('COM_OSMAP_HEADING_NUM_LINKS'); ?>
+                    <th style="width: 8%" class="nowrap center">
+                        <?php echo Text::_('COM_OSMAP_HEADING_NUM_LINKS'); ?>
                     </th>
 
-                    <th width="1%" class="nowrap">
+                    <th style="width: 1%" class="nowrap">
                         <?php
-                        echo JHtml::_(
+                        echo HTMLHelper::_(
                             'searchtools.sort',
                             'COM_OSMAP_HEADING_ID',
                             'sitemap.id',
@@ -118,33 +119,33 @@ $listDir   = $this->state->get('list.direction');
                 <tbody>
                 <?php
                 foreach ($this->items as $i => $this->item) :
-                    $editLink = JRoute::_('index.php?option=com_osmap&view=sitemap&layout=edit&id=' . $this->item->id);
+                    $editLink = Route::_('index.php?option=com_osmap&view=sitemap&layout=edit&id=' . $this->item->id);
                     ?>
                     <tr class="<?php echo 'row' . ($i % 2); ?>">
                         <td class="center">
-                            <?php echo JHtml::_('grid.id', $i, $this->item->id); ?>
+                            <?php echo HTMLHelper::_('grid.id', $i, $this->item->id); ?>
                         </td>
 
                         <td class="center">
                             <div class="btn-group">
                                 <?php
-                                echo JHtml::_(
+                                echo HTMLHelper::_(
                                     'jgrid.published',
                                     $this->item->published,
                                     $i,
                                     'sitemaps.'
                                 );
 
-                                $defaultAttribs = array(
-                                    array(
+                                $defaultAttribs = [
+                                    [
                                         'onclick'             => $this->item->is_default
                                             ? 'javascript:void(0);'
                                             : "return listItemTask('cb{$i}','sitemap.setAsDefault')",
                                         'class'               => 'btn btn-micro hasTooltip',
-                                        'data-original-title' => JText::_('COM_OSMAP_SITEMAP_IS_DEFAULT_DESC')
-                                    )
-                                );
-                                echo JHtml::_(
+                                        'data-original-title' => Text::_('COM_OSMAP_SITEMAP_IS_DEFAULT_DESC')
+                                    ]
+                                ];
+                                echo HTMLHelper::_(
                                     'link',
                                     '#',
                                     sprintf(
@@ -158,7 +159,7 @@ $listDir   = $this->state->get('list.direction');
                         </td>
 
                         <td class="nowrap">
-                            <?php echo JHtml::_('link', $editLink, $this->escape($this->item->name)); ?>
+                            <?php echo HTMLHelper::_('link', $editLink, $this->escape($this->item->name)); ?>
                         </td>
 
                         <td class="nowrap <?php echo $editLinksClass; ?>">
@@ -170,21 +171,20 @@ $listDir   = $this->state->get('list.direction');
                         </td>
 
                         <td class="center">
-                            <?php echo (int)$this->item->links_count; ?>
+                            <?php echo number_format($this->item->links_count); ?>
                         </td>
 
                         <td class="center">
                             <?php echo (int)$this->item->id; ?>
                         </td>
                     </tr>
-                <?php
-                endforeach;
-                ?>
+                <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     <?php endif; ?>
+
     <input type="hidden" name="task" value=""/>
     <input type="hidden" name="boxchecked" value="0"/>
-    <?php echo JHtml::_('form.token'); ?>
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>
