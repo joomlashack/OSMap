@@ -26,7 +26,6 @@ use Alledia\OSMap\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\Utilities\ArrayHelper;
 
 defined('_JEXEC') or die();
 
@@ -48,120 +47,59 @@ class OsmapFormFieldSitemaps extends FormField
 
     protected function getInput()
     {
-        HTMLHelper::_('jquery.framework');
-        HTMLHelper::_('script', 'system/modal-fields.js', ['version' => 'auto', 'relative' => true]);
-
-        $function = 'osmapSelectSitemap_' . $this->id;
-
-        // Build the script.
-        if (empty(static::$scripts[$this->id])) {
-            $script = <<<JSCRIPT
-window.{$function} = function(id, name) {
-    window.processModalSelect('Sitemap', '{$this->id}', id, name);
-}
-JSCRIPT;
-
-            Factory::getDocument()->addScriptDeclaration($script);
-
-            static::$scripts[$this->id] = true;
-        }
-
-        $app     = Factory::getApplication();
-        $context = sprintf('%s.%s', $app->input->getCmd('option'), $app->input->getCmd('view'));
-
-        // Build the link
-        $linkQuery = [
-            'option'   => 'com_osmap',
-            'view'     => 'sitemaps',
-            'layout'   => 'modal',
-            'tmpl'     => 'component',
-            'context'  => $context,
-            'function' => $function
-        ];
-
-        $link = 'index.php?' . htmlspecialchars(http_build_query($linkQuery));
-
-        // Get sitemap title if one selected
-        $value = (int)$this->value ?: '';
+        $value = $this->value || '';
         if ($value) {
             $db = Factory::getDbo();
             $db->setQuery(
                 $db->getQuery(true)
                     ->select('name')
                     ->from('#__osmap_sitemaps')
-                    ->where('id = ' . (int)$this->value)
+                    ->where('id = ' . (int)$value)
             );
-            $title = $db->loadResult();
+            $name = $db->loadResult();
         }
 
-        if (empty($title)) {
-            $title = Text::_('COM_OSMAP_OPTION_SELECT_SITEMAP');
+        if (empty($name)) {
+            $name = Text::_('COM_OSMAP_OPTION_SELECT_SITEMAP');
         }
 
-        $title   = htmlspecialchars($title, ENT_QUOTES);
-        $modalId = 'ModalSelectSitemap_' . $this->id;
+        $function = 'osmapSelectSitemap_' . $this->id;
 
-        // Begin field output
-        $html = '<span class="input-append">';
-
-        // Display the read-only name field
-        $html .= sprintf(
-            '<input %s/>',
-            ArrayHelper::toString([
-                'type'     => 'text',
-                'id'       => $this->id . '_name',
-                'value'    => $title,
-                'class'    => 'input-medium',
-                'disabled' => 'disabled',
-                'size'     => 35
-            ])
-        );
-
-        // Create read-only ID field
-        $attribs = [
-            'type'          => 'hidden',
-            'id'            => $this->id . '_id',
-            'name'          => $this->name,
-            'value'         => $value,
-            'data-required' => (int)$this->required
+        $linkQuery = [
+            'option'   => 'com_osmap',
+            'view'     => 'sitemaps',
+            'layout'   => 'modal',
+            'tmpl'     => 'component',
+            'function' => $function
         ];
-        if ($this->required) {
-            $attribs['class'] = 'class="required modal-value';
-        }
-        $html .= sprintf('<input  %s/>', ArrayHelper::toString($attribs));
 
-        // Select button
-        $html .= HTMLHelper::_(
-            'link',
-            '#' . $modalId,
-            '<span class="icon-list" aria-hidden="true"></span> ' . Text::_('JSELECT'),
+        $link = 'index.php?' . htmlspecialchars(http_build_query($linkQuery));
+
+        return HTMLHelper::_(
+            'alledia.renderModal',
             [
-                'class'       => 'btn btn-primary hasTooltip',
-                'id'          => $this->id . '_change',
-                'data-toggle' => 'modal',
-                'role'        => 'button',
-                'title'       => HTMLHelper::tooltipText(Text::_('COM_OSMAP_OPTION_SELECT_SITEMAP')),
+                'id'       => $this->id,
+                'name'     => $name,
+                'link'     => $link,
+                'function' => $function,
+                'itemType' => 'Sitemap',
+                'title'    => Text::_('COM_OSMAP_OPTION_SELECT_SITEMAP'),
+                'hint'     => $name,
+                'value'    => $value,
+                'required' => $this->required,
+                //'height'     => '400px',
+                //'width'      => '100%',
+                //'bodyHeight' => 70,
+                //'modalWidth' => 80,
             ]
         );
+    }
 
-        // Modal Sitemap window
-        $html .= HTMLHelper::_(
-            'bootstrap.renderModal',
-            $modalId,
-            [
-                'title'      => Text::_('COM_OSMAP_OPTION_SELECT_SITEMAP'),
-                'url'        => $link,
-                'height'     => '400px',
-                'width'      => '800px',
-                'bodyHeight' => '70',
-                'modalWidth' => '80',
-                'footer'     => sprintf(
-                    '<a role="button" class="btn" data-dismiss="modal" aria-hidden="true">%s</a>',
-                    Text::_('JLIB_HTML_BEHAVIOR_CLOSE')
-                ),
-            ]
-        );
-
-        return $html;
+    /**
+     * @inheritDoc
+     */
+    protected function getLabel()
+    {
+        return str_replace($this->id, $this->id . '_id', parent::getLabel());
     }
 }
