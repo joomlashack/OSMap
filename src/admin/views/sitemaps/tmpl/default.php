@@ -42,7 +42,6 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
                 <?php
-                // Search tools bar
                 echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
                 ?>
                 <?php if (empty($this->items)) : ?>

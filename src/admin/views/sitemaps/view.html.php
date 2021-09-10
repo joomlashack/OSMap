@@ -22,39 +22,21 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Helper\General;
+use Alledia\OSMap\View\Admin\Base;
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Language\LanguageHelper;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
-use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
 
-class OSMapViewSitemaps extends OSMap\View\Admin\Base
+class OSMapViewSitemaps extends Base
 {
     /**
-     * @var object[]
-     */
-    protected $items = null;
-
-    /**
-     * @var Registry
-     */
-    protected $state = null;
-
-    /**
-     * @var JForm
-     */
-    public $filterForm = null;
-
-    /**
-     * @var array
-     */
-    public $activeFilters = null;
-
-    /**
-     * @var array
+     * @var string[]
      */
     protected $languages = null;
 
@@ -64,10 +46,7 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
     protected $item = null;
 
     /**
-     * @param null $tpl
-     *
-     * @return void
-     * @throws Exception
+     * @inheritDoc
      */
     public function display($tpl = null)
     {
@@ -86,13 +65,16 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
 
         // Get the active languages for multi-language sites
         $this->languages = null;
-        if (JLanguageMultilang::isEnabled()) {
-            $this->languages = JLanguageHelper::getLanguages();
+        if (Multilanguage::isEnabled()) {
+            $this->languages = LanguageHelper::getLanguages();
         }
 
         parent::display($tpl);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function setToolbar($addDivider = true)
     {
         $this->setTitle('COM_OSMAP_SUBMENU_SITEMAPS');
@@ -129,21 +111,20 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
      */
     protected function getLink($item, $type, $lang = null)
     {
-        $view   = in_array($type, array('news', 'images')) ? 'xml' : $type;
-        $menuId = empty($item->menuIdList[$view]) ? null : $item->menuIdList[$view];
+        $view   = in_array($type, ['news', 'images']) ? 'xml' : $type;
+        $menuId = $item->menuIdList[$view] ?? null;
 
-        $query = array();
-
+        $query = [];
         if ($menuId) {
             $query['Itemid'] = $menuId;
         }
 
         if (empty($query['Itemid'])) {
-            $query = array(
+            $query = [
                 'option' => 'com_osmap',
                 'view'   => $view,
                 'id'     => $item->id
-            );
+            ];
         }
 
         if ($type != $view) {
@@ -162,7 +143,7 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
             $query['lang'] = $lang;
         }
 
-        $router = OSMap\Factory::getPimpleContainer()->router;
+        $router = Factory::getPimpleContainer()->router;
 
         return $router->routeURL('index.php?' . http_build_query($query));
     }

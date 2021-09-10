@@ -24,9 +24,11 @@
 
 namespace Alledia\OSMap\Helper;
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Version;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
@@ -72,12 +74,12 @@ abstract class General
             ]
         ];
 
-        OSMap\Factory::getApplication()->triggerEvent('onOSMapAddAdminSubmenu', [&$submenus]);
+        Factory::getApplication()->triggerEvent('onOSMapAddAdminSubmenu', [&$submenus]);
 
         if (!empty($submenus)) {
             foreach ($submenus as $submenu) {
                 if (is_array($submenu)) {
-                    \JHtmlSidebar::addEntry(
+                    Sidebar::addEntry(
                         Text::_($submenu['text']),
                         $submenu['link'],
                         $viewName == $submenu['view']
@@ -97,19 +99,19 @@ abstract class General
      * @return string
      * @throws \Exception
      */
-    public static function getSitemapTypeFromInput()
+    public static function getSitemapTypeFromInput(): string
     {
-        $input = OSMap\Factory::getPimpleContainer()->input;
+        $input = Factory::getPimpleContainer()->input;
 
-        if ((bool)$input->getString('images', 0)) {
+        if ($input->getBool('images', false)) {
             return 'images';
-        }
 
-        if ((bool)$input->getString('news', 0)) {
+        } elseif ($input->getBool('news', false)) {
             return 'news';
-        }
 
-        return 'standard';
+        } else {
+            return 'standard';
+        }
     }
 
     /**
@@ -117,15 +119,15 @@ abstract class General
      * will be returned first, than, OSMap plugins. Always respecting the
      * ordering.
      *
-     * @return array
+     * @return object[]
      * @throws \Exception
      */
-    public static function getPluginsFromDatabase()
+    public static function getPluginsFromDatabase(): array
     {
-        $db = OSMap\Factory::getPimpleContainer()->db;
+        $db = Factory::getPimpleContainer()->db;
 
-        // Get all the OSMap and XMap plugins. Get first the XMap plugins and
-        // than OSMap. Always respecting the ordering.
+        // Get all the OSMap and XMap plugins. Get XMap plugins first
+        // then OSMap. Always respecting the ordering.
         $query = $db->getQuery(true)
             ->select([
                 'folder',
@@ -134,7 +136,12 @@ abstract class General
             ])
             ->from('#__extensions')
             ->where('type = ' . $db->quote('plugin'))
-            ->where('folder IN (' . $db->quote('osmap') . ',' . $db->quote('xmap') . ')')
+            ->where(
+                sprintf(
+                    'folder IN (%s)',
+                    $db->quote(['osmap', 'xmap'])
+                )
+            )
             ->where('enabled = 1')
             ->order('folder DESC, ordering');
 
@@ -144,12 +151,12 @@ abstract class General
     /**
      * Returns true if the plugin is compatible with the given option
      *
-     * @param object $plugin
-     * @param string $option
+     * @param object  $plugin
+     * @param ?string $option
      *
      * @return bool
      */
-    protected static function checkPluginCompatibilityWithOption($plugin, $option)
+    protected static function checkPluginCompatibilityWithOption(object $plugin, ?string $option)
     {
         if (empty($option)) {
             return false;
@@ -158,23 +165,25 @@ abstract class General
         $path       = JPATH_PLUGINS . '/' . $plugin->folder . '/' . $plugin->element . '/' . $plugin->element . '.php';
         $compatible = false;
 
-        // Check if the plugin file exists
         if (File::exists($path)) {
-            // Legacy plugins have plugins element equals the option. But it still doesn't mean is compatible with
-            // the current content/option
+            /*
+             * Legacy plugins have element == option.
+             * But may still not be compatible with
+             * the current content/option
+             */
             $isLegacy = $plugin->element === $option;
 
-            $className = $isLegacy ? ($plugin->folder . '_' . $option) :
-                ('Plg' . ucfirst($plugin->folder) . ucfirst($plugin->element));
+            $className = $isLegacy
+                ? ($plugin->folder . '_' . $option)
+                : ('Plg' . ucfirst($plugin->folder) . ucfirst($plugin->element));
 
-            // If the class wasn't loaded yet, load it.
             if (!class_exists($className)) {
                 require_once $path;
             }
 
             // Instantiate the plugin if the class exists
             if (class_exists($className)) {
-                $dispatcher = OSMap\Factory::getDispatcher();
+                $dispatcher = Factory::getDispatcher();
                 $instance   = method_exists($className, 'getInstance') ?
                     $className::getInstance() : new $className($dispatcher);
 
@@ -202,31 +211,27 @@ abstract class General
      *
      * @param string $option
      *
-     * @return object
+     * @return object[]
      * @throws \Exception
      */
-    public static function getPluginsForComponent($option)
+    public static function getPluginsForComponent(string $option): array
     {
         // Check if there is a cached list of plugins for this option
-        if (!empty(static::$plugins) && isset(static::$plugins[$option])) {
-            return static::$plugins[$option];
-        }
+        if (!isset(static::$plugins[$option])) {
+            $compatiblePlugins = [];
 
-        $compatiblePlugins = [];
+            $plugins = static::getPluginsFromDatabase();
 
-        $plugins = static::getPluginsFromDatabase();
-
-        if (!empty($plugins)) {
-            jimport('joomla.filesystem.file');
-
-            foreach ($plugins as $plugin) {
-                if (static::checkPluginCompatibilityWithOption($plugin, $option)) {
-                    $compatiblePlugins[] = $plugin;
+            if ($plugins) {
+                foreach ($plugins as $plugin) {
+                    if (static::checkPluginCompatibilityWithOption($plugin, $option)) {
+                        $compatiblePlugins[] = $plugin;
+                    }
                 }
             }
-        }
 
-        static::$plugins[$option] = $compatiblePlugins;
+            static::$plugins[$option] = $compatiblePlugins;
+        }
 
         return static::$plugins[$option];
     }
@@ -235,15 +240,15 @@ abstract class General
      * Extracts pagebreaks from the given text. Returns a list of subnodes
      * related to each pagebreak.
      *
-     * @param string $text
-     * @param string $baseLink
-     * @param string $uid
+     * @param string  $text
+     * @param string  $baseLink
+     * @param ?string $uid
      *
-     * @return array
+     * @return object[]
      */
-    public static function getPagebreaks($text, $baseLink, $uid = '')
+    public static function getPagebreaks(string $text, string $baseLink, ?string $uid = ''): array
     {
-        $matches = $subnodes = [];
+        $matches = $subNodes = [];
 
         if (preg_match_all(
             '/<hr\s*[^>]*?(?:(?:\s*alt="(?P<alt>[^"]+)")|(?:\s*title="(?P<title>[^"]+)"))+[^>]*>/i',
@@ -256,21 +261,14 @@ abstract class General
                 if (strpos($match[0], 'class="system-pagebreak"') !== false) {
                     $link = $baseLink . '&limitstart=' . ($i - 1);
 
-                    if (@$match['alt']) {
-                        $title = stripslashes($match['alt']);
-                    } elseif (@$match['title']) {
-                        $title = stripslashes($match['title']);
-                    } else {
-                        $title = Text::sprintf('Page #', $i);
-                    }
+                    $subNode = (object)[
+                        'name'       => $match['alt'] ?? $match['title'] ?? Text::sprintf('Page #', $i),
+                        'uid'        => $uid . '.' . ($i - 1),
+                        'expandible' => false,
+                        'link'       => $link,
+                    ];
 
-                    $subnode             = new \stdClass();
-                    $subnode->name       = $title;
-                    $subnode->uid        = $uid . '.' . ($i - 1);
-                    $subnode->expandible = false;
-                    $subnode->link       = $link;
-
-                    $subnodes[] = $subnode;
+                    $subNodes[] = $subNode;
 
                     $i++;
                 }
@@ -278,21 +276,21 @@ abstract class General
 
         }
 
-        return $subnodes;
+        return $subNodes;
     }
 
     /**
      * Returns true if the given date is empty, considering not only as string,
      * but integer, boolean or date.
      *
-     * @param string $date
+     * @param mixed $date
      *
      * @return bool
      * @throws \Exception
      */
-    public static function isEmptyDate($date)
+    public static function isEmptyDate($date): bool
     {
-        $db = OSMap\Factory::getPimpleContainer()->db;
+        $db = Factory::getPimpleContainer()->db;
 
         $invalidDates = [
             '',
@@ -320,28 +318,28 @@ abstract class General
      * @return mixed
      * @throws \Exception
      */
-    public static function getAuthorisedViewLevels($asString = true)
+    public static function getAuthorisedViewLevels(bool $asString = true)
     {
-        $container = OSMap\Factory::getPimpleContainer();
+        $container = Factory::getPimpleContainer();
         $levels    = [];
 
         // Check if we need to return all levels, if it was called from the admin to edit the link list
         if ($container->input->get('view') === 'adminsitemapitems') {
-            $db = OSMap\Factory::getDbo();
+            $db = $container->db;
 
             // Get all access levels
             $query = $db->getQuery(true)
                 ->select('id')
                 ->from($db->quoteName('#__viewlevels'));
-            $db->setQuery($query);
-            $rows = $db->loadRowList();
+            $rows = $db->setQuery($query)->loadRowList();
 
             foreach ($rows as $row) {
                 $levels[] = $row[0];
             }
+
         } else {
             // Only shows returns the level for the current user
-            $levels = (array)OSMap\Factory::getUser()->getAuthorisedViewLevels();
+            $levels = Factory::getUser()->getAuthorisedViewLevels();
         }
 
         if ($asString) {
@@ -366,15 +364,15 @@ abstract class General
         string $adminPath = OSMAP_ADMIN_PATH,
         string $sitePath = OSMAP_SITE_PATH
     ) {
-        $app = OSMap\Factory::getApplication();
+        $app = Factory::getApplication();
 
         switch ($app->getName()) {
             case 'administrator':
-                OSMap\Factory::getLanguage()->load($option, $adminPath);
+                Factory::getLanguage()->load($option, $adminPath);
                 break;
 
             case 'site':
-                OSMap\Factory::getLanguage()->load($option, $sitePath);
+                Factory::getLanguage()->load($option, $sitePath);
                 break;
         }
     }
@@ -395,14 +393,9 @@ abstract class General
     public static function callUserFunc($class, $instance, $method, array $params = [])
     {
         $reflection = new \ReflectionMethod($class, $method);
-        $result     = null;
 
-        if ($reflection->isStatic()) {
-            $result = call_user_func_array([$class, $method], $params);
-        } else {
-            $result = call_user_func_array([$instance, $method], $params);
-        }
-
-        return $result;
+        return $reflection->isStatic()
+            ? call_user_func_array([$class, $method], $params)
+            : call_user_func_array([$instance, $method], $params);
     }
 }
