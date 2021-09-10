@@ -97,12 +97,7 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
     {
         $this->setTitle('COM_OSMAP_SUBMENU_SITEMAPS');
 
-        /**
-         * Submenu only on J3
-         */
-        if (Version::MAJOR_VERSION < 4) {
-            OSMap\Helper\General::addSubmenu('sitemaps');
-        }
+        General::addSubmenu('sitemaps');
 
         ToolbarHelper::addNew('sitemap.add');
         ToolbarHelper::custom('sitemap.edit', 'edit.png', 'edit_f2.png', 'JTOOLBAR_EDIT', true);

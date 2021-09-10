@@ -52,8 +52,13 @@ abstract class General
      * @return void
      * @throws \Exception
      */
-    public static function addSubmenu($viewName)
+    public static function addSubmenu(string $viewName)
     {
+        if (Version::MAJOR_VERSION > 3) {
+            // Not needed for Joomla 4+
+            return;
+        }
+
         $submenus = [
             [
                 'text' => 'COM_OSMAP_SUBMENU_SITEMAPS',
