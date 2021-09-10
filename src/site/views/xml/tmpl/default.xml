@@ -14,8 +14,7 @@
                    type="osmap.sitemaps"
                    default=""
                    required="true"
-                   label="COM_OSMAP_SELECT_AN_SITEMAP"
-                   description="COM_OSMAP_SELECT_A_SITEMAP"/>
+                   label="COM_OSMAP_SITEMAP"/>
 
             <field name="format"
                    type="hidden"

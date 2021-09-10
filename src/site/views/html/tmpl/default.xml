@@ -11,8 +11,7 @@
             <field name="id"
                    type="osmap.sitemaps"
                    required="true"
-                   label="COM_OSMAP_SELECT_AN_SITEMAP"
-                   description="COM_OSMAP_SELECT_A_SITEMAP"/>
+                   label="COM_OSMAP_SITEMAP"/>
         </fieldset>
     </fields>
 
