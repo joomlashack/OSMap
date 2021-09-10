@@ -139,7 +139,7 @@ abstract class General
             ->where(
                 sprintf(
                     'folder IN (%s)',
-                    $db->quote(['osmap', 'xmap'])
+                    join(',', $db->quote(['osmap', 'xmap']))
                 )
             )
             ->where('enabled = 1')
