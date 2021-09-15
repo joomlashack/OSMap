@@ -33,15 +33,13 @@ HTMLHelper::_('behavior.core');
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
-HTMLHelper::_('stylesheet', 'jui/icomoon.css', array('relative' => true));
+HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
+HTMLHelper::_('stylesheet', 'jui/icomoon.css', ['relative' => true]);
 
-$listFields = json_encode(
-    array(
-        'frequencies' => HTMLHelper::_('osmap.frequencyList'),
-        'priorities'  => HTMLHelper::_('osmap.priorityList')
-    )
-);
+$listFields = json_encode([
+    'frequencies' => HTMLHelper::_('osmap.frequencyList'),
+    'priorities'  => HTMLHelper::_('osmap.priorityList')
+]);
 
 $jscript = <<<JSCRIPT
 ;(function($) {
@@ -52,7 +50,7 @@ $jscript = <<<JSCRIPT
 JSCRIPT;
 OSMap\Factory::getDocument()->addScriptDeclaration($jscript);
 
-HTMLHelper::_('script', 'com_osmap/sitemapitems.min.js', array('relative' => true));
+HTMLHelper::_('script', 'com_osmap/sitemapitems.min.js', ['relative' => true]);
 
 $container = OSMap\Factory::getPimpleContainer();
 ?>
@@ -85,7 +83,6 @@ $container = OSMap\Factory::getPimpleContainer();
     <input type="hidden" name="language" value="<?php echo $this->language; ?>"/>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>
-
 
 <script>
     ;(function($) {
