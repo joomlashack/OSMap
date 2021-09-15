@@ -24,11 +24,11 @@
 
 namespace Alledia\OSMap\View\Admin;
 
+use Alledia\Framework\Joomla\View\Admin\AbstractList;
 use Alledia\OSMap;
-use Alledia\Framework\Joomla\Extension;
+use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Object\CMSObject;
-use Alledia\Framework\Joomla\View\Admin\AbstractList;
 
 defined('_JEXEC') or die();
 
@@ -58,11 +58,11 @@ class Base extends AbstractList
         $this->displayHeader();
 
         $hide    = OSMap\Factory::getApplication()->input->getBool('hidemainmenu', false);
-        $sidebar = count(\JHtmlSidebar::getEntries()) + count(\JHtmlSidebar::getFilters());
+        $sidebar = count(Sidebar::getEntries()) + count(Sidebar::getFilters());
         if (!$hide && $sidebar > 0) {
             $start = array(
                 '<div id="j-sidebar-container" class="span2">',
-                \JHtmlSidebar::render(),
+                Sidebar::render(),
                 '</div>',
                 '<div id="j-main-container" class="span10">'
             );
@@ -120,7 +120,7 @@ class Base extends AbstractList
         // Prepare the plugins
         \JPluginHelper::importPlugin('osmap');
 
-        $viewName = strtolower(str_replace('OSMapView', '', $this->getName()));
+        $viewName    = strtolower(str_replace('OSMapView', '', $this->getName()));
         $eventParams = array(
             $viewName
         );
