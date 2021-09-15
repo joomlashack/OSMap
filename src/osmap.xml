@@ -114,6 +114,7 @@
                        group="xmap"
                        element="com_content"/>
 
+            <folder>administrator/components/com_osmap/library/alledia/osmap/Installer</folder>
             <folder>administrator/components/com_osmap/library/alledia/osmap/Joomla</folder>
             <folder>administrator/components/com_osmap/library/Free</folder>
             <folder>administrator/components/com_osmap/models/fields</folder>
@@ -123,8 +124,6 @@
             <file>administrator/components/com_osmap/helpers/html/grid.php</file>
             <file>administrator/components/com_osmap/helpers/osmap.php</file>
             <file>administrator/components/com_osmap/library/alledia/osmap/Helper/ImagesPro.php</file>
-            <file>administrator/components/com_osmap/library/alledia/osmap/Installer/Script.php</file>
-            <file>administrator/components/com_osmap/library/alledia/osmap/Installer/XmapConverter.php.php</file>
             <file>administrator/components/com_osmap/library/alledia/osmap/Services/Pro.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/edit.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/edit_legacy.php</file>
