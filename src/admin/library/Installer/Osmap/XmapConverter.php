@@ -22,46 +22,42 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Alledia\OSMap\Installer;
+namespace Alledia\Installer\Osmap;
 
-use Alledia\Framework;
-use Alledia\OSMap;
+use Alledia\Framework\Joomla\Extension\Generic;
+use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die();
 
-
-/**
- * Class with methods to migrate a Xmap installation to OSMap
- */
 class XmapConverter
 {
     /**
      * @var array
      */
-    protected $xmapPluginsParams = array();
+    protected $xmapPluginsParams = [];
 
     /**
      * List of refactored Xmap plugins to migrate the settings
      *
      * @var array
      */
-    protected $refactoredXmapPlugins = array('com_content' => 'joomla');
+    protected $refactoredXmapPlugins = ['com_content' => 'joomla'];
 
     /**
      * Look for the Xmap data to suggest a data migration
      *
      * @return bool True if Xmap data was found
      */
-    public function checkXmapDataExists()
+    public function checkXmapDataExists(): bool
     {
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
 
         // Do we have any Xmap sitemap?
         $query = $db->getQuery(true)
             ->select('COUNT(*)')
             ->from('#__xmap_sitemap');
 
-        $total = (int) $db->setQuery($query)->loadResult();
+        $total = (int)$db->setQuery($query)->loadResult();
 
         return $total > 0;
     }
@@ -74,38 +70,32 @@ class XmapConverter
      */
     public function saveXmapPluginParamsIfExists()
     {
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
 
-        $query = $db->getQuery(true)
-            ->select(
-                array(
-                    'element',
-                    'params'
-                )
-            )
+        $query         = $db->getQuery(true)
+            ->select([
+                'element',
+                'params'
+            ])
             ->from('#__extensions')
-            ->where(
-                array(
-                    'type = "plugin"',
-                    'folder = "xmap"',
-                    'element IN ("' . implode('","', array_keys($this->refactoredXmapPlugins)) . '")'
-                )
-            );
+            ->where([
+                'type = "plugin"',
+                'folder = "xmap"',
+                'element IN ("' . implode('","', array_keys($this->refactoredXmapPlugins)) . '")'
+            ]);
         $legacyPlugins = $db->setQuery($query)->loadObjectList();
 
         // Check if the respective OSMap plugin is already installed. If so, do not save its params to not override.
-        if (!empty($legacyPlugins)) {
+        if ($legacyPlugins) {
             foreach ($legacyPlugins as $plugin) {
-                $query = $db->getQuery(true)
+                $query         = $db->getQuery(true)
                     ->select('extension_id')
                     ->from('#__extensions')
-                    ->where(
-                        array(
-                            'type = "plugin"',
-                            'folder = "osmap"',
-                            'element = "' . $plugin->element . '"'
-                        )
-                    );
+                    ->where([
+                        'type = "plugin"',
+                        'folder = "osmap"',
+                        'element = "' . $plugin->element . '"'
+                    ]);
                 $osmapPluginID = $db->setQuery($query)->loadResult();
 
                 if (empty($osmapPluginID)) {
@@ -122,27 +112,25 @@ class XmapConverter
      */
     public function moveXmapPluginsParamsToOSMapPlugins()
     {
-        $db = \JFactory::getDbo();
+        $db = Factory::getDbo();
 
         if (!empty($this->xmapPluginsParams)) {
             foreach ($this->xmapPluginsParams as $plugin) {
                 // Look for the OSMap plugin
-                $query = $db->getQuery(true)
+                $query         = $db->getQuery(true)
                     ->select('extension_id')
                     ->from('#__extensions')
-                    ->where(
-                        array(
-                            'type = "plugin"',
-                            'folder = "osmap"',
-                            'element = "' . @$this->refactoredXmapPlugins[$plugin->element] . '"'
-                        )
-                    );
+                    ->where([
+                        'type = "plugin"',
+                        'folder = "osmap"',
+                        'element = ' . $db->quote($this->refactoredXmapPlugins[$plugin->element] ?? '')
+                    ]);
                 $osmapPluginID = $db->setQuery($query)->loadResult();
 
                 if (!empty($osmapPluginID)) {
                     $query = $db->getQuery(true)
                         ->update('#__extensions')
-                        ->set('params = "' . addslashes($plugin->params) . '"')
+                        ->set('params = ' . $db->quote(addslashes($plugin->params)))
                         ->where('extension_id = ' . $osmapPluginID);
                     $db->setQuery($query)->execute();
                 }
@@ -157,79 +145,72 @@ class XmapConverter
      */
     public function migrateData()
     {
-        $result = new \stdClass;
-        $result->success = false;
+        $result = (object)[
+            'success' => false
+        ];
 
-        $db = \JFactory::getDbo();
-        $db->startTransaction();
+        $db = Factory::getDbo();
+        $db->transactionStart();
 
         try {
             // Do we have any Xmap sitemap?
-            $sitemapIds       = array();
-            $itemIds          = array();
-            $sitemapFailedIds = array();
-            $itemFailedIds = array();
-            $query = $db->getQuery(true)
+            $sitemapFailedIds = [];
+            $itemFailedIds    = [];
+            $query            = $db->getQuery(true)
                 ->select('*')
                 ->from('#__xmap_sitemap');
-            $db->setQuery($query);
-            $sitemaps = $db->loadObjectList();
+            $sitemaps         = $db->setQuery($query)->loadObjectList();
 
-            if (!empty($sitemaps)) {
+            if ($sitemaps) {
                 // Cleanup the db tables
-                $db->setQuery('DELETE FROM `#__osmap_items_settings`')->execute();
-                $db->setQuery('DELETE FROM `#__osmap_sitemap_menus`')->execute();
-                $db->setQuery('DELETE FROM `#__osmap_sitemaps`')->execute();
+                $tables = [
+                    '#__osmap_items_settings',
+                    '#__osmap_sitemap_menus',
+                    '#__osmap_sitemaps'
+                ];
+                foreach ($tables as $table) {
+                    $db->setQuery(
+                        $db->getQuery(true)->delete($db->quoteName($table))
+                    )->execute();
+                }
 
                 // Import the sitemaps
                 foreach ($sitemaps as $sitemap) {
                     $query = $db->getQuery(true)
-                        ->set(
-                            array(
-                                $db->quoteName('id') . '=' . $db->quote($sitemap->id),
-                                $db->quoteName('name') . '=' . $db->quote($sitemap->title),
-                                $db->quoteName('is_default') . '=' . $db->quote($sitemap->is_default),
-                                $db->quoteName('published') . '=' . $db->quote($sitemap->state),
-                                $db->quoteName('created_on') . '=' . $db->quote($sitemap->created)
-                            )
-                        )
+                        ->set([
+                            $db->quoteName('id') . '=' . $db->quote($sitemap->id),
+                            $db->quoteName('name') . '=' . $db->quote($sitemap->title),
+                            $db->quoteName('is_default') . '=' . $db->quote($sitemap->is_default),
+                            $db->quoteName('published') . '=' . $db->quote($sitemap->state),
+                            $db->quoteName('created_on') . '=' . $db->quote($sitemap->created)
+                        ])
                         ->insert('#__osmap_sitemaps');
-                    $db->setQuery($query);
 
-                    if ($db->execute()) {
-                        $sitemapIds[$sitemap->id] = $db->insertId();
-
+                    if ($db->setQuery($query)->execute()) {
                         // Add the selected menus to the correct table
-                        $menus = json_decode($sitemap->selections, true);
-
-                        if (!empty($menus)) {
+                        if ($menus = json_decode($sitemap->selections, true)) {
                             foreach ($menus as $menuType => $menu) {
-                                $menuTypeId = $this->getMenuTypeId($menuType);
-
-                                // Check if the menutype still exists
-                                if (!empty($menuTypeId)) {
+                                if ($menuTypeId = $this->getMenuTypeId($menuType)) {
                                     // Convert the selection of menus into a row
                                     $query = $db->getQuery(true)
                                         ->insert('#__osmap_sitemap_menus')
-                                        ->columns(
-                                            array(
-                                                'sitemap_id',
-                                                'menutype_id',
-                                                'priority',
-                                                'changefreq',
-                                                'ordering'
-                                            )
-                                        )
+                                        ->columns([
+                                            'sitemap_id',
+                                            'menutype_id',
+                                            'priority',
+                                            'changefreq',
+                                            'ordering'
+                                        ])
                                         ->values(
                                             implode(
                                                 ',',
-                                                array(
+                                                [
                                                     $db->quote($sitemap->id),
                                                     $db->quote($menuTypeId),
                                                     $db->quote($menu['priority']),
                                                     $db->quote($menu['changefreq']),
                                                     $db->quote($menu['ordering'])
-                                                )
+                                                ]
                                             )
                                         );
                                     $db->setQuery($query)->execute();
@@ -238,11 +219,8 @@ class XmapConverter
                         }
 
                         // Convert settings about excluded items
-                        $excludedItems = array();
-                        if (!empty($sitemap->excluded_items)) {
-                            $excludedItems = json_decode($sitemap->excluded_items, true);
-
-                            if (!empty($excludedItems)) {
+                        if ($sitemap->excluded_items ?? null) {
+                            if ($excludedItems = json_decode($sitemap->excluded_items, true)) {
                                 foreach ($excludedItems as $item) {
                                     $uid = $this->convertItemUID($item[0]);
 
@@ -250,71 +228,61 @@ class XmapConverter
                                     $query = $db->getQuery(true)
                                         ->select('COUNT(*)')
                                         ->from('#__osmap_items_settings')
-                                        ->where(
-                                            array(
-                                                'sitemap_id = ' . $db->quote($sitemap->id),
-                                                'uid = ' . $db->quote($uid)
-                                            )
-                                        );
+                                        ->where([
+                                            'sitemap_id = ' . $db->quote($sitemap->id),
+                                            'uid = ' . $db->quote($uid)
+                                        ]);
                                     $count = $db->setQuery($query)->loadResult();
 
                                     if ($count == 0) {
                                         // Insert the settings
                                         $query = $db->getQuery(true)
                                             ->insert('#__osmap_items_settings')
-                                            ->columns(
-                                                array(
-                                                    'sitemap_id',
-                                                    'uid',
-                                                    'published',
-                                                    'changefreq',
-                                                    'priority'
-                                                )
-                                            )
+                                            ->columns([
+                                                'sitemap_id',
+                                                'uid',
+                                                'published',
+                                                'changefreq',
+                                                'priority'
+                                            ])
                                             ->values(
                                                 implode(
                                                     ',',
-                                                    array(
+                                                    [
                                                         $sitemap->id,
                                                         $db->quote($uid),
                                                         0,
                                                         $db->quote('weekly'),
                                                         $db->quote('0.5')
-                                                    )
+                                                    ]
                                                 )
                                             );
-                                        $db->setQuery($query)->execute();
                                     } else {
                                         // Update the setting
                                         $query = $db->getQuery(true)
                                             ->update('#__osmap_items_settings')
                                             ->set('published = 0')
-                                            ->where(
-                                                array(
-                                                    'sitemap_id = ' . $db->quote($sitemap->id),
-                                                    'uid = ' . $db->quote($uid)
-                                                )
-                                            );
-                                        $db->setQuery($query)->execute();
+                                            ->where([
+                                                'sitemap_id = ' . $db->quote($sitemap->id),
+                                                'uid = ' . $db->quote($uid)
+                                            ]);
                                     }
+                                    $db->setQuery($query)->execute();
                                 }
                             }
                         }
 
                         // Convert custom settings for items
                         $query = $db->getQuery(true)
-                            ->select(
-                                array(
-                                    'uid',
-                                    'properties'
-                                )
-                            )
+                            ->select([
+                                'uid',
+                                'properties'
+                            ])
                             ->from('#__xmap_items')
                             ->where('sitemap_id = ' . $db->quote($sitemap->id))
                             ->where('view = ' . $db->quote('xml'));
-                        $modifiedItems = $db->setQuery($query)->loadObjectList();
 
-                        if (!empty($modifiedItems)) {
+                        if ($modifiedItems = $db->setQuery($query)->loadObjectList()) {
                             foreach ($modifiedItems as $item) {
                                 $item->properties = str_replace(';', '&', $item->properties);
                                 parse_str($item->properties, $properties);
@@ -325,17 +293,14 @@ class XmapConverter
                                 $query = $db->getQuery(true)
                                     ->select('COUNT(*)')
                                     ->from('#__osmap_items_settings')
-                                    ->where(
-                                        array(
-                                            'sitemap_id = ' . $db->quote($sitemap->id),
-                                            'uid = ' . $db->quote($item->uid)
-                                        )
-                                    );
+                                    ->where([
+                                        'sitemap_id = ' . $db->quote($sitemap->id),
+                                        'uid = ' . $db->quote($item->uid)
+                                    ]);
+
                                 $exists = (bool)$db->setQuery($query)->loadResult();
-
-
                                 if ($exists) {
-                                    $fields = array();
+                                    $fields = [];
 
                                     // Check if the changefreq is set and set to update
                                     if (isset($properties['changefreq'])) {
@@ -351,38 +316,34 @@ class XmapConverter
                                     $query = $db->getQuery(true)
                                         ->update('#__osmap_items_settings')
                                         ->set($fields)
-                                        ->where(
-                                            array(
-                                                'sitemap_id = ' . $db->quote($sitemap->id),
-                                                'uid = ' . $db->quote($item->uid)
-                                            )
-                                        );
-                                    $db->setQuery($query)->execute();
-                                }
+                                        ->where([
+                                            'sitemap_id = ' . $db->quote($sitemap->id),
+                                            'uid = ' . $db->quote($item->uid)
+                                        ]);
 
-                                if (!$exists) {
-                                    $columns = array(
+                                } else {
+                                    $columns = [
                                         'sitemap_id',
                                         'uid',
                                         'published'
-                                    );
+                                    ];
 
-                                    $values = array(
+                                    $values = [
                                         $db->quote($sitemap->id),
                                         $db->quote($item->uid),
                                         1
-                                    );
+                                    ];
 
                                     // Check if the changefreq is set and set to update
                                     if (isset($properties['changefreq'])) {
                                         $columns[] = 'changefreq';
-                                        $values[] = 'changefreq = ' . $db->quote($properties['changefreq']);
+                                        $values[]  = 'changefreq = ' . $db->quote($properties['changefreq']);
                                     }
 
                                     // Check if the priority is set and set to update
                                     if (isset($properties['priority'])) {
                                         $columns[] = 'priority';
-                                        $values[] = 'priority = ' . $db->quote($properties['priority']);
+                                        $values[]  = 'priority = ' . $db->quote($properties['priority']);
                                     }
 
                                     // Insert a new item
@@ -390,8 +351,8 @@ class XmapConverter
                                         ->insert('#__osmap_items_settings')
                                         ->columns($columns)
                                         ->values(implode(',', $values));
-                                    $db->setQuery($query)->execute();
                                 }
+                                $db->setQuery($query)->execute();
                             }
                         }
                     } else {
@@ -400,15 +361,15 @@ class XmapConverter
                 }
             }
 
-            if (!empty($sitemapFailedIds) || !empty($itemFailedIds)) {
-                throw new \Exception("Failed the sitemap or item migration");
+            if ($sitemapFailedIds || $itemFailedIds) {
+                throw new \Exception('Failed the sitemap or item migration');
             }
 
             /*
              * Menu Migration
              */
-            $xmap  = new Framework\Joomla\Extension\Generic('Xmap', 'component');
-            $osmap = new Framework\Joomla\Extension\Generic('OSMap', 'component');
+            $xmap  = new Generic('Xmap', 'component');
+            $osmap = new Generic('OSMap', 'component');
 
             // Remove OSMap menus
             $query = $db->getQuery(true)
@@ -459,11 +420,11 @@ class XmapConverter
             $db->setQuery('DELETE FROM ' . $db->quoteName('#__xmap_items'));
             $db->execute();
 
-            $db->commitTransaction();
+            $db->transactionCommit();
 
             $result->success = true;
         } catch (\Exception $e) {
-            $db->rollbackTransaction();
+            $db->transactionRollback();
             var_dump($e);
         }
 
@@ -477,14 +438,20 @@ class XmapConverter
      *
      * @return string
      */
-    protected function replaceXmapByOSMap($str)
+    protected function replaceXmapByOSMap(string $str): string
     {
-        $str = str_replace('XMAP', 'OSMAP', $str);
-        $str = str_replace('XMap', 'OSMap', $str);
-        $str = str_replace('xMap', 'OSMap', $str);
-        $str = str_replace('xmap', 'osmap', $str);
+        $replacements = [
+            'XMAP' => 'OSMAP',
+            'XMap' => 'OSMap',
+            'xMap' => 'OSMap',
+            'xmap' => 'osmap',
+        ];
 
-        return $str;
+        return str_replace(
+            array_keys($replacements),
+            $replacements,
+            $str
+        );
     }
 
     /**
@@ -494,14 +461,15 @@ class XmapConverter
      *
      * @return int
      */
-    protected function getMenuTypeId($menuType)
+    protected function getMenuTypeId(string $menuType): int
     {
-        $db = OSMap\Factory::getDbo();
+        $db = Factory::getDbo();
 
         $query = $db->getQuery(true)
             ->select('id')
             ->from('#__menu_types')
             ->where('menutype = ' . $db->quote($menuType));
+
         return (int)$db->setQuery($query)->loadResult();
     }
 
@@ -513,7 +481,7 @@ class XmapConverter
      *
      * @return string
      */
-    protected function convertItemUID($uid)
+    protected function convertItemUID(string $uid): string
     {
         // Joomla articles in categories
         if (preg_match('#com_contentc[0-9]+a([0-9]+)#', $uid, $matches)) {
