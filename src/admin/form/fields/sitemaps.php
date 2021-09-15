@@ -56,11 +56,11 @@ class OsmapFormFieldSitemaps extends FormField
                     ->from('#__osmap_sitemaps')
                     ->where('id = ' . (int)$value)
             );
-            $name = $db->loadResult();
+            $selectedName = $db->loadResult();
         }
 
-        if (empty($name)) {
-            $name = Text::_('COM_OSMAP_OPTION_SELECT_SITEMAP');
+        if (empty($selectedName)) {
+            $selectedName = Text::_('COM_OSMAP_OPTION_SELECT_SITEMAP');
         }
 
         $function = 'osmapSelectSitemap_' . $this->id;
@@ -79,12 +79,12 @@ class OsmapFormFieldSitemaps extends FormField
             'alledia.renderModal',
             [
                 'id'       => $this->id,
-                'name'     => $name,
+                'name'     => $this->name,
                 'link'     => $link,
                 'function' => $function,
                 'itemType' => 'Sitemap',
                 'title'    => Text::_('COM_OSMAP_OPTION_SELECT_SITEMAP'),
-                'hint'     => $name,
+                'hint'     => $selectedName,
                 'value'    => $value,
                 'required' => $this->required,
                 //'height'     => '400px',
