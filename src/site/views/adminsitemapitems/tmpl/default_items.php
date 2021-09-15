@@ -99,7 +99,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                           class="hasTooltip icon-<?php echo $class; ?>">
                     </span>
                 </div>
-                <?php
+            <?php
             endif;
 
             $notes = $item->getAdminNotesString();
@@ -107,7 +107,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
             if (!empty($notes)) :
                 ?>
                 <span class="icon-warning hasTooltip osmap-info" title="<?php echo $notes; ?>"></span>
-                <?php
+            <?php
             endif;
             ?>
         </td>
@@ -119,7 +119,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                 <span class="level-mark">
                     <?php echo str_repeat('—', $item->level); ?>
                 </span>
-                <?php
+            <?php
             endif;
 
             if (!empty($item->rawLink) && $item->rawLink !== '#' && $item->link !== '#') :
@@ -131,13 +131,13 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                     <?php echo $item->rawLink; ?>
                 </a>
                 <span class="icon-new-tab"></span>
-                <?php
+            <?php
             else :
                 ?>
                 <span>
                     <?php echo isset($item->name) ? $item->name : ''; ?>
                 </span>
-                <?php
+            <?php
             endif;
             ?>
 
@@ -148,9 +148,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                 <div class="small osmap-item-uid">
                     <?php echo Text::_('COM_OSMAP_UID'); ?>: <?php echo $item->uid; ?>
                 </div>
-                <?php
-            endif;
-            ?>
+            <?php endif; ?>
         </td>
 
         <td class="sitemapitem-name">

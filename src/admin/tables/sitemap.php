@@ -228,7 +228,7 @@ class OSMapTableSitemap extends JTable
             $db       = OSMap\Factory::getDbo();
             $ordering = array();
 
-            $query     = $db->getQuery(true)
+            $query = $db->getQuery(true)
                 ->select('*')
                 ->from('#__osmap_sitemap_menus')
                 ->where('sitemap_id = ' . $db->quote($this->id))

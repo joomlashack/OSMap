@@ -75,5 +75,5 @@ foreach ($languages as $language) :
         ?>
     </span>
     <br/>
-    <?php
+<?php
 endforeach;

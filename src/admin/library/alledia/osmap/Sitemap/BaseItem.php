@@ -333,7 +333,7 @@ class BaseItem extends \JObject
 
         if (!OSMap\Helper\General::isEmptyDate($this->modified)) {
             if (!is_numeric($this->modified)) {
-                $date =  new \JDate($this->modified);
+                $date           = new \JDate($this->modified);
                 $this->modified = $date->toUnix();
             }
 
@@ -342,7 +342,7 @@ class BaseItem extends \JObject
                 if ($this->modified < 0) {
                     $this->modified = null;
                 } else {
-                    $date = new \JDate($this->modified);
+                    $date           = new \JDate($this->modified);
                     $this->modified = $date->toISO8601();
                 }
             }
