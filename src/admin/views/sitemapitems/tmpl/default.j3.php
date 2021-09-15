@@ -93,14 +93,14 @@ $container = OSMap\Factory::getPimpleContainer();
                 container: '#osmap-items-list',
                 language : '<?php echo $this->language; ?>',
                 lang     : {
-                    'COM_OSMAP_HOURLY'                    : '<?php echo HTMLHelper::_('COM_OSMAP_HOURLY'); ?>',
-                    'COM_OSMAP_DAILY'                     : '<?php echo HTMLHelper::_('COM_OSMAP_DAILY'); ?>',
-                    'COM_OSMAP_WEEKLY'                    : '<?php echo HTMLHelper::_('COM_OSMAP_WEEKLY'); ?>',
-                    'COM_OSMAP_MONTHLY'                   : '<?php echo HTMLHelper::_('COM_OSMAP_MONTHLY'); ?>',
-                    'COM_OSMAP_YEARLY'                    : '<?php echo HTMLHelper::_('COM_OSMAP_YEARLY'); ?>',
-                    'COM_OSMAP_NEVER'                     : '<?php echo HTMLHelper::_('COM_OSMAP_NEVER'); ?>',
-                    'COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH': '<?php echo HTMLHelper::_('COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH'); ?>',
-                    'COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH'  : '<?php echo HTMLHelper::_('COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH'); ?>'
+                    'COM_OSMAP_HOURLY'                    : '<?php echo Text::_('COM_OSMAP_HOURLY'); ?>',
+                    'COM_OSMAP_DAILY'                     : '<?php echo Text::_('COM_OSMAP_DAILY'); ?>',
+                    'COM_OSMAP_WEEKLY'                    : '<?php echo Text::_('COM_OSMAP_WEEKLY'); ?>',
+                    'COM_OSMAP_MONTHLY'                   : '<?php echo Text::_('COM_OSMAP_MONTHLY'); ?>',
+                    'COM_OSMAP_YEARLY'                    : '<?php echo Text::_('COM_OSMAP_YEARLY'); ?>',
+                    'COM_OSMAP_NEVER'                     : '<?php echo Text::_('COM_OSMAP_NEVER'); ?>',
+                    'COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH': '<?php echo Text::_('COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH'); ?>',
+                    'COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH'  : '<?php echo Text::_('COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH'); ?>'
                 }
             });
         });
