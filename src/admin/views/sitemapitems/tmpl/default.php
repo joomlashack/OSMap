@@ -23,21 +23,22 @@
  */
 
 use Alledia\OSMap;
+use Joomla\CMS\HTML\HTMLHelper;
 
 defined('_JEXEC') or die();
 
-JHtml::_('bootstrap.tooltip');
-JHtml::_('behavior.core');
-JHtml::_('behavior.keepalive');
-JHtml::_('formbehavior.chosen', 'select');
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.core');
+HTMLHelper::_('behavior.keepalive');
+HTMLHelper::_('formbehavior.chosen', 'select');
 
-JHtml::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
-JHtml::_('stylesheet', 'jui/icomoon.css', array('relative' => true));
+HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
+HTMLHelper::_('stylesheet', 'jui/icomoon.css', array('relative' => true));
 
 $listFields = json_encode(
     array(
-        'frequencies' =>JHtml::_('osmap.frequencyList'),
-        'priorities' => JHtml::_('osmap.priorityList')
+        'frequencies' => HTMLHelper::_('osmap.frequencyList'),
+        'priorities'  => HTMLHelper::_('osmap.priorityList')
     )
 );
 
@@ -50,7 +51,7 @@ $jscript = <<<JSCRIPT
 JSCRIPT;
 OSMap\Factory::getDocument()->addScriptDeclaration($jscript);
 
-JHtml::_('script', 'com_osmap/sitemapitems.min.js', array('relative' => true));
+HTMLHelper::_('script', 'com_osmap/sitemapitems.min.js', array('relative' => true));
 
 $container = OSMap\Factory::getPimpleContainer();
 ?>
@@ -81,7 +82,7 @@ $container = OSMap\Factory::getPimpleContainer();
     <input type="hidden" name="id" value="<?php echo $this->sitemapId; ?>"/>
     <input type="hidden" name="update-data" id="update-data" value=""/>
     <input type="hidden" name="language" value="<?php echo $this->language; ?>"/>
-    <?php echo JHtml::_('form.token'); ?>
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
 

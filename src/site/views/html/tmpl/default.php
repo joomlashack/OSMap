@@ -23,18 +23,19 @@
  */
 
 use Alledia\OSMap;
+use Joomla\CMS\HTML\HTMLHelper;
 
 defined('_JEXEC') or die();
 
 // Check if we need to inject the CSS
 if ($this->params->get('use_css', 1)) {
-    JHtml::stylesheet('media/com_osmap/css/sitemap_html.min.css');
+    HTMLHelper::stylesheet('media/com_osmap/css/sitemap_html.min.css');
 }
 
 // If debug is enabled, use text content type
 if ($this->debug) {
     OSMap\Factory::getApplication()->input->set('tmpl', 'component');
-    JHtml::stylesheet('media/com_osmap/css/sitemap_html_debug.min.css');
+    HTMLHelper::stylesheet('media/com_osmap/css/sitemap_html_debug.min.css');
 }
 
 // Check if we have parameters from a menu, acknowledging we have a menu

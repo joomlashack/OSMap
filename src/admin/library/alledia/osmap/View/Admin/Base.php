@@ -26,6 +26,7 @@ namespace Alledia\OSMap\View\Admin;
 
 use Alledia\OSMap;
 use Alledia\Framework\Joomla\Extension;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Object\CMSObject;
 use Alledia\Framework\Joomla\View\Admin\AbstractList;
 
@@ -85,7 +86,7 @@ class Base extends AbstractList
      */
     protected function setTitle($sub = null, $icon = 'osmap')
     {
-        $img = \JHtml::_('image', "com_osmap/icon-48-{$icon}.png", null, null, true, true);
+        $img = HTMLHelper::_('image', "com_osmap/icon-48-{$icon}.png", null, null, true, true);
         if ($img) {
             $doc = OSMap\Factory::getDocument();
             $doc->addStyleDeclaration(".icon-48-{$icon} { background-image: url({$img}); }");
@@ -149,7 +150,7 @@ class Base extends AbstractList
                 $html = array();
 
                 if ($tabbed) {
-                    $html[] = \JHtml::_('bootstrap.addTab', 'myTab', $name, \JText::_($label));
+                    $html[] = HTMLHelper::_('bootstrap.addTab', 'myTab', $name, \JText::_($label));
                 }
 
                 $html[] = '<div class="row-fluid">';
@@ -180,7 +181,7 @@ class Base extends AbstractList
                 $html[] = '</fieldset>';
                 $html[] = '</div>';
                 if ($tabbed) {
-                    $html[] = \JHtml::_('bootstrap.endTab');
+                    $html[] = HTMLHelper::_('bootstrap.endTab');
                 }
             }
         }

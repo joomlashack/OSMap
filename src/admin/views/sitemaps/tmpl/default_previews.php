@@ -22,7 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Joomla\CMS\HTML\HTMLHelper;
 
 defined('_JEXEC') or die();
 
@@ -32,7 +32,7 @@ foreach ($languages as $language) :
     ?>
     <span class="osmap-link">
         <?php
-        echo JHtml::_(
+        echo HTMLHelper::_(
             'link',
             $this->getLink($this->item, 'xml', $langCode),
             JText::_('COM_OSMAP_XML_LINK'),
@@ -43,7 +43,7 @@ foreach ($languages as $language) :
 
     <span class="osmap-link">
         <?php
-        echo JHtml::_(
+        echo HTMLHelper::_(
             'link',
             $this->getLink($this->item, 'html', $langCode),
             JText::_('COM_OSMAP_HTML_LINK'),
@@ -54,7 +54,7 @@ foreach ($languages as $language) :
 
     <span class="osmap-link">
         <?php
-        echo JHtml::_(
+        echo HTMLHelper::_(
             'link',
             $this->getLink($this->item, 'news', $langCode),
             JText::_('COM_OSMAP_NEWS_LINK'),
@@ -65,7 +65,7 @@ foreach ($languages as $language) :
 
     <span class="osmap-link">
         <?php
-        echo JHtml::_(
+        echo HTMLHelper::_(
             'link',
             $this->getLink($this->item, 'images', $langCode),
             JText::_('COM_OSMAP_IMAGES_LINK'),
