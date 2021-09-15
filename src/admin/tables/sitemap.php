@@ -23,6 +23,7 @@
  */
 
 use Alledia\OSMap;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
@@ -109,7 +110,7 @@ class OSMapTableSitemap extends JTable
     public function check()
     {
         if (empty($this->name)) {
-            $this->setError(JText::_('COM_OSMAP_MSG_SITEMAP_MUST_HAVE_NAME'));
+            $this->setError(Text::_('COM_OSMAP_MSG_SITEMAP_MUST_HAVE_NAME'));
 
             return false;
         }
@@ -149,7 +150,7 @@ class OSMapTableSitemap extends JTable
                 $this->is_default = 1;
 
                 OSMap\Factory::getApplication()->enqueueMessage(
-                    JText::_('COM_OSMAP_MSG_SITEMAP_FORCED_AS_DEFAULT'),
+                    Text::_('COM_OSMAP_MSG_SITEMAP_FORCED_AS_DEFAULT'),
                     'info'
                 );
             }

@@ -22,6 +22,8 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die();
 
 $count             = 0;
@@ -93,7 +95,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                         : 'COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH';
                     ?>
 
-                    <span title="<?php echo JText::_($title); ?>"
+                    <span title="<?php echo Text::_($title); ?>"
                           class="hasTooltip icon-<?php echo $class; ?>">
                     </span>
                 </div>
@@ -144,7 +146,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                 ?>
                 <br>
                 <div class="small osmap-item-uid">
-                    <?php echo JText::_('COM_OSMAP_UID'); ?>: <?php echo $item->uid; ?>
+                    <?php echo Text::_('COM_OSMAP_UID'); ?>: <?php echo $item->uid; ?>
                 </div>
                 <?php
             endif;
@@ -169,7 +171,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                  data-original="<?php echo $item->changefreq; ?>"
                  data-value="<?php echo $item->changefreq; ?>">
 
-                <?php echo JText::_('COM_OSMAP_' . strtoupper($item->changefreq)); ?>
+                <?php echo Text::_('COM_OSMAP_' . strtoupper($item->changefreq)); ?>
             </div>
         </td>
     </tr>
@@ -184,23 +186,23 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
         <thead>
         <tr>
             <th width="1%" style="min-width:55px" class="nowrap center">
-                <?php echo JText::_('COM_OSMAP_HEADING_STATUS'); ?>
+                <?php echo Text::_('COM_OSMAP_HEADING_STATUS'); ?>
             </th>
 
             <th class="title">
-                <?php echo JText::_('COM_OSMAP_HEADING_URL'); ?>
+                <?php echo Text::_('COM_OSMAP_HEADING_URL'); ?>
             </th>
 
             <th class="title">
-                <?php echo JText::_('COM_OSMAP_HEADING_TITLE'); ?>
+                <?php echo Text::_('COM_OSMAP_HEADING_TITLE'); ?>
             </th>
 
             <th class="center">
-                <?php echo JText::_('COM_OSMAP_HEADING_PRIORITY'); ?>
+                <?php echo Text::_('COM_OSMAP_HEADING_PRIORITY'); ?>
             </th>
 
             <th class="nowrap center">
-                <?php echo JText::_('COM_OSMAP_HEADING_CHANGE_FREQ'); ?>
+                <?php echo Text::_('COM_OSMAP_HEADING_CHANGE_FREQ'); ?>
             </th>
         </tr>
         </thead>
@@ -213,13 +215,13 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
         ?>
         </tbody>
     </table>
-    <div><?php echo JText::sprintf('COM_OSMAP_NUMBER_OF_ITEMS_FOUND', $count); ?></div>
+    <div><?php echo Text::sprintf('COM_OSMAP_NUMBER_OF_ITEMS_FOUND', $count); ?></div>
 
 <?php
 if (empty($count)) :
     ?>
     <div class="alert alert-warning">
-        <?php echo JText::_('COM_OSMAP_NO_ITEMS'); ?>
+        <?php echo Text::_('COM_OSMAP_NO_ITEMS'); ?>
     </div>
 <?php
 endif;

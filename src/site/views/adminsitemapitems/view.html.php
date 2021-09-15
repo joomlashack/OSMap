@@ -78,6 +78,6 @@ class OSMapViewAdminSitemapItems extends JViewLegacy
             }
         }
 
-        throw new Exception(JText::_('JERROR_PAGE_NOT_FOUND'), 404);
+        throw new Exception(\Joomla\CMS\Language\Text::_('JERROR_PAGE_NOT_FOUND'), 404);
     }
 }

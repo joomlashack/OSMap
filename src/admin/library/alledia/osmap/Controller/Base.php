@@ -25,6 +25,7 @@
 namespace Alledia\OSMap\Controller;
 
 use Alledia\OSMap;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
@@ -40,7 +41,7 @@ class Base extends \JControllerLegacy
 
                 OSMap\Factory::getApplication()->redirect(
                     $container->router->routeURL('index.php?Itemid=' . $home->id),
-                    \JText::_('JINVALID_TOKEN'),
+                    Text::_('JINVALID_TOKEN'),
                     'error'
                 );
             }

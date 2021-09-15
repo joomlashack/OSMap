@@ -25,6 +25,7 @@
 namespace Alledia\OSMap\Sitemap;
 
 use Alledia\OSMap;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
@@ -283,7 +284,7 @@ class BaseItem extends \JObject
             $this->adminNotes = array();
         }
 
-        $this->adminNotes[] = \JText::_($note);
+        $this->adminNotes[] = Text::_($note);
     }
 
     /**

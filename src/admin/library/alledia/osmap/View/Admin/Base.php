@@ -28,7 +28,9 @@ use Alledia\Framework\Joomla\View\Admin\AbstractList;
 use Alledia\OSMap;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 defined('_JEXEC') or die();
 
@@ -92,12 +94,12 @@ class Base extends AbstractList
             $doc->addStyleDeclaration(".icon-48-{$icon} { background-image: url({$img}); }");
         }
 
-        $title = \JText::_('COM_OSMAP');
+        $title = Text::_('COM_OSMAP');
         if ($sub) {
-            $title .= ': ' . \JText::_($sub);
+            $title .= ': ' . Text::_($sub);
         }
 
-        \JToolbarHelper::title($title, $icon);
+        ToolbarHelper::title($title, $icon);
     }
 
     /**
@@ -150,7 +152,7 @@ class Base extends AbstractList
                 $html = array();
 
                 if ($tabbed) {
-                    $html[] = HTMLHelper::_('bootstrap.addTab', 'myTab', $name, \JText::_($label));
+                    $html[] = HTMLHelper::_('bootstrap.addTab', 'myTab', $name, Text::_($label));
                 }
 
                 $html[] = '<div class="row-fluid">';

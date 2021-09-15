@@ -22,14 +22,16 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die();
 ?>
 
 <?php if ($this->debug) : ?>
     <div class="osmap-debug-sitemap">
-        <h1><?php echo JText::_('COM_OSMAP_DEBUG_ALERT_TITLE'); ?></h1>
-        <p><?php echo JText::_('COM_OSMAP_DEBUG_ALERT'); ?></p>
-        <?php echo JText::_('COM_OSMAP_SITEMAP_ID'); ?>: <?php echo $this->sitemap->id; ?>
+        <h1><?php echo Text::_('COM_OSMAP_DEBUG_ALERT_TITLE'); ?></h1>
+        <p><?php echo Text::_('COM_OSMAP_DEBUG_ALERT'); ?></p>
+        <?php echo Text::_('COM_OSMAP_SITEMAP_ID'); ?>: <?php echo $this->sitemap->id; ?>
     </div>
 <?php endif; ?>
 
@@ -40,6 +42,6 @@ defined('_JEXEC') or die();
 
 <?php if ($this->debug) : ?>
     <div class="osmap-debug-items-count">
-        <?php echo JText::_('COM_OSMAP_SITEMAP_ITEMS_COUNT'); ?>: <?php echo $this->generalCounter; ?>
+        <?php echo Text::_('COM_OSMAP_SITEMAP_ITEMS_COUNT'); ?>: <?php echo $this->generalCounter; ?>
     </div>
 <?php endif; ?>
