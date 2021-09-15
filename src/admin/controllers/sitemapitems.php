@@ -41,6 +41,7 @@ class OSMapControllerSitemapItems extends Form
 
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function save($key = null, $urlVar = null)
     {
