@@ -41,10 +41,9 @@ $showExternalLinks = (int)$this->osmapParams->get('show_external_links', 0);
  * @return bool
  */
 $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExternalLinks) {
-    // Check if is external URL and if should be ignored
     if (!$item->isInternal) :
         if ($showExternalLinks === 0) :
-            // No external links
+            // Don't show external links
             $item->set('ignore', true);
             $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_IGNORED_EXTERNAL');
 
@@ -81,35 +80,28 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
         data-settings-hash="<?php echo $item->settingsHash; ?>">
 
         <td class="center">
-            <?php
-            if (!$item->ignore) :
+            <div class="sitemapitem-published"
+                 data-original="<?php echo $item->published ? '1' : '0'; ?>"
+                 data-value="<?php echo $item->published ? '1' : '0'; ?>">
+
+                <?php
+                $class = $item->published ? 'publish' : 'unpublish';
+                $title = $item->published
+                    ? 'COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH'
+                    : 'COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH';
                 ?>
-                <div class="sitemapitem-published"
-                     data-original="<?php echo $item->published ? '1' : '0'; ?>"
-                     data-value="<?php echo $item->published ? '1' : '0'; ?>">
 
-                    <?php
-                    $class = $item->published ? 'publish' : 'unpublish';
-                    $title = $item->published
-                        ? 'COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH'
-                        : 'COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH';
-                    ?>
-
-                    <span title="<?php echo Text::_($title); ?>"
-                          class="hasTooltip icon-<?php echo $class; ?>">
+                <span title="<?php echo Text::_($title); ?>"
+                      class="hasTooltip icon-<?php echo $class; ?>">
                     </span>
-                </div>
+            </div>
             <?php
-            endif;
-
             $notes = $item->getAdminNotesString();
 
             if (!empty($notes)) :
                 ?>
                 <span class="icon-warning hasTooltip osmap-info" title="<?php echo $notes; ?>"></span>
-            <?php
-            endif;
-            ?>
+            <?php endif; ?>
         </td>
 
         <td class="sitemapitem-link">
@@ -119,8 +111,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                 <span class="level-mark">
                     <?php echo str_repeat('—', $item->level); ?>
                 </span>
-            <?php
-            endif;
+            <?php endif;
 
             if (!empty($item->rawLink) && $item->rawLink !== '#' && $item->link !== '#') :
                 ?>
@@ -131,15 +122,12 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
                     <?php echo $item->rawLink; ?>
                 </a>
                 <span class="icon-new-tab"></span>
-            <?php
-            else :
-                ?>
+
+            <?php else : ?>
                 <span>
-                    <?php echo isset($item->name) ? $item->name : ''; ?>
+                    <?php echo $item->name ?? ''; ?>
                 </span>
-            <?php
-            endif;
-            ?>
+            <?php endif; ?>
 
             <?php
             if ($showItemUID) :
@@ -152,7 +140,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
         </td>
 
         <td class="sitemapitem-name">
-            <?php echo isset($item->name) ? $item->name : ''; ?>
+            <?php echo $item->name ?? ''; ?>
         </td>
 
         <td class="center">
@@ -179,11 +167,10 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
     return true;
 };
 ?>
-
     <table class="adminlist table table-striped" id="itemList">
         <thead>
         <tr>
-            <th width="1%" style="min-width:55px" class="nowrap center">
+            <th style="width: 1%;min-width:55px" class="nowrap center">
                 <?php echo Text::_('COM_OSMAP_HEADING_STATUS'); ?>
             </th>
 

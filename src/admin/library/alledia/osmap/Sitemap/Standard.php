@@ -24,8 +24,9 @@
 
 namespace Alledia\OSMap\Sitemap;
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
@@ -94,7 +95,7 @@ class Standard implements SitemapInterface
      */
     public function __construct($id)
     {
-        $row = OSMap\Factory::getTable('Sitemap');
+        $row = Factory::getTable('Sitemap');
         $row->load($id);
 
         if (empty($row) || !$row->id) {
@@ -128,24 +129,16 @@ class Standard implements SitemapInterface
     }
 
     /**
-     * Traverse the sitemap items recursively and call the given callback,
-     * passing each node as parameter.
-     *
-     * @param callable $callback
-     * @param bool     $triggerEvents
-     * @param bool     $updateCount
-     *
-     * @return void
-     * @throws \Exception
+     * @inheritDoc
      */
     public function traverse($callback, $triggerEvents = true, $updateCount = false)
     {
         if ($triggerEvents) {
             // Call the plugins, allowing to interact or override the collector
-            \JPluginHelper::importPlugin('osmap');
+            PluginHelper::importPlugin('osmap');
 
-            $eventParams = array(&$this, &$callback);
-            $results     = OSMap\Factory::getApplication()->triggerEvent('osmapOnBeforeCollectItems', $eventParams);
+            $eventParams = [$this, $callback];
+            $results     = Factory::getApplication()->triggerEvent('osmapOnBeforeCollectItems', $eventParams);
 
             // A plugin asked to stop the traverse
             if (in_array(true, $results)) {
@@ -177,14 +170,14 @@ class Standard implements SitemapInterface
      */
     protected function updateLinksCount($count)
     {
-        $db = OSMap\Factory::getDbo();
+        $db = Factory::getDbo();
 
-        $updateObject = (object)array(
+        $updateObject = (object)[
             'id'          => $this->id,
             'links_count' => (int)$count
-        );
+        ];
 
-        $db->updateObject('#__osmap_sitemaps', $updateObject, array('id'));
+        $db->updateObject('#__osmap_sitemaps', $updateObject, ['id']);
     }
 
     public function cleanup()

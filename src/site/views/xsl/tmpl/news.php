@@ -30,8 +30,8 @@ defined('_JEXEC') or die();
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xna="https://www.sitemaps.org/schemas/sitemap/0.9"
-    xmlns:news="https://www.google.com/schemas/sitemap-news/0.9"
+    xmlns:xna="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
     exclude-result-prefixes="xna">
 
 <xsl:output indent="yes" method="html" omit-xml-declaration="yes"/>
@@ -40,7 +40,7 @@ defined('_JEXEC') or die();
 <head>
 <title><?php echo Text::_('COM_OSMAP_XML_SITEMAP_FILE'); ?></title>
 <link rel="stylesheet" type="text/css" href="<?php echo $this->icoMoonUri; ?>" />
-<style type="text/css">
+<style>
     <![CDATA[
     body {
         font-family: tahoma, sans-serif;

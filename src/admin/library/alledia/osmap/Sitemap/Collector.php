@@ -299,15 +299,16 @@ class Collector
         $this->checkDuplicatedUIDToIgnore($item);
 
         // Verify if the item can be displayed to count as unique for the XML sitemap
-        if (!$item->ignore
+        if (
+            !$item->ignore
             && $item->published
             && $item->visibleForRobots
-            && (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1)))
+            && (!$item->duplicate || !$this->params->get('ignore_duplicated_uids', 1))
         ) {
             // Check if the URL is not duplicated (specially for the XML sitemap)
             $this->checkDuplicatedURLToIgnore($item);
 
-            if (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1))) {
+            if (!$item->duplicate || !$this->params->get('ignore_duplicated_uids', 1)) {
                 ++$this->counter;
             }
         }
@@ -345,9 +346,7 @@ class Collector
             ->where('osm.sitemap_id = ' . $db->quote($this->sitemap->id))
             ->order('osm.ordering');
 
-        $list = $db->setQuery($query)->loadObjectList('menutype');
-
-        return $list;
+        return $db->setQuery($query)->loadObjectList('menutype');
     }
 
     /**
@@ -465,7 +464,7 @@ class Collector
         if (!empty($item->fullLink)) {
             $container = Factory::getPimpleContainer();
 
-            // We need to make sure to have an URL free of hash chars
+            // We need to make sure to have a URL free of hash chars
             $url  = $container->router->removeHashFromURL($item->fullLink);
             $hash = $container->router->createUrlHash($url);
 
@@ -602,8 +601,8 @@ class Collector
 
     /**
      * This method is used for backward compatibility. The plugins will call
-     * it. In the legacy XMap its behavior depends on the sitemap view type,
-     * only changing the level in the HTML view. Now, it always consider the
+     * it. In the legacy XMap, its behavior depends on the sitemap view type,
+     * only changing the level in the HTML view. OSMap will always consider the
      * level of the item, even for XML view. XML will just ignore that.
      *
      * @param int $step
@@ -780,19 +779,19 @@ class Collector
             $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_PARENT_UNPUBLISHED');
         }
 
-        // If the item is unpublished, and the ignore level is false, mark the level to ignore sub-items
+        // If the item is unpublished and the 'ignore' level is false, mark the level to ignore sub-items
         $displayable = $item->published
             && !$item->ignore
-            && (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1)));
+            && (!$item->duplicate || !$this->params->get('ignore_duplicated_uids', 1));
         if (!$displayable && $this->unpublishLevel === false) {
             $this->unpublishLevel = $item->level;
         }
 
-        // If the item won't be ignored, make sure to reset the ignore level
+        // If the item won't be ignored, make sure to reset the 'ignore' level
         if (
             $item->published
             && !$item->ignore
-            && (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1)))
+            && (!$item->duplicate || !$this->params->get('ignore_duplicated_uids', 1))
         ) {
             $this->unpublishLevel = false;
         }

@@ -66,7 +66,7 @@ class Configuration
     public function get($name, $default = null)
     {
         if (strpos($name, '.') === false) {
-            return isset($this->settings[$name]) ? $this->settings[$name] : $default;
+            return $this->settings[$name] ?? $default;
         }
         $levels = explode('.', $name);
 

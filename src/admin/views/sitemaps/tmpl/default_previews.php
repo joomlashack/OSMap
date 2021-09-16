@@ -27,7 +27,7 @@ use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
-$languages = $this->languages ?: array('');
+$languages = $this->languages ?: [''];
 foreach ($languages as $language) :
     $langCode = empty($language->sef) ? null : $language->sef;
     ?>

@@ -98,7 +98,7 @@ class Images
     }
 
     /**
-     * Return an array of images found in the content image params.
+     * Return an array of images from the content image params.
      *
      * @param object $item
      *

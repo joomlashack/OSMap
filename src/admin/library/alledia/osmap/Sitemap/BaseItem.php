@@ -63,7 +63,7 @@ class BaseItem extends \JObject
     public $fullLink = null;
 
     /**
-     * Routed fulll link, sanitized but can contains a hash segment
+     * Routed full link, sanitized but can contain a hash segment
      *
      * @var string
      */
@@ -164,7 +164,7 @@ class BaseItem extends \JObject
     /**
      * @var array
      */
-    public $images = array();
+    public $images = [];
 
     /**
      * @var string
@@ -284,7 +284,7 @@ class BaseItem extends \JObject
     public function addAdminNote($note)
     {
         if (!is_array($this->adminNotes)) {
-            $this->adminNotes = array();
+            $this->adminNotes = [];
         }
 
         $this->adminNotes[] = Text::_($note);
@@ -308,6 +308,7 @@ class BaseItem extends \JObject
      * Check if the current link is an internal link.
      *
      * @return bool
+     * @throws \Exception
      */
     protected function checkLinkIsInternal()
     {
@@ -316,10 +317,10 @@ class BaseItem extends \JObject
         return $container->router->isInternalURL($this->link)
             || in_array(
                 $this->type,
-                array(
+                [
                     'separator',
                     'heading'
-                )
+                ]
             );
     }
 
@@ -327,6 +328,7 @@ class BaseItem extends \JObject
      * Set the correct modification date.
      *
      * @return void
+     * @throws \Exception
      */
     public function setModificationDate()
     {

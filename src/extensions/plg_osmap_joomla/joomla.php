@@ -67,7 +67,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     public static function getInstance()
     {
         if (empty(static::$instance)) {
-            $dispatcher = Factory::getDispatcher();
+            $dispatcher       = Factory::getDispatcher();
             static::$instance = new self($dispatcher);
         }
 
@@ -694,7 +694,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
             $subnode->secure     = $parent->secure;
             $subnode->created    = $item->created;
             $subnode->modified   = $item->modified;
-            $subnode->publishUp  = isset($item->publish_up) ? $item->publish_up : $item->created;
+            $subnode->publishUp  = $item->publish_up ?? $item->created;
 
             $collector->printNode($subnode);
 

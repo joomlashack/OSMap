@@ -32,7 +32,7 @@ $ignoreDuplicatedUIDs = (int)$this->osmapParams->get('ignore_duplicated_uids', 1
 $printNodeCallback = function (Item $node) use ($ignoreDuplicatedUIDs) {
     $display = !$node->ignore
         && $node->published
-        && (!$node->duplicate || ($node->duplicate && !$ignoreDuplicatedUIDs))
+        && (!$node->duplicate || !$ignoreDuplicatedUIDs)
         && $node->visibleForRobots
         && $node->parentIsVisibleForRobots
         && $node->visibleForXML
@@ -72,10 +72,10 @@ $printNodeCallback = function (Item $node) use ($ignoreDuplicatedUIDs) {
 
 echo $this->addStylesheet();
 
-$attributes = array(
+$attributes = [
     'xmlns'       => 'https://www.sitemaps.org/schemas/sitemap/0.9',
     'xmlns:image' => 'https://www.google.com/schemas/sitemap-image/1.1'
-);
+];
 echo sprintf('<urlset %s>', ArrayHelper::toString($attributes));
 
 $this->sitemap->traverse($printNodeCallback);

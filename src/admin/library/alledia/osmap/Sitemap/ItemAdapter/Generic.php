@@ -24,34 +24,29 @@
 
 namespace Alledia\OSMap\Sitemap\ItemAdapter;
 
-use Alledia\OSMap;
+use Alledia\OSMap\Sitemap\Item;
 
 defined('_JEXEC') or die();
 
 class Generic implements AdapterInterface
 {
     /**
-     * @var OSMap\Sitemap\Item
+     * @var Item
      */
     protected $item;
 
     /**
-     * The constructor
-     *
-     * @param OSMap\Sitemap\Item $item
+     * @param Item $item
      *
      * @return void
      */
-    public function __construct(OSMap\Sitemap\Item &$item)
+    public function __construct(Item $item)
     {
         $this->item = $item;
     }
 
     /**
-     * Gets the visible state for robots. Each adapter will check specific params. Returns
-     * true if the item is visible.
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function checkVisibilityForRobots()
     {

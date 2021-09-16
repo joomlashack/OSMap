@@ -76,9 +76,8 @@ class Router
 
         // Remove application subpaths (typically /administrator)
         $adminPath = str_replace(Uri::root(), '', Uri::base());
-        $url       = str_replace($adminPath, '', $url);
 
-        return $url;
+        return str_replace($adminPath, '', $url);
     }
 
     /**
@@ -97,16 +96,16 @@ class Router
         $base     = $uri->toString(['scheme', 'host', 'port', 'path']);
         $host     = $uri->toString(['scheme', 'host', 'port']);
         $path     = $uri->toString(['path']);
-        $baseHost = Uri::getInstance($uri->root())->toString(['host']);
+        $baseHost = Uri::getInstance($uri::root())->toString(['host']);
 
         if ($path === $url) {
             return true;
 
         } elseif (empty($host) && strpos($path, 'index.php') === 0
-            || !empty($host) && preg_match('#' . preg_quote($uri->root(), '#') . '#', $base)
+            || !empty($host) && preg_match('#' . preg_quote($uri::root(), '#') . '#', $base)
             || !empty($host) && $host === $baseHost && strpos($path, 'index.php') !== false
             || !empty($host) && $base === $host
-            && preg_match('#' . preg_quote($base, '#') . '#', $uri->root())
+            && preg_match('#' . preg_quote($base, '#') . '#', $uri::root())
         ) {
             return true;
         }
@@ -125,7 +124,7 @@ class Router
      */
     public function getFrontendBase()
     {
-        return Factory::getPimpleContainer()->uri->root();
+        return Factory::getPimpleContainer()->uri::root();
     }
 
     /**
@@ -140,7 +139,7 @@ class Router
     {
         $container = Factory::getPimpleContainer();
 
-        $uri = $container->uri->getInstance($url);
+        $uri = $container->uri::getInstance($url);
 
         return $uri->toString(['path']) === $url;
     }
@@ -157,7 +156,7 @@ class Router
     {
         if ($path[0] == '/') {
             $scheme = ['scheme', 'user', 'pass', 'host', 'port'];
-            $path   = Factory::getPimpleContainer()->uri->getInstance()->toString($scheme) . $path;
+            $path   = Factory::getPimpleContainer()->uri::getInstance()->toString($scheme) . $path;
 
         } elseif ($this->isRelativeUri($path)) {
             $path = $this->getFrontendBase() . $path;
@@ -173,14 +172,11 @@ class Router
      */
     public function sanitizeURL($url)
     {
-        // Remove double slashes
-        $url = preg_replace('#([^:])(/{2,})#', '$1/', $url);
-
-        return $url;
+        return preg_replace('#([^:])(/{2,})#', '$1/', $url);
     }
 
     /**
-     * Returns an URL without the hash
+     * Returns a URL without the hash
      *
      * @return string
      */
@@ -194,9 +190,7 @@ class Router
             $url = substr($url, 0, $hashPos);
         }
 
-        $url = trim($url);
-
-        return $url;
+        return trim($url);
     }
 
     /**
@@ -209,6 +203,6 @@ class Router
      */
     public function createUrlHash($url)
     {
-        return md5(str_replace(Factory::getPimpleContainer()->uri->root(), '', $url));
+        return md5(str_replace(Factory::getPimpleContainer()->uri::root(), '', $url));
     }
 }

@@ -23,20 +23,28 @@
  */
 
 use Alledia\OSMap;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
 
 defined('_JEXEC') or die();
 
 
-class OSMapModelSitemap extends JModelAdmin
+class OSMapModelSitemap extends AdminModel
 {
-    public function getTable($type = 'Sitemap', $prefix = 'OSMapTable', $config = array())
+    /**
+     * @inheritDoc
+     */
+    public function getTable($name = 'Sitemap', $prefix = 'OSMapTable', $options = [])
     {
-        return JTable::getInstance($type, $prefix, $config);
+        return Table::getInstance($name, $prefix, $options);
     }
 
-    public function getForm($data = array(), $loadData = true)
+    /**
+     * @inheritDoc
+     */
+    public function getForm($data = [], $loadData = true)
     {
-        $form = $this->loadForm('com_osmap.sitemap', 'sitemap', array('control' => 'jform', 'load_data' => $loadData));
+        $form = $this->loadForm('com_osmap.sitemap', 'sitemap', ['control' => 'jform', 'load_data' => $loadData]);
         if (empty($form)) {
             return false;
         }
@@ -44,9 +52,12 @@ class OSMapModelSitemap extends JModelAdmin
         return $form;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function loadFormData()
     {
-        $data = OSMap\Factory::getApplication()->getUserState('com_osmap.edit.sitemap.data', array());
+        $data = OSMap\Factory::getApplication()->getUserState('com_osmap.edit.sitemap.data', []);
 
         if (empty($data)) {
             $data = $this->getItem();
@@ -68,13 +79,13 @@ class OSMapModelSitemap extends JModelAdmin
                     ->order('ordering');
                 $menus = $db->setQuery($query)->loadObjectList();
 
-                $data->menus = array();
+                $data->menus = [];
 
                 foreach ($menus as $menu) {
-                    $data->menus[$menu->menutype_id] = array(
+                    $data->menus[$menu->menutype_id] = [
                         'priority'   => $menu->priority,
                         'changefreq' => $menu->changefreq
-                    );
+                    ];
                 }
             }
         }
@@ -83,9 +94,7 @@ class OSMapModelSitemap extends JModelAdmin
     }
 
     /**
-     * @param JTable $table
-     *
-     * @return void
+     * @inheritDoc
      */
     protected function prepareTable($table)
     {
@@ -98,5 +107,6 @@ class OSMapModelSitemap extends JModelAdmin
      */
     public function getSelectedMenus($sitemapId)
     {
+        return [];
     }
 }

@@ -57,7 +57,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
         // This attribute will be used by the custom template to display the option to migrate legacy sitemaps
         $this->isXmapDataFound = $this->tableExists('#__xmap_sitemap') && $xmapConverter->checkXmapDataExists();
 
-        // If Xmap plugins are still available and we don't have the OSMap plugins yet,
+        // If Xmap plugins are still available, and we don't have the OSMap plugins yet,
         // save Xmap plugins params to re-apply after install OSMap plugins
         $xmapConverter->saveXmapPluginParamsIfExists();
 
@@ -164,7 +164,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
     }
 
     /**
-     * In case we are updating from a legacy version, make sure to cleanup
+     * In case we are updating from a legacy version, cleanup
      * the new tables to get a clean start for the data migration
      *
      * @return void

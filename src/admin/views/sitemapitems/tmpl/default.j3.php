@@ -86,7 +86,7 @@ $container = OSMap\Factory::getPimpleContainer();
     ;jQuery(function($) {
         $(function() {
             $.fn.osmap.loadSitemapItems({
-                baseUri  : '<?php echo $container->uri->root(); ?>',
+                baseUri  : '<?php echo $container->uri::root(); ?>',
                 sitemapId: '<?php echo $this->sitemapId; ?>',
                 container: '#osmap-items-list',
                 language : '<?php echo $this->language; ?>',

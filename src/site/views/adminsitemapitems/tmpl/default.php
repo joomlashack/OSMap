@@ -29,7 +29,7 @@ defined('_JEXEC') or die();
 
 OSMap\Factory::getApplication()->input->set('tmpl', 'component');
 
-HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
+HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
 
 if (!empty($this->message)) : ?>
     <div class="alert alert-warning">

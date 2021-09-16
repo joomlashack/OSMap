@@ -56,7 +56,7 @@ abstract class Base extends CMSPlugin
 
     /**
      * Set memory limit to unlimited. If unable to do so,
-     * we'll want to check that we have enough memory left to continue
+     * we'll want to check that we have enough memory left to continue,
      * so we can fail gracefully
      *
      * @return void
@@ -66,7 +66,7 @@ abstract class Base extends CMSPlugin
         if (static::$memoryLimit === null) {
             $limit = @ini_set('memory_limit', -1);
 
-            if (empty($limit) || $limit === false) {
+            if (empty($limit)) {
                 $mags  = [
                     'K' => 1024,
                     'M' => 1024 * 1024,

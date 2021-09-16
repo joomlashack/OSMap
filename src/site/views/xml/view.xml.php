@@ -134,13 +134,13 @@ class OSMapViewXml extends HtmlView
     protected function addStylesheet()
     {
         if ($this->params->get('add_styling', 1)) {
-            $query = array(
+            $query = [
                 'option' => 'com_osmap',
                 'view'   => 'xsl',
                 'format' => 'xsl',
                 'layout' => $this->type,
                 'id'     => $this->sitemap->id
-            );
+            ];
             if ($this->params->get('show_page_heading', 1)) {
                 $query['title'] = urlencode($this->pageHeading);
             }

@@ -23,25 +23,29 @@
  */
 
 use Alledia\OSMap\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 
 defined('_JEXEC') or die();
 
-class OSMapModelSitemaps extends JModelList
+class OSMapModelSitemaps extends ListModel
 {
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
-        $config['filter_fields'] = array(
+        $config['filter_fields'] = [
             'published',
             'default',
             'sitemap.published',
             'sitemap.name',
             'sitemap.id'
-        );
+        ];
 
         parent::__construct($config);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getListQuery()
     {
         $db = $this->getDbo();
@@ -98,14 +102,14 @@ class OSMapModelSitemaps extends JModelList
             $siteApp = JApplicationCms::getInstance('site');
             $menus   = $siteApp->getMenu()->getItems('component', 'com_osmap');
             foreach ($items as $item) {
-                $item->menuIdList = array();
+                $item->menuIdList = [];
                 foreach ($menus as $menu) {
                     $view  = empty($menu->query['view']) ? null : $menu->query['view'];
                     $mapId = empty($menu->query['id']) ? null : $menu->query['id'];
 
                     if (
                         $mapId == $item->id
-                        && in_array($menu->query['view'], array('html', 'xml'))
+                        && in_array($menu->query['view'], ['html', 'xml'])
                         && empty($item->menuIdList[$view])
                     ) {
                         $item->menuIdList[$view] = $menu->id;
@@ -156,10 +160,10 @@ class OSMapModelSitemaps extends JModelList
 
         if ($db->setQuery($query)->execute()) {
             Factory::getApplication()->enqueueMessage('SITEMAPS: ' . $db->getAffectedRows());
-            $relatedTables = array(
+            $relatedTables = [
                 '#__osmap_sitemap_menus',
                 '#__osmap_items_settings'
-            );
+            ];
 
             foreach ($relatedTables as $table) {
                 $db->setQuery(

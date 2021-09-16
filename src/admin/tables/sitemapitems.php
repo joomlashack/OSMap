@@ -22,8 +22,6 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
-
 defined('_JEXEC') or die();
 
 /**
@@ -58,10 +56,10 @@ class OSMapTableSitemapItems extends JTable
     public $priority = 5;
 
     /**
-     * @param    JDatabase    A database connector object
+     * @param JDatabaseDriver
      */
     public function __construct($db)
     {
-        parent::__construct('#__osmap_items_settings', array('sitemap_id', 'uid', 'settings_hash'), $db);
+        parent::__construct('#__osmap_items_settings', ['sitemap_id', 'uid', 'settings_hash'], $db);
     }
 }

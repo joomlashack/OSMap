@@ -25,52 +25,50 @@
 namespace Alledia\OSMap\View\Admin;
 
 use Alledia\Framework\Joomla\View\Admin\AbstractList;
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 defined('_JEXEC') or die();
 
-
 class Base extends AbstractList
 {
     /**
-     * @var CMSObject
+     * @inheritdoc
      */
     protected $state = null;
 
-    public function __construct($config = array())
+    /**
+     * @inheritDoc
+     */
+    public function __construct($config = [])
     {
         parent::__construct($config);
     }
 
     /**
-     * Admin display
-     *
-     * @param null $tpl
-     *
-     * @return void
+     * @inheritDoc
      * @throws \Exception
      */
     public function display($tpl = null)
     {
         $this->displayHeader();
 
-        $hide    = OSMap\Factory::getApplication()->input->getBool('hidemainmenu', false);
+        $hide    = Factory::getApplication()->input->getBool('hidemainmenu', false);
         $sidebar = count(Sidebar::getEntries()) + count(Sidebar::getFilters());
         if (!$hide && $sidebar > 0) {
-            $start = array(
+            $start = [
                 '<div id="j-sidebar-container" class="span2">',
                 Sidebar::render(),
                 '</div>',
                 '<div id="j-main-container" class="span10">'
-            );
+            ];
 
         } else {
-            $start = array('<div id="j-main-container">');
+            $start = ['<div id="j-main-container">'];
         }
 
         echo join("\n", $start) . "\n";
@@ -81,16 +79,16 @@ class Base extends AbstractList
     /**
      * Default admin screen title
      *
-     * @param string $sub
-     * @param string $icon
+     * @param ?string $sub
+     * @param string  $icon
      *
      * @return void
      */
-    protected function setTitle($sub = null, $icon = 'osmap')
+    protected function setTitle(?string $sub = null, string $icon = 'osmap')
     {
         $img = HTMLHelper::_('image', "com_osmap/icon-48-{$icon}.png", null, null, true, true);
         if ($img) {
-            $doc = OSMap\Factory::getDocument();
+            $doc = Factory::getDocument();
             $doc->addStyleDeclaration(".icon-48-{$icon} { background-image: url({$img}); }");
         }
 
@@ -108,25 +106,26 @@ class Base extends AbstractList
      * @param bool $addDivider
      *
      * @return void
+     * @throws \Exception
      */
     protected function setToolBar($addDivider = true)
     {
-        $user = OSMap\Factory::getUser();
+        $user = Factory::getUser();
         if ($user->authorise('core.admin', 'com_osmap')) {
             if ($addDivider) {
-                \JToolBarHelper::divider();
+                ToolbarHelper::divider();
             }
-            \JToolBarHelper::preferences('com_osmap');
+            ToolbarHelper::preferences('com_osmap');
         }
 
         // Prepare the plugins
-        \JPluginHelper::importPlugin('osmap');
+        PluginHelper::importPlugin('osmap');
 
         $viewName    = strtolower(str_replace('OSMapView', '', $this->getName()));
-        $eventParams = array(
+        $eventParams = [
             $viewName
-        );
-        OSMap\Factory::getApplication()->triggerEvent('osmapOnAfterSetToolBar', $eventParams);
+        ];
+        Factory::getApplication()->triggerEvent('osmapOnAfterSetToolBar', $eventParams);
     }
 
     /**
@@ -139,9 +138,9 @@ class Base extends AbstractList
      *
      * @return string
      */
-    protected function renderFieldset($fieldSet, array $sameLine = array(), $tabbed = false)
+    protected function renderFieldset(string $fieldSet, array $sameLine = [], ?bool $tabbed = false): string
     {
-        $html = array();
+        $html = [];
         if (!empty($this->form) && $this->form instanceof \JForm) {
             $fieldSets = $this->form->getFieldsets();
 
@@ -149,7 +148,7 @@ class Base extends AbstractList
                 $name  = $fieldSets[$fieldSet]->name;
                 $label = $fieldSets[$fieldSet]->label;
 
-                $html = array();
+                $html = [];
 
                 if ($tabbed) {
                     $html[] = HTMLHelper::_('bootstrap.addTab', 'myTab', $name, Text::_($label));
@@ -163,14 +162,14 @@ class Base extends AbstractList
                         continue;
                     }
 
-                    $fieldHtml = array(
+                    $fieldHtml = [
                         '<div class="control-group">',
                         '<div class="control-label">',
                         $field->label,
                         '</div>',
                         '<div class="controls">',
                         $field->input
-                    );
+                    ];
                     $html      = array_merge($html, $fieldHtml);
 
                     if (isset($sameLine[$field->fieldname])) {
@@ -192,9 +191,7 @@ class Base extends AbstractList
     }
 
     /**
-     * Display a header on admin pages
-     *
-     * @return void
+     * @inheritDoc
      */
     protected function displayHeader()
     {

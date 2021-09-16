@@ -36,7 +36,7 @@ defined('_JEXEC') or die();
 <?php endif; ?>
 
 <div class="osmap-items">
-    <?php $this->sitemap->traverse(array($this, 'registerNodeIntoList')); ?>
+    <?php $this->sitemap->traverse([$this, 'registerNodeIntoList']); ?>
     <?php $this->renderSitemap(); ?>
 </div>
 

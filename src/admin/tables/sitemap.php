@@ -69,45 +69,54 @@ class OSMapTableSitemap extends Table
     /**
      * @var array
      */
-    public $menus = array();
+    public $menus = [];
 
     /**
      * @var array
      */
-    public $menus_priority = array();
+    public $menus_priority = [];
 
     /**
      * @var array
      */
-    public $menus_changefreq = array();
+    public $menus_changefreq = [];
 
     /**
      * @var string
      */
     public $menus_ordering = '';
 
-    public function __construct(&$db)
+    /**
+     * @param JDatabaseDriver $db
+     */
+    public function __construct($db)
     {
         parent::__construct('#__osmap_sitemaps', 'id', $db);
     }
 
-    public function bind($array, $ignore = '')
+    /**
+     * @inheritDoc
+     */
+    public function bind($src, $ignore = '')
     {
-        if (isset($array['params']) && is_array($array['params'])) {
+        if (isset($src['params']) && is_array($src['params'])) {
             $registry = new Registry();
-            $registry->loadArray($array['params']);
-            $array['params'] = $registry->toString();
+            $registry->loadArray($src['params']);
+            $src['params'] = $registry->toString();
         }
 
-        if (isset($array['metadata']) && is_array($array['metadata'])) {
+        if (isset($src['metadata']) && is_array($src['metadata'])) {
             $registry = new Registry();
-            $registry->loadArray($array['metadata']);
-            $array['metadata'] = $registry->toString();
+            $registry->loadArray($src['metadata']);
+            $src['metadata'] = $registry->toString();
         }
 
-        return parent::bind($array, $ignore);
+        return parent::bind($src, $ignore);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function check()
     {
         if (empty($this->name)) {
@@ -119,6 +128,9 @@ class OSMapTableSitemap extends Table
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function store($updateNulls = false)
     {
         $db   = Factory::getDbo();
@@ -129,7 +141,7 @@ class OSMapTableSitemap extends Table
         }
 
         // Make sure we have only one default sitemap
-        if ((bool)$this->is_default) {
+        if ($this->is_default) {
             // Set as not default any other sitemap
             $query = $db->getQuery(true)
                 ->update('#__osmap_sitemaps')
@@ -182,15 +194,13 @@ class OSMapTableSitemap extends Table
 
                     $query = $db->getQuery(true)
                         ->insert('#__osmap_sitemap_menus')
-                        ->set(
-                            array(
-                                'sitemap_id = ' . $db->quote($this->id),
-                                'menutype_id = ' . $db->quote($menuId),
-                                'priority = ' . $db->quote($menusPriority[$index]),
-                                'changefreq = ' . $db->quote($menusChangeFreq[$index]),
-                                'ordering = ' . $ordering
-                            )
-                        );
+                        ->set([
+                            'sitemap_id = ' . $db->quote($this->id),
+                            'menutype_id = ' . $db->quote($menuId),
+                            'priority = ' . $db->quote($menusPriority[$index]),
+                            'changefreq = ' . $db->quote($menusChangeFreq[$index]),
+                            'ordering = ' . $ordering
+                        ]);
                     $db->setQuery($query)->execute();
 
                     $ordering++;
@@ -206,13 +216,11 @@ class OSMapTableSitemap extends Table
     /**
      * Remove all the menus for the given sitemap
      *
-     * @param int $sitemapId
-     *
      * @return void
      */
     public function removeMenus()
     {
-        if (!empty($this->id)) {
+        if ($this->id) {
             $db    = Factory::getDbo();
             $query = $db->getQuery(true)
                 ->delete('#__osmap_sitemap_menus')
@@ -222,12 +230,15 @@ class OSMapTableSitemap extends Table
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function load($keys = null, $reset = true)
     {
         if (parent::load($keys, $reset)) {
             // Load the menus information
             $db       = Factory::getDbo();
-            $ordering = array();
+            $ordering = [];
 
             $query = $db->getQuery(true)
                 ->select('*')

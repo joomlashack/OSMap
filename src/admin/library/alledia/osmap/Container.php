@@ -121,8 +121,7 @@ class Container extends \Pimple\Container
             }
         }
 
-        $instance = $class->newInstanceArgs($dependencies);
-        return $instance;
+        return  $class->newInstanceArgs($dependencies);
     }
 
     /**

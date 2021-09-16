@@ -116,7 +116,7 @@ abstract class General
 
     /**
      * Returns a list of plugins from the database. Legacy plugins from XMap
-     * will be returned first, than, OSMap plugins. Always respecting the
+     * will be returned first, then OSMap plugins. Always respecting the
      * ordering.
      *
      * @return object[]
@@ -311,7 +311,7 @@ abstract class General
      * Returns an array or string with the authorised view levels for public or
      * guest users. If the param $asString is true, it returns a string as CSV.
      * If false, an array. If the current view was called by the admin to edit
-     * the sitemap links, we returns all access levels to give access for everything.
+     * the sitemap links, we return all access levels to give access for everything.
      *
      * @param bool $asString
      *
@@ -378,7 +378,7 @@ abstract class General
     }
 
     /**
-     * Check if the needed method is static or no and call it in the proper
+     * Check if the needed method is static or not and call it in the proper
      * way, avoiding Strict warnings in 3rd party plugins. It returns the
      * result of the called method.
      *

@@ -94,9 +94,9 @@ class OSMapViewSitemaps extends Base
         );
 
         if ($this->state->get('filter.published') == -2) {
-            ToolbarHelper::deleteList('', 'sitemaps.delete', 'JTOOLBAR_DELETE');
+            ToolbarHelper::deleteList('', 'sitemaps.delete');
         } else {
-            ToolbarHelper::trash('sitemaps.trash', 'JTOOLBAR_TRASH');
+            ToolbarHelper::trash('sitemaps.trash');
         }
 
         parent::setToolBar($addDivider);
@@ -107,7 +107,7 @@ class OSMapViewSitemaps extends Base
      * @param string $lang
      *
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getLink($item, $type, $lang = null)
     {
