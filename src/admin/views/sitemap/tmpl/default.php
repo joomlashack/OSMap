@@ -22,7 +22,9 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\OSMap\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
@@ -32,7 +34,7 @@ HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
 HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
-$input = JFactory::getApplication()->input;
+$input = Factory::getApplication()->input;
 
 $actionQuery = array(
     'option' => 'com_osmap',
@@ -42,7 +44,7 @@ $actionQuery = array(
 );
 ?>
 <script>
-    ;(function($) {
+    ;jQuery(function($) {
         Joomla.submitbutton = function(task) {
             if (task === 'sitemap.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
                 var ordering = jQuery('#ul_menus li').first().attr('id')
@@ -51,7 +53,7 @@ $actionQuery = array(
                 Joomla.submitform(task, document.getElementById('adminForm'));
             }
         }
-    })(jQuery);
+    });
 </script>
 
 <form action="<?php echo Route::_('index.php?' . http_build_query($actionQuery)); ?>"
@@ -60,7 +62,7 @@ $actionQuery = array(
       id="adminForm"
       class="form-validate sitemap">
 
-    <?php echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
+    <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
     <div class="form-horizontal">
         <div class="row-fluid">

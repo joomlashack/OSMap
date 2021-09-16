@@ -22,13 +22,14 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
-class OSMapTableSitemap extends JTable
+class OSMapTableSitemap extends Table
 {
     /**
      * @var int Primary key
@@ -58,7 +59,7 @@ class OSMapTableSitemap extends JTable
     /**
      * @var int
      */
-    public $published = 1; //JPUBLISHED's value is 1
+    public $published = 1;
 
     /**
      * @var int
@@ -120,8 +121,8 @@ class OSMapTableSitemap extends JTable
 
     public function store($updateNulls = false)
     {
-        $db   = OSMap\Factory::getDbo();
-        $date = JFactory::getDate();
+        $db   = Factory::getDbo();
+        $date = Factory::getDate();
 
         if (!$this->id) {
             $this->created_on = $date->toSql();
@@ -149,7 +150,7 @@ class OSMapTableSitemap extends JTable
             if ($count == 0) {
                 $this->is_default = 1;
 
-                OSMap\Factory::getApplication()->enqueueMessage(
+                Factory::getApplication()->enqueueMessage(
                     Text::_('COM_OSMAP_MSG_SITEMAP_FORCED_AS_DEFAULT'),
                     'info'
                 );
@@ -212,7 +213,7 @@ class OSMapTableSitemap extends JTable
     public function removeMenus()
     {
         if (!empty($this->id)) {
-            $db    = OSMap\Factory::getDbo();
+            $db    = Factory::getDbo();
             $query = $db->getQuery(true)
                 ->delete('#__osmap_sitemap_menus')
                 ->where('sitemap_id = ' . $db->quote($this->id));
@@ -225,7 +226,7 @@ class OSMapTableSitemap extends JTable
     {
         if (parent::load($keys, $reset)) {
             // Load the menus information
-            $db       = OSMap\Factory::getDbo();
+            $db       = Factory::getDbo();
             $ordering = array();
 
             $query = $db->getQuery(true)

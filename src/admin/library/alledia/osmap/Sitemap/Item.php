@@ -24,7 +24,10 @@
 
 namespace Alledia\OSMap\Sitemap;
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Helper\General;
+use Joomla\CMS\Date\Date;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
@@ -75,7 +78,7 @@ class Item extends BaseItem
         $this->rawLink = $this->fullLink;
 
         // Removes the hash segment from the Full link, if exists
-        $container      = OSMap\Factory::getPimpleContainer();
+        $container      = Factory::getPimpleContainer();
         $this->fullLink = $container->router->removeHashFromURL($this->fullLink);
 
         // Make sure to have a unique hash for the settings
@@ -142,7 +145,7 @@ class Item extends BaseItem
      */
     protected function checkLinkIsInternal()
     {
-        $container = OSMap\Factory::getPimpleContainer();
+        $container = Factory::getPimpleContainer();
 
         return $container->router->isInternalURL($this->link)
             || in_array(
@@ -170,11 +173,11 @@ class Item extends BaseItem
             }
         }
 
-        if (OSMap\Helper\General::isEmptyDate($this->$attributeName)) {
+        if (General::isEmptyDate($this->$attributeName)) {
             $this->$attributeName = null;
         }
 
-        if (!OSMap\Helper\General::isEmptyDate($this->$attributeName)) {
+        if (!General::isEmptyDate($this->$attributeName)) {
             if (!is_numeric($this->$attributeName)) {
                 $date                 = new \JDate($this->$attributeName);
                 $this->$attributeName = $date->toUnix();
@@ -185,7 +188,7 @@ class Item extends BaseItem
                 if ($this->$attributeName < 0) {
                     $this->$attributeName = null;
                 } else {
-                    $date                 = new \JDate($this->$attributeName);
+                    $date                 = new Date($this->$attributeName);
                     $this->$attributeName = $date->toISO8601();
                 }
             }
@@ -201,8 +204,8 @@ class Item extends BaseItem
     public function hasCompatibleLanguage()
     {
         // Check the language
-        if (\JLanguageMultilang::isEnabled() && isset($this->language)) {
-            if ($this->language === '*' || $this->language === \JFactory::getLanguage()->getTag()) {
+        if (Multilanguage::isEnabled() && isset($this->language)) {
+            if ($this->language === '*' || $this->language === Factory::getLanguage()->getTag()) {
                 return true;
             }
 
@@ -239,7 +242,7 @@ class Item extends BaseItem
         // If is an alias, use the Itemid stored in the parameters to get the correct url
         if ($this->type === 'alias') {
             // Get the related menu item's link
-            $db = OSMap\Factory::getDbo();
+            $db = Factory::getDbo();
 
             $query = $db->getQuery(true)
                 ->select('link')
@@ -258,7 +261,7 @@ class Item extends BaseItem
      */
     protected function sanitizeFullLink()
     {
-        $container = OSMap\Factory::getPimpleContainer();
+        $container = Factory::getPimpleContainer();
 
         $this->fullLink = $container->router->sanitizeURL($this->fullLink);
     }
@@ -274,19 +277,19 @@ class Item extends BaseItem
      */
     protected function setFullLink()
     {
-        $container = OSMap\Factory::getPimpleContainer();
+        $container = Factory::getPimpleContainer();
 
         if ((bool)$this->home) {
             // Correct the URL for the home page.
             // Check if multi-language is enabled to use the proper route
-            if (\JLanguageMultilang::isEnabled()) {
-                $lang = OSMap\Factory::getLanguage();
+            if (Multilanguage::isEnabled()) {
+                $lang = Factory::getLanguage();
                 $tag  = $lang->getTag();
                 $lang = null;
 
-                $homes = \JLanguageMultilang::getSiteHomePages();
+                $homes = Multilanguage::getSiteHomePages();
 
-                $home = isset($homes[$tag]) ? $homes[$tag] : $home = $homes['*'];
+                $home = $homes[$tag] ?? $homes['*'];
 
                 // Joomla bug? When in subfolder, multilingual home page doubles up the base path
                 $uri            = $container->uri->getInstance();

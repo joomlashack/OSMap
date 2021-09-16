@@ -22,6 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\OSMap\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 defined('_JEXEC') or die();
@@ -102,7 +103,8 @@ class OSMapModelSitemaps extends JModelList
                     $view  = empty($menu->query['view']) ? null : $menu->query['view'];
                     $mapId = empty($menu->query['id']) ? null : $menu->query['id'];
 
-                    if ($mapId == $item->id
+                    if (
+                        $mapId == $item->id
                         && in_array($menu->query['view'], array('html', 'xml'))
                         && empty($item->menuIdList[$view])
                     ) {
@@ -153,7 +155,7 @@ class OSMapModelSitemaps extends JModelList
             ->where(sprintf('id IN (%s)', join(',', $ids)));
 
         if ($db->setQuery($query)->execute()) {
-            JFactory::getApplication()->enqueueMessage('SITEMAPS: ' . $db->getAffectedRows());
+            Factory::getApplication()->enqueueMessage('SITEMAPS: ' . $db->getAffectedRows());
             $relatedTables = array(
                 '#__osmap_sitemap_menus',
                 '#__osmap_items_settings'
@@ -165,7 +167,6 @@ class OSMapModelSitemaps extends JModelList
                         ->delete($table)
                         ->where('sitemap_id NOT IN (SELECT id FROM #__osmap_sitemaps)')
                 )->execute();
-                // JFactory::getApplication()->enqueueMessage($table . ':: ' . $db->getAffectedRows());
             }
 
             return true;

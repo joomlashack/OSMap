@@ -22,6 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\OSMap\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
@@ -32,7 +33,7 @@ HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
 HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
-$input = JFactory::getApplication()->input;
+$input = Factory::getApplication()->input;
 
 $actionQuery = array(
     'option' => 'com_osmap',

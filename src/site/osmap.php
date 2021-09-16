@@ -22,12 +22,15 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\OSMap\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+
 defined('_JEXEC') or die();
 
 require_once JPATH_ADMINISTRATOR . '/components/com_osmap/include.php';
 
-$task = JFactory::getApplication()->input->getCmd('task');
+$task = Factory::getApplication()->input->getCmd('task');
 
-$controller = JControllerLegacy::getInstance('OSMap');
+$controller = BaseController::getInstance('OSMap');
 $controller->execute($task);
 $controller->redirect();

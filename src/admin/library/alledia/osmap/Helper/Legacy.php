@@ -24,11 +24,9 @@
 
 namespace Alledia\OSMap\Helper;
 
-use Alledia\Framework;
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
 
 defined('_JEXEC') or die();
-
 
 abstract class Legacy
 {
@@ -45,7 +43,7 @@ abstract class Legacy
 
         if (!isset($multilangSiteHomePages)) {
             // Check for Home pages languages.
-            $db = \JFactory::getDbo();
+            $db    = Factory::getDbo();
             $query = $db->getQuery(true)
                 ->select('language')
                 ->select('id')
