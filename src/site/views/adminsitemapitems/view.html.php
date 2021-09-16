@@ -24,17 +24,38 @@
 
 use Alledia\OSMap\Component\Helper as ComponentHelper;
 use Alledia\OSMap\Factory;
+use Alledia\OSMap\Sitemap\SitemapInterface;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\Input\Input;
+use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
-class OSMapViewAdminSitemapItems extends JViewLegacy
+class OSMapViewAdminSitemapItems extends HtmlView
 {
     /**
-     * @param string $tpl
-     *
-     * @return void
+     * @var Registry
+     */
+    protected $params = null;
+
+    /**
+     * @var SitemapInterface
+     */
+    protected $sitemap = null;
+
+    /**
+     * @var Registry
+     */
+    protected $osmapParams = null;
+
+    /**
+     * @var string
+     */
+    protected $message = null;
+
+    /**
+     * @inheritDoc
      * @throws Exception
      */
     public function display($tpl = null)
@@ -49,7 +70,7 @@ class OSMapViewAdminSitemapItems extends JViewLegacy
             $this->params = Factory::getApplication()->getParams();
 
             // Load the sitemap instance
-            $this->sitemap     = Factory::getSitemap($id, 'standard');
+            $this->sitemap     = Factory::getSitemap($id);
             $this->osmapParams = ComponentHelper::getParams();
 
         } catch (Exception $e) {

@@ -31,11 +31,17 @@ defined('_JEXEC') or die();
 
 abstract class Helper extends ComponentHelper
 {
+    /**
+     * @inheritDoc
+     */
     public static function getParams($option = 'com_osmap', $strict = false)
     {
         return parent::getParams($option, $strict);
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function getComponent($option = 'com_osmap', $strict = false)
     {
         return parent::getComponent($option, $strict);

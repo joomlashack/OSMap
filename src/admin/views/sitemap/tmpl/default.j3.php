@@ -33,21 +33,21 @@ HTMLHelper::_('behavior.formvalidation');
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
+HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
 $input = Factory::getApplication()->input;
 
-$actionQuery = array(
+$actionQuery = [
     'option' => 'com_osmap',
     'view'   => 'sitemap',
     'layout' => 'edit',
     'id'     => (int)$this->item->id
-);
+];
 ?>
 <script>
     ;(function($) {
         Joomla.submitbutton = function(task) {
             if (task === 'sitemap.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
-                var ordering = $('#ul_menus').sortable('toArray').toString();
+                let ordering = $('#ul_menus').sortable('toArray').toString();
                 $('#menus_ordering').val(ordering);
 
                 Joomla.submitform(task, document.getElementById('adminForm'));
@@ -67,7 +67,7 @@ $actionQuery = array(
     <div class="form-horizontal">
         <div class="row-fluid">
             <div class="span9">
-                <?php echo $this->form->getField('menus')->renderField(array('hiddenLabel' => true)); ?>
+                <?php echo $this->form->getField('menus')->renderField(['hiddenLabel' => true]); ?>
             </div>
 
             <div class="span3">
