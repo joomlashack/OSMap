@@ -111,7 +111,7 @@ abstract class Base extends CMSPlugin
      *
      * @return string
      */
-    protected static function getViewFromUrl($url)
+    protected static function getViewFromUrl(string $url): string
     {
         $linkUrl = parse_url($url);
         if (isset($linkUrl['query'])) {
@@ -122,6 +122,6 @@ abstract class Base extends CMSPlugin
             }
         }
 
-        return null;
+        return '';
     }
 }

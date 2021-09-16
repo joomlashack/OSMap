@@ -152,7 +152,7 @@ class Collector
      * @return void
      * @throws \Exception
      */
-    public function __construct($sitemap)
+    public function __construct(SitemapInterface $sitemap)
     {
         $this->sitemap = $sitemap;
         $this->params  = ComponentHelper::getParams('com_osmap');
@@ -185,18 +185,13 @@ class Collector
         $menus = $this->getSitemapMenus();
 
         $this->counter = 0;
-        if (!empty($menus)) {
-            // Get the legacy settings to upgrade them
+        if ($menus) {
             $this->getLegacyItemsSettings();
-
-            // Get the custom settings from db for the items
             $this->getItemsSettings();
 
             foreach ($menus as $menu) {
-                // Store a reference for the current menu
                 $this->currentMenu = &$menu;
 
-                // Get the menu items
                 $items = $this->getMenuItems($menu);
                 foreach ($items as $item) {
                     if ($this->itemIsBlackListed($item)) {

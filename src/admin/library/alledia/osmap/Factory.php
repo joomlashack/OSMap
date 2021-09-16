@@ -26,6 +26,7 @@ namespace Alledia\OSMap;
 
 use Alledia\Framework;
 use Alledia\OSMap\Sitemap\SitemapInterface;
+use Joomla\CMS\Table\Table;
 
 defined('_JEXEC') or die();
 
@@ -97,10 +98,10 @@ class Factory extends Framework\Factory
      *
      * @param string $tableName
      *
-     * @return mixed
+     * @return Table
      */
     public static function getTable($tableName, $prefix = 'OSMapTable')
     {
-        return \JTable::getInstance($tableName, $prefix);
+        return Table::getInstance($tableName, $prefix);
     }
 }

@@ -122,6 +122,7 @@ class Standard implements SitemapInterface
      * Method to initialize the items collector
      *
      * @return void
+     * @throws \Exception
      */
     protected function initCollector()
     {

@@ -315,7 +315,7 @@ abstract class General
      *
      * @param bool $asString
      *
-     * @return mixed
+     * @return string|string[]
      * @throws \Exception
      */
     public static function getAuthorisedViewLevels(bool $asString = true)
