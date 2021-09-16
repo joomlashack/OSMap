@@ -111,7 +111,7 @@ class Html extends Base
      */
     public function display($tpl = null)
     {
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         $id = $container->input->getInt('id');
 
@@ -141,11 +141,11 @@ class Html extends Base
         }
 
         if ($keywords = $this->params->get('menu-meta_keywords')) {
-            $this->document->setMetadata('keywords', $keywords);
+            $this->document->setMetaData('keywords', $keywords);
         }
 
         if ($robots = $this->params->get('robots')) {
-            $this->document->setMetadata('robots', $robots);
+            $this->document->setMetaData('robots', $robots);
         }
 
         parent::display($tpl);
@@ -165,11 +165,11 @@ class Html extends Base
 
         $display = !$node->ignore
             && $node->published
-            && (!$node->duplicate || ($node->duplicate && !$ignoreDuplicatedUIDs))
+            && (!$node->duplicate || !$ignoreDuplicatedUIDs)
             && $node->visibleForHTML;
 
-        // Check if is external URL and if should be ignored
         if ($display && !$node->isInternal) {
+            // Show external links if so configured
             $display = $this->showExternalLinks > 0;
         }
 
@@ -221,7 +221,7 @@ class Html extends Base
         // Add this item to its parent children list
         $this->lastItemsPerLevel[$queueItem->level - 1]->children[] = $queueItem;
 
-        // Add this item as the last one on the its level
+        // Add this item as the last one on the level
         $this->lastItemsPerLevel[$queueItem->level] = $queueItem;
 
         unset($node);
@@ -287,7 +287,7 @@ class Html extends Base
 
         // Some items are just separator, without a link. Do not print as link then
         if (trim($item->rawLink) === '') {
-            $type = isset($item->type) ? $item->type : 'separator';
+            $type = $item->type ?? 'separator';
             echo sprintf('<span class="osmap-item-%s">%s</span>', $type, htmlspecialchars($item->name));
 
         } else {

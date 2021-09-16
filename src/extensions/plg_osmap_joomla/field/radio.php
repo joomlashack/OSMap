@@ -33,7 +33,7 @@ class ShackFormFieldRadio extends JFormFieldRadio
 {
     use TraitShack;
 
-    public function setup(\SimpleXMLElement $element, $value, $group = null)
+    public function setup(SimpleXMLElement $element, $value, $group = null)
     {
         return $this->isPro() && parent::setup($element, $value, $group);
     }

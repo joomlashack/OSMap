@@ -3,7 +3,7 @@
     "description"      : "OSMap",
     "minimum-stability": "stable",
     "license"          : "GPL-2.0-or-later",
-    "type"             : "joomla.component",
+    "type"             : "joomla-component",
     "extra"            : {
         "element"        : "com_osmap",
         "element-short"  : "osmap",
@@ -28,7 +28,7 @@
         }
     ],
     "require"          : {
-        "php"          : ">= 5.6",
+        "php"          : ">=7.2.5",
         "ext-json"     : "*",
         "ext-simplexml": "*"
     }

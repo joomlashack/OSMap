@@ -9,10 +9,9 @@
     <fields name="request">
         <fieldset name="request" addfieldpath="/administrator/components/com_osmap/form/fields">
             <field name="id"
-                   type="sitemaps"
+                   type="osmap.sitemaps"
                    required="true"
-                   label="COM_OSMAP_SELECT_AN_SITEMAP"
-                   description="COM_OSMAP_SELECT_A_SITEMAP"/>
+                   label="COM_OSMAP_SITEMAP"/>
         </fieldset>
     </fields>
 

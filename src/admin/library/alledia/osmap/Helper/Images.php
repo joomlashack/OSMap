@@ -43,7 +43,7 @@ class Images
      */
     public function getImagesFromText($text, $max = 9999)
     {
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
         $images    = [];
 
         // Look <img> tags
@@ -98,7 +98,7 @@ class Images
     }
 
     /**
-     * Return an array of images found in the content image params.
+     * Return an array of images from the content image params.
      *
      * @param object $item
      *
@@ -107,7 +107,7 @@ class Images
      */
     public function getImagesFromParams($item)
     {
-        $container   = Factory::getContainer();
+        $container   = Factory::getPimpleContainer();
         $imagesParam = json_decode($item->images);
         $images      = [];
 

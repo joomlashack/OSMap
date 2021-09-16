@@ -22,15 +22,16 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Table\Table;
 
 defined('_JEXEC') or die();
 
 
-class OSMapModelSitemapItems extends JModelLegacy
+class OSMapModelSitemapItems extends BaseDatabaseModel
 {
-    public function getTable($name = 'SitemapItems', $prefix = 'OSMapTable', $options = array())
+    public function getTable($name = 'SitemapItems', $prefix = 'OSMapTable', $options = [])
     {
-        return JTable::getInstance($name, $prefix, $options);
+        return Table::getInstance($name, $prefix, $options);
     }
 }

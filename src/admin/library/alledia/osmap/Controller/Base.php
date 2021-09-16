@@ -24,26 +24,27 @@
 
 namespace Alledia\OSMap\Controller;
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Session\Session;
 
 defined('_JEXEC') or die();
 
-class Base extends \JControllerLegacy
+class Base extends BaseController
 {
     public function checkToken($method = 'post', $redirect = true)
     {
-        $valid = \JSession::checkToken();
+        $valid = Session::checkToken();
         if (!$valid && $redirect) {
-            if ($redirect) {
-                $home      = OSMap\Factory::getApplication()->getMenu()->getDefault();
-                $container = OSMap\Factory::getContainer();
+            $home      = Factory::getApplication()->getMenu()->getDefault();
+            $container = Factory::getPimpleContainer();
 
-                OSMap\Factory::getApplication()->redirect(
-                    $container->router->routeURL('index.php?Itemid=' . $home->id),
-                    \JText::_('JINVALID_TOKEN'),
-                    'error'
-                );
-            }
+            Factory::getApplication()->redirect(
+                $container->router->routeURL('index.php?Itemid=' . $home->id),
+                Text::_('JINVALID_TOKEN'),
+                'error'
+            );
         }
 
         return $valid;

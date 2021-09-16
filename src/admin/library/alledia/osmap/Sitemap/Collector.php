@@ -152,7 +152,7 @@ class Collector
      * @return void
      * @throws \Exception
      */
-    public function __construct($sitemap)
+    public function __construct(SitemapInterface $sitemap)
     {
         $this->sitemap = $sitemap;
         $this->params  = ComponentHelper::getParams('com_osmap');
@@ -163,7 +163,7 @@ class Collector
          * They always calculate the visibility for both views and the view is
          * the one who decides to whow or not. If not equals HTML, is always XML.
          */
-        $inputView = Factory::getContainer()->input->get('view', 'xml');
+        $inputView = Factory::getPimpleContainer()->input->get('view', 'xml');
         if ($inputView === 'html') {
             $this->view = 'html';
         }
@@ -185,18 +185,13 @@ class Collector
         $menus = $this->getSitemapMenus();
 
         $this->counter = 0;
-        if (!empty($menus)) {
-            // Get the legacy settings to upgrade them
+        if ($menus) {
             $this->getLegacyItemsSettings();
-
-            // Get the custom settings from db for the items
             $this->getItemsSettings();
 
             foreach ($menus as $menu) {
-                // Store a reference for the current menu
                 $this->currentMenu = &$menu;
 
-                // Get the menu items
                 $items = $this->getMenuItems($menu);
                 foreach ($items as $item) {
                     if ($this->itemIsBlackListed($item)) {
@@ -299,15 +294,16 @@ class Collector
         $this->checkDuplicatedUIDToIgnore($item);
 
         // Verify if the item can be displayed to count as unique for the XML sitemap
-        if (!$item->ignore
+        if (
+            !$item->ignore
             && $item->published
             && $item->visibleForRobots
-            && (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1)))
+            && (!$item->duplicate || !$this->params->get('ignore_duplicated_uids', 1))
         ) {
             // Check if the URL is not duplicated (specially for the XML sitemap)
             $this->checkDuplicatedURLToIgnore($item);
 
-            if (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1))) {
+            if (!$item->duplicate || !$this->params->get('ignore_duplicated_uids', 1)) {
                 ++$this->counter;
             }
         }
@@ -345,13 +341,7 @@ class Collector
             ->where('osm.sitemap_id = ' . $db->quote($this->sitemap->id))
             ->order('osm.ordering');
 
-        $list = $db->setQuery($query)->loadObjectList('menutype');
-
-        if ($db->getErrorNum()) {
-            throw new \Exception($db->getErrorMsg(), 021);
-        }
-
-        return $list;
+        return $db->setQuery($query)->loadObjectList('menutype');
     }
 
     /**
@@ -364,7 +354,7 @@ class Collector
      */
     protected function getMenuItems($menu)
     {
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
         $db        = $container->db;
         $app       = $container->app;
         $lang      = $container->language;
@@ -406,16 +396,12 @@ class Collector
 
         $items = $db->setQuery($query)->loadAssocList();
 
-        if ($db->getErrorNum()) {
-            throw new \Exception($db->getErrorMsg(), 021);
-        }
-
         if ($this->params->get('ignore_hidden_menus', false)) {
             $items = array_filter(
                 $items,
                 function ($menu) {
                     $params = json_decode($menu['params']);
-                    if (empty($params->menu_show)) {
+                    if (isset($params->menu_show) && $params->menu_show == 0) {
                         return false;
                     }
 
@@ -471,9 +457,9 @@ class Collector
     protected function checkDuplicatedURLToIgnore($item)
     {
         if (!empty($item->fullLink)) {
-            $container = Factory::getContainer();
+            $container = Factory::getPimpleContainer();
 
-            // We need to make sure to have an URL free of hash chars
+            // We need to make sure to have a URL free of hash chars
             $url  = $container->router->removeHashFromURL($item->fullLink);
             $hash = $container->router->createUrlHash($url);
 
@@ -610,8 +596,8 @@ class Collector
 
     /**
      * This method is used for backward compatibility. The plugins will call
-     * it. In the legacy XMap its behavior depends on the sitemap view type,
-     * only changing the level in the HTML view. Now, it always consider the
+     * it. In the legacy XMap, its behavior depends on the sitemap view type,
+     * only changing the level in the HTML view. OSMap will always consider the
      * level of the item, even for XML view. XML will just ignore that.
      *
      * @param int $step
@@ -788,19 +774,19 @@ class Collector
             $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_PARENT_UNPUBLISHED');
         }
 
-        // If the item is unpublished, and the ignore level is false, mark the level to ignore sub-items
+        // If the item is unpublished and the 'ignore' level is false, mark the level to ignore sub-items
         $displayable = $item->published
             && !$item->ignore
-            && (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1)));
+            && (!$item->duplicate || !$this->params->get('ignore_duplicated_uids', 1));
         if (!$displayable && $this->unpublishLevel === false) {
             $this->unpublishLevel = $item->level;
         }
 
-        // If the item won't be ignored, make sure to reset the ignore level
+        // If the item won't be ignored, make sure to reset the 'ignore' level
         if (
             $item->published
             && !$item->ignore
-            && (!$item->duplicate || ($item->duplicate && !$this->params->get('ignore_duplicated_uids', 1)))
+            && (!$item->duplicate || !$this->params->get('ignore_duplicated_uids', 1))
         ) {
             $this->unpublishLevel = false;
         }

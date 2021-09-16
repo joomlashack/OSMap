@@ -22,32 +22,57 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\OSMap\Component\Helper as ComponentHelper;
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Sitemap\SitemapInterface;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\Input\Input;
+use Joomla\Registry\Registry;
+
 defined('_JEXEC') or die();
 
-use Alledia\OSMap;
-
-class OSMapViewAdminSitemapItems extends JViewLegacy
+class OSMapViewAdminSitemapItems extends HtmlView
 {
     /**
-     * @param string $tpl
-     *
-     * @return void
+     * @var Registry
+     */
+    protected $params = null;
+
+    /**
+     * @var SitemapInterface
+     */
+    protected $sitemap = null;
+
+    /**
+     * @var Registry
+     */
+    protected $osmapParams = null;
+
+    /**
+     * @var string
+     */
+    protected $message = null;
+
+    /**
+     * @inheritDoc
      * @throws Exception
      */
     public function display($tpl = null)
     {
         $this->checkAccess();
 
-        $container = OSMap\Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         try {
             $id = $container->input->getInt('id');
 
-            $this->params = OSMap\Factory::getApplication()->getParams();
+            $this->params = Factory::getApplication()->getParams();
 
             // Load the sitemap instance
-            $this->sitemap     = OSMap\Factory::getSitemap($id, 'standard');
-            $this->osmapParams = JComponentHelper::getParams('com_osmap');
+            $this->sitemap     = Factory::getSitemap($id);
+            $this->osmapParams = ComponentHelper::getParams();
+
         } catch (Exception $e) {
             $this->message = $e->getMessage();
         }
@@ -63,7 +88,7 @@ class OSMapViewAdminSitemapItems extends JViewLegacy
      */
     protected function checkAccess()
     {
-        $server  = new JInput(array_change_key_case($_SERVER, CASE_LOWER));
+        $server  = new Input(array_change_key_case($_SERVER, CASE_LOWER));
         $referer = parse_url($server->getString('http_referer'));
 
         if (!empty($referer['query'])) {
@@ -78,6 +103,6 @@ class OSMapViewAdminSitemapItems extends JViewLegacy
             }
         }
 
-        throw new Exception(JText::_('JERROR_PAGE_NOT_FOUND'), 404);
+        throw new Exception(Text::_('JERROR_PAGE_NOT_FOUND'), 404);
     }
 }

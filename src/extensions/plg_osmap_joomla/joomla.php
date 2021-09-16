@@ -67,7 +67,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     public static function getInstance()
     {
         if (empty(static::$instance)) {
-            $dispatcher       = JEventDispatcher::getInstance();
+            $dispatcher       = Factory::getDispatcher();
             static::$instance = new self($dispatcher);
         }
 
@@ -99,7 +99,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         static::checkMemory();
 
         $db        = Factory::getDbo();
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         $linkQuery = parse_url($node->link);
 
@@ -486,7 +486,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         static::checkMemory();
 
         $db        = Factory::getDbo();
-        $container = Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         if ($params->get('include_archived', 2)) {
             $where = ['(a.state = 1 or a.state = 2)'];
@@ -694,7 +694,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
             $subnode->secure     = $parent->secure;
             $subnode->created    = $item->created;
             $subnode->modified   = $item->modified;
-            $subnode->publishUp  = isset($item->publish_up) ? $item->publish_up : $item->created;
+            $subnode->publishUp  = $item->publish_up ?? $item->created;
 
             $collector->printNode($subnode);
 

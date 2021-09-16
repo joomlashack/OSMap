@@ -22,39 +22,21 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Helper\General;
+use Alledia\OSMap\View\Admin\Base;
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Language\LanguageHelper;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
-use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
 
 
-class OSMapViewSitemaps extends OSMap\View\Admin\Base
+class OSMapViewSitemaps extends Base
 {
     /**
-     * @var object[]
-     */
-    protected $items = null;
-
-    /**
-     * @var Registry
-     */
-    protected $state = null;
-
-    /**
-     * @var JForm
-     */
-    public $filterForm = null;
-
-    /**
-     * @var array
-     */
-    public $activeFilters = null;
-
-    /**
-     * @var array
+     * @var string[]
      */
     protected $languages = null;
 
@@ -64,10 +46,7 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
     protected $item = null;
 
     /**
-     * @param null $tpl
-     *
-     * @return void
-     * @throws Exception
+     * @inheritDoc
      */
     public function display($tpl = null)
     {
@@ -79,29 +58,28 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
         $this->filterForm    = $model->getFilterForm();
         $this->activeFilters = $model->getActiveFilters();
 
-        if ($errors = $model->getErrors()) {
-            throw new Exception(implode("\n", $errors));
-        }
-
         // We don't need toolbar or submenus in the modal window
-        if ($this->getLayout() !== 'modal') {
+        if (stripos($this->getLayout(), 'modal') !== 0) {
             $this->setToolbar();
         }
 
         // Get the active languages for multi-language sites
         $this->languages = null;
-        if (JLanguageMultilang::isEnabled()) {
-            $this->languages = JLanguageHelper::getLanguages();
+        if (Multilanguage::isEnabled()) {
+            $this->languages = LanguageHelper::getLanguages();
         }
 
         parent::display($tpl);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function setToolbar($addDivider = true)
     {
         $this->setTitle('COM_OSMAP_SUBMENU_SITEMAPS');
 
-        OSMap\Helper\General::addSubmenu('sitemaps');
+        General::addSubmenu('sitemaps');
 
         ToolbarHelper::addNew('sitemap.add');
         ToolbarHelper::custom('sitemap.edit', 'edit.png', 'edit_f2.png', 'JTOOLBAR_EDIT', true);
@@ -116,9 +94,9 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
         );
 
         if ($this->state->get('filter.published') == -2) {
-            ToolbarHelper::deleteList('', 'sitemaps.delete', 'JTOOLBAR_DELETE');
+            ToolbarHelper::deleteList('', 'sitemaps.delete');
         } else {
-            ToolbarHelper::trash('sitemaps.trash', 'JTOOLBAR_TRASH');
+            ToolbarHelper::trash('sitemaps.trash');
         }
 
         parent::setToolBar($addDivider);
@@ -129,25 +107,24 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
      * @param string $lang
      *
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getLink($item, $type, $lang = null)
     {
-        $view   = in_array($type, array('news', 'images')) ? 'xml' : $type;
-        $menuId = empty($item->menuIdList[$view]) ? null : $item->menuIdList[$view];
+        $view   = in_array($type, ['news', 'images']) ? 'xml' : $type;
+        $menuId = $item->menuIdList[$view] ?? null;
 
-        $query = array();
-
+        $query = [];
         if ($menuId) {
             $query['Itemid'] = $menuId;
         }
 
         if (empty($query['Itemid'])) {
-            $query = array(
+            $query = [
                 'option' => 'com_osmap',
                 'view'   => $view,
                 'id'     => $item->id
-            );
+            ];
         }
 
         if ($type != $view) {
@@ -166,7 +143,7 @@ class OSMapViewSitemaps extends OSMap\View\Admin\Base
             $query['lang'] = $lang;
         }
 
-        $router = OSMap\Factory::getContainer()->router;
+        $router = Factory::getPimpleContainer()->router;
 
         return $router->routeURL('index.php?' . http_build_query($query));
     }

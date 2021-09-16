@@ -22,11 +22,12 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Alledia\OSMap\Installer;
+namespace Alledia\Installer\Osmap\Free;
 
-use Alledia\Installer\AbstractScript;
+use Alledia\Installer\Osmap\XmapConverter;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -34,24 +35,7 @@ use Joomla\CMS\Table\Table;
 
 defined('_JEXEC') or die();
 
-if (!defined('OSMAP_TEST')) {
-    if (file_exists(__DIR__ . '/../../../Installer/include.php')) {
-        $basePath = __DIR__ . '/../../..';
-    } else {
-        $basePath = __DIR__ . '/../..';
-    }
-
-    require_once $basePath . '/Installer/include.php';
-    require_once __DIR__ . '/XmapConverter.php';
-
-    require_once JPATH_ADMINISTRATOR . '/modules/mod_menu/helper.php';
-}
-
-
-/**
- * OSMap Installer Script
- */
-class Script extends AbstractScript
+class AbstractScript extends \Alledia\Installer\AbstractScript
 {
     /**
      * @var bool
@@ -63,14 +47,17 @@ class Script extends AbstractScript
      */
     public function postFlight($type, $parent)
     {
+        if ($type == 'uninstall') {
+            return;
+        }
+
         // Check if XMap is installed, to start a migration
         $xmapConverter = new XmapConverter();
 
-        // This attribute will be used by the cusotm template to display the option to migrate legacy sitemaps
-        $this->isXmapDataFound = $this->tableExists('#__xmap_sitemap') ?
-            $xmapConverter->checkXmapDataExists() : false;
+        // This attribute will be used by the custom template to display the option to migrate legacy sitemaps
+        $this->isXmapDataFound = $this->tableExists('#__xmap_sitemap') && $xmapConverter->checkXmapDataExists();
 
-        // If Xmap plugins are still available and we don't have the OSMap plugins yet,
+        // If Xmap plugins are still available, and we don't have the OSMap plugins yet,
         // save Xmap plugins params to re-apply after install OSMap plugins
         $xmapConverter->saveXmapPluginParamsIfExists();
 
@@ -107,8 +94,6 @@ class Script extends AbstractScript
 
         $xmapConverter->moveXmapPluginsParamsToOSMapPlugins();
         $this->checkDbScheme();
-
-        $this->showMessages();
     }
 
     /**
@@ -120,7 +105,7 @@ class Script extends AbstractScript
     {
         $db = Factory::getDbo();
 
-        // Check if we have any sitemap, otherwise lets create a default one
+        // Check if we have any sitemaps, otherwise let's create a default one
         $query      = $db->getQuery(true)
             ->select('COUNT(*)')
             ->from('#__osmap_sitemaps');
@@ -128,7 +113,27 @@ class Script extends AbstractScript
 
         if ($noSitemaps) {
             // Get all menus
-            $menus = \ModMenuHelper::getMenus();
+
+            // Search for home menu and language if exists
+            $subQuery = $db->getQuery(true)
+                ->select('b.menutype, b.home, b.language, l.image, l.sef, l.title_native')
+                ->from('#__menu AS b')
+                ->leftJoin('#__languages AS l ON l.lang_code = b.language')
+                ->where('b.home != 0')
+                ->where('(b.client_id = 0 OR b.client_id IS NULL)');
+
+            // Get all menu types with optional home menu and language
+            $query = $db->getQuery(true)
+                ->select('a.id, a.asset_id, a.menutype, a.title, a.description, a.client_id')
+                ->select('c.home, c.language, c.image, c.sef, c.title_native')
+                ->from('#__menu_types AS a')
+                ->leftJoin('(' . $subQuery . ') c ON c.menutype = a.menutype')
+                ->order('a.id');
+
+            $db->setQuery($query);
+
+            $menus = $db->loadObjectList();
+
             if (!empty($menus)) {
                 $data = [
                     'name'       => 'Default Sitemap',
@@ -159,7 +164,7 @@ class Script extends AbstractScript
     }
 
     /**
-     * In case we are updating from a legacy version, make sure to cleanup
+     * In case we are updating from a legacy version, cleanup
      * the new tables to get a clean start for the data migration
      *
      * @return void
@@ -435,7 +440,7 @@ class Script extends AbstractScript
      *
      * @return int
      */
-    protected function getMenuTypeId($menuType)
+    protected function getMenuTypeId(string $menuType): int
     {
         $db = Factory::getDbo();
 
@@ -443,6 +448,7 @@ class Script extends AbstractScript
             ->select('id')
             ->from('#__menu_types')
             ->where('menutype = ' . $db->quote($menuType));
+
         return (int)$db->setQuery($query)->loadResult();
     }
 
@@ -454,7 +460,7 @@ class Script extends AbstractScript
      *
      * @return string
      */
-    protected function convertItemUID($uid)
+    protected function convertItemUID(string $uid): string
     {
         // Joomla articles in categories
         if (preg_match('#com_contentc[0-9]+a([0-9]+)#', $uid, $matches)) {
@@ -489,12 +495,10 @@ class Script extends AbstractScript
      */
     protected function checkDbScheme()
     {
-        // Table: #__osmap_items_settings
         $existentColumns = $this->getColumnsFromTable('#__osmap_items_settings');
 
         $db = Factory::getDbo();
 
-        // URH Hash
         if (in_array('url_hash', $existentColumns)) {
             $db->setQuery('ALTER TABLE `#__osmap_items_settings`
                 CHANGE `url_hash` `settings_hash` CHAR(32)
@@ -502,7 +506,6 @@ class Script extends AbstractScript
             $db->execute();
         }
 
-        // Format
         if (!in_array('format', $existentColumns)) {
             $db->setQuery('ALTER TABLE `#__osmap_items_settings`
                 ADD `format` TINYINT(1) UNSIGNED DEFAULT NULL
@@ -551,7 +554,9 @@ class Script extends AbstractScript
         );
 
         foreach ($files as $file) {
-            @unlink($file);
+            if (is_file($file)) {
+                File::delete($file);
+            }
         }
     }
 }

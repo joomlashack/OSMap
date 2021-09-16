@@ -49,7 +49,7 @@ abstract class Form extends FormController
             $controllerName,
             $task
         ];
-        $results = \JEventDispatcher::getInstance()->trigger('osmapOnBeforeExecuteTask', $eventParams);
+        $results = Factory::getApplication()->triggerEvent('osmapOnBeforeExecuteTask', $eventParams);
 
         // Check if any of the plugins returned the exit signal
         if (is_array($results) && in_array('exit', $results, true)) {
@@ -72,7 +72,7 @@ abstract class Form extends FormController
 
         // Runs the event after the task was executed
         $eventParams[] = &$result;
-        \JEventDispatcher::getInstance()->trigger('osmapOnAfterExecuteTask', $eventParams);
+        Factory::getApplication()->triggerEvent('osmapOnAfterExecuteTask', $eventParams);
 
         return $result;
     }

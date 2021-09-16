@@ -24,7 +24,11 @@
 
 namespace Alledia\OSMap\Sitemap;
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Helper\General;
+use Joomla\CMS\Date\Date;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
@@ -59,7 +63,7 @@ class BaseItem extends \JObject
     public $fullLink = null;
 
     /**
-     * Routed fulll link, sanitized but can contains a hash segment
+     * Routed full link, sanitized but can contain a hash segment
      *
      * @var string
      */
@@ -160,7 +164,7 @@ class BaseItem extends \JObject
     /**
      * @var array
      */
-    public $images = array();
+    public $images = [];
 
     /**
      * @var string
@@ -280,10 +284,10 @@ class BaseItem extends \JObject
     public function addAdminNote($note)
     {
         if (!is_array($this->adminNotes)) {
-            $this->adminNotes = array();
+            $this->adminNotes = [];
         }
 
-        $this->adminNotes[] = \JText::_($note);
+        $this->adminNotes[] = Text::_($note);
     }
 
     /**
@@ -304,18 +308,19 @@ class BaseItem extends \JObject
      * Check if the current link is an internal link.
      *
      * @return bool
+     * @throws \Exception
      */
     protected function checkLinkIsInternal()
     {
-        $container = OSMap\Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         return $container->router->isInternalURL($this->link)
             || in_array(
                 $this->type,
-                array(
+                [
                     'separator',
                     'heading'
-                )
+                ]
             );
     }
 
@@ -323,16 +328,17 @@ class BaseItem extends \JObject
      * Set the correct modification date.
      *
      * @return void
+     * @throws \Exception
      */
     public function setModificationDate()
     {
-        if (OSMap\Helper\General::isEmptyDate($this->modified)) {
+        if (General::isEmptyDate($this->modified)) {
             $this->modified = null;
         }
 
-        if (!OSMap\Helper\General::isEmptyDate($this->modified)) {
+        if (!General::isEmptyDate($this->modified)) {
             if (!is_numeric($this->modified)) {
-                $date =  new \JDate($this->modified);
+                $date           = new Date($this->modified);
                 $this->modified = $date->toUnix();
             }
 
@@ -341,7 +347,7 @@ class BaseItem extends \JObject
                 if ($this->modified < 0) {
                     $this->modified = null;
                 } else {
-                    $date = new \JDate($this->modified);
+                    $date           = new \JDate($this->modified);
                     $this->modified = $date->toISO8601();
                 }
             }
@@ -357,8 +363,8 @@ class BaseItem extends \JObject
     public function hasCompatibleLanguage()
     {
         // Check the language
-        if (\JLanguageMultilang::isEnabled() && isset($this->language)) {
-            if ($this->language === '*' || $this->language === \JFactory::getLanguage()->getTag()) {
+        if (Multilanguage::isEnabled() && isset($this->language)) {
+            if ($this->language === '*' || $this->language === Factory::getLanguage()->getTag()) {
                 return true;
             }
 

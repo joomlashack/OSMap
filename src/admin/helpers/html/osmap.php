@@ -22,6 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
@@ -42,10 +43,10 @@ abstract class JHtmlOSMap
     {
         $options = [];
         foreach (static::priorityList() as $priority) {
-            $options[] = JHTML::_('select.option', $priority, $priority);
+            $options[] = HTMLHelper::_('select.option', $priority, $priority);
         }
 
-        return JHtml::_('select.genericlist', $options, $name, null, 'value', 'text', $selected, $name . $j);
+        return HTMLHelper::_('select.genericlist', $options, $name, null, 'value', 'text', $selected, $name . $j);
     }
 
     /**
@@ -59,10 +60,10 @@ abstract class JHtmlOSMap
     {
         $options = [];
         foreach (static::frequencyList() as $value => $text) {
-            $options[] = JHTML::_('select.option', $value, $text);
+            $options[] = HTMLHelper::_('select.option', $value, $text);
         }
 
-        return JHtml::_('select.genericlist', $options, $name, null, 'value', 'text', $selected, $name . $j);
+        return HTMLHelper::_('select.genericlist', $options, $name, null, 'value', 'text', $selected, $name . $j);
     }
 
     /**

@@ -24,6 +24,8 @@
 
 namespace Alledia\OSMap\Controller;
 
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die();
 
 class Json extends \JControllerLegacy
@@ -38,7 +40,7 @@ class Json extends \JControllerLegacy
     public function checkToken($method = 'post', $redirect = true)
     {
         if (!\JSession::checkToken()) {
-            throw new \Exception(\JText::_('JINVALID_TOKEN'), 403);
+            throw new \Exception(Text::_('JINVALID_TOKEN'), 403);
         }
 
         return true;

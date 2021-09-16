@@ -24,80 +24,80 @@
 
 namespace Alledia\OSMap\View\Admin;
 
-use Alledia\OSMap;
-use Alledia\Framework\Joomla\Extension;
-use Joomla\CMS\Object\CMSObject;
+use Alledia\Framework\Joomla\View\Admin\AbstractList;
+use Alledia\OSMap\Factory;
+use Joomla\CMS\HTML\Helpers\Sidebar;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 defined('_JEXEC') or die();
 
-
-class Base extends OSMap\View\Base
+class Base extends AbstractList
 {
     /**
-     * @var CMSObject
+     * @inheritdoc
      */
     protected $state = null;
 
-    public function __construct($config = array())
+    /**
+     * @inheritDoc
+     */
+    public function __construct($config = [])
     {
         parent::__construct($config);
     }
 
     /**
-     * Admin display
-     *
-     * @param null $tpl
-     *
-     * @return void
+     * @inheritDoc
      * @throws \Exception
      */
     public function display($tpl = null)
     {
         $this->displayHeader();
 
-        $hide    = OSMap\Factory::getApplication()->input->getBool('hidemainmenu', false);
-        $sidebar = count(\JHtmlSidebar::getEntries()) + count(\JHtmlSidebar::getFilters());
+        $hide    = Factory::getApplication()->input->getBool('hidemainmenu', false);
+        $sidebar = count(Sidebar::getEntries()) + count(Sidebar::getFilters());
         if (!$hide && $sidebar > 0) {
-            $start = array(
+            $start = [
                 '<div id="j-sidebar-container" class="span2">',
-                \JHtmlSidebar::render(),
+                Sidebar::render(),
                 '</div>',
                 '<div id="j-main-container" class="span10">'
-            );
+            ];
 
         } else {
-            $start = array('<div id="j-main-container">');
+            $start = ['<div id="j-main-container">'];
         }
 
         echo join("\n", $start) . "\n";
         parent::display($tpl);
         echo "\n</div>";
-
-        $this->displayFooter();
     }
 
     /**
      * Default admin screen title
      *
-     * @param string $sub
-     * @param string $icon
+     * @param ?string $sub
+     * @param string  $icon
      *
      * @return void
      */
-    protected function setTitle($sub = null, $icon = 'osmap')
+    protected function setTitle(?string $sub = null, string $icon = 'osmap')
     {
-        $img = \JHtml::_('image', "com_osmap/icon-48-{$icon}.png", null, null, true, true);
+        $img = HTMLHelper::_('image', "com_osmap/icon-48-{$icon}.png", null, null, true, true);
         if ($img) {
-            $doc = OSMap\Factory::getDocument();
+            $doc = Factory::getDocument();
             $doc->addStyleDeclaration(".icon-48-{$icon} { background-image: url({$img}); }");
         }
 
-        $title = \JText::_('COM_OSMAP');
+        $title = Text::_('COM_OSMAP');
         if ($sub) {
-            $title .= ': ' . \JText::_($sub);
+            $title .= ': ' . Text::_($sub);
         }
 
-        \JToolbarHelper::title($title, $icon);
+        ToolbarHelper::title($title, $icon);
     }
 
     /**
@@ -106,25 +106,26 @@ class Base extends OSMap\View\Base
      * @param bool $addDivider
      *
      * @return void
+     * @throws \Exception
      */
     protected function setToolBar($addDivider = true)
     {
-        $user = OSMap\Factory::getUser();
+        $user = Factory::getUser();
         if ($user->authorise('core.admin', 'com_osmap')) {
             if ($addDivider) {
-                \JToolBarHelper::divider();
+                ToolbarHelper::divider();
             }
-            \JToolBarHelper::preferences('com_osmap');
+            ToolbarHelper::preferences('com_osmap');
         }
 
         // Prepare the plugins
-        \JPluginHelper::importPlugin('osmap');
+        PluginHelper::importPlugin('osmap');
 
-        $viewName = strtolower(str_replace('OSMapView', '', $this->getName()));
-        $eventParams = array(
+        $viewName    = strtolower(str_replace('OSMapView', '', $this->getName()));
+        $eventParams = [
             $viewName
-        );
-        \JEventDispatcher::getInstance()->trigger('osmapOnAfterSetToolBar', $eventParams);
+        ];
+        Factory::getApplication()->triggerEvent('osmapOnAfterSetToolBar', $eventParams);
     }
 
     /**
@@ -137,9 +138,9 @@ class Base extends OSMap\View\Base
      *
      * @return string
      */
-    protected function renderFieldset($fieldSet, array $sameLine = array(), $tabbed = false)
+    protected function renderFieldset(string $fieldSet, array $sameLine = [], ?bool $tabbed = false): string
     {
-        $html = array();
+        $html = [];
         if (!empty($this->form) && $this->form instanceof \JForm) {
             $fieldSets = $this->form->getFieldsets();
 
@@ -147,10 +148,10 @@ class Base extends OSMap\View\Base
                 $name  = $fieldSets[$fieldSet]->name;
                 $label = $fieldSets[$fieldSet]->label;
 
-                $html = array();
+                $html = [];
 
                 if ($tabbed) {
-                    $html[] = \JHtml::_('bootstrap.addTab', 'myTab', $name, \JText::_($label));
+                    $html[] = HTMLHelper::_('bootstrap.addTab', 'myTab', $name, Text::_($label));
                 }
 
                 $html[] = '<div class="row-fluid">';
@@ -161,14 +162,14 @@ class Base extends OSMap\View\Base
                         continue;
                     }
 
-                    $fieldHtml = array(
+                    $fieldHtml = [
                         '<div class="control-group">',
                         '<div class="control-label">',
                         $field->label,
                         '</div>',
                         '<div class="controls">',
                         $field->input
-                    );
+                    ];
                     $html      = array_merge($html, $fieldHtml);
 
                     if (isset($sameLine[$field->fieldname])) {
@@ -181,7 +182,7 @@ class Base extends OSMap\View\Base
                 $html[] = '</fieldset>';
                 $html[] = '</div>';
                 if ($tabbed) {
-                    $html[] = \JHtml::_('bootstrap.endTab');
+                    $html[] = HTMLHelper::_('bootstrap.endTab');
                 }
             }
         }
@@ -190,23 +191,10 @@ class Base extends OSMap\View\Base
     }
 
     /**
-     * Display a header on admin pages
-     *
-     * @return void
+     * @inheritDoc
      */
     protected function displayHeader()
     {
         // To be set in subclasses
-    }
-
-    /**
-     * Display a standard footer on all admin pages
-     *
-     * @return void
-     */
-    protected function displayFooter()
-    {
-        $extension = new Extension\Licensed('OSMap', 'component');
-        echo $extension->getFooterMarkup();
     }
 }

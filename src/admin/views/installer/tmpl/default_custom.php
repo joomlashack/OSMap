@@ -62,25 +62,25 @@ if ($this->isXmapDataFound) :
     <script>
         (function($) {
             $(function() {
-                var button  = $('#alledia-installer-xmap-import-button'),
+                let button  = $('#alledia-installer-xmap-import-button'),
                     message = $('#alledia-installer-xmap-import-message'),
                     title   = $('.alledia-xmap-import > h4.warning');
 
-                var showError = function() {
+                let showError = function() {
                     $('#alledia-installer-xmap-import-error').show();
                     title.hide();
                 };
 
-                var showSuccess = function() {
+                let showSuccess = function() {
                     $('#alledia-installer-xmap-import-success').show();
                     title.hide();
                 };
 
                 button.on('click', function() {
-                    var goAhead = confirm('<?php echo Text::_("COM_OSMAP_INSTALLER_WIPE_CONFIRMATION"); ?>');
+                    let goAhead = confirm('<?php echo Text::_('COM_OSMAP_INSTALLER_WIPE_CONFIRMATION'); ?>');
 
                     if (goAhead) {
-                        button.text('<?php echo Text::_("COM_OSMAP_INSTALLER_IMPORTING"); ?>')
+                        button.text('<?php echo Text::_('COM_OSMAP_INSTALLER_IMPORTING'); ?>')
                             .off('click', this)
                             .css('cursor', 'default');
 
@@ -90,7 +90,7 @@ if ($this->isXmapDataFound) :
                                 message.hide();
 
                                 try {
-                                    var result = JSON.parse(data);
+                                    let result = JSON.parse(data);
 
                                     if (result.success) {
                                         showSuccess();

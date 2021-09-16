@@ -29,7 +29,7 @@ use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
-HTMLHelper::_('behavior.formvalidator');
+HTMLHelper::_('behavior.formvalidation');
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
@@ -44,16 +44,16 @@ $actionQuery = [
 ];
 ?>
 <script>
-    ;jQuery(function($) {
+    ;(function($) {
         Joomla.submitbutton = function(task) {
-            if (task === 'sitemap.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
-                let ordering = jQuery('#ul_menus li').first().attr('id')
+            if (task === 'sitemap.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
+                let ordering = $('#ul_menus').sortable('toArray').toString();
                 $('#menus_ordering').val(ordering);
 
                 Joomla.submitform(task, document.getElementById('adminForm'));
             }
         }
-    });
+    })(jQuery);
 </script>
 
 <form action="<?php echo Route::_('index.php?' . http_build_query($actionQuery)); ?>"
@@ -66,11 +66,11 @@ $actionQuery = [
 
     <div class="form-horizontal">
         <div class="row-fluid">
-            <div class="col-9">
+            <div class="span9">
                 <?php echo $this->form->getField('menus')->renderField(['hiddenLabel' => true]); ?>
             </div>
 
-            <div class="col-3">
+            <div class="span3">
                 <?php echo $this->form->renderFieldset('params'); ?>
             </div>
         </div>

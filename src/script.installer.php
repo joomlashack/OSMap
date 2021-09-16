@@ -22,17 +22,13 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap\Installer\Script;
+use Alledia\Installer\Osmap\Free\AbstractScript;
 
 defined('_JEXEC') or die();
 
-// Adapt for install and uninstall environments
-if (file_exists(__DIR__ . '/admin/library/alledia/osmap/Installer/Script.php')) {
-    require_once __DIR__ . '/admin/library/alledia/osmap/Installer/Script.php';
-} else {
-    require_once __DIR__ . '/library/alledia/osmap/Installer/Script.php';
-}
+$installPath = __DIR__ . (is_dir(__DIR__ . '/admin') ? '/admin' : '');
+require_once $installPath . '/library/Installer/include.php';
 
-class com_osmapInstallerScript extends Script
+class com_osmapInstallerScript extends AbstractScript
 {
 }

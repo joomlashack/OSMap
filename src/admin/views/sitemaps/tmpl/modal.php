@@ -25,128 +25,143 @@
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 defined('_JEXEC') or die();
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::_('behavior.core');
+HTMLHelper::_('bootstrap.tooltip', '.hasTooltip', ['placement' => 'bottom']);
+HTMLHelper::_('bootstrap.popover', '.hasPopover', ['placement' => 'bottom']);
 
-HTMLHelper::_('behavior.tooltip');
-HTMLHelper::_('formbehavior.chosen', 'select');
+HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
 
-HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', array('relative' => true));
-
-$function  = Factory::getApplication()->input->getString('function', 'jSelectSitemap');
+$function  = Factory::getApplication()->input->getString('function', 'osmapSelectSitemap');
 $baseUrl   = Uri::root();
-$listOrder = $this->escape($this->state->get('list.ordering'));
-$listDir   = $this->escape($this->state->get('list.direction'));
+$ordering  = $this->escape($this->state->get('list.ordering'));
+$direction = $this->escape($this->state->get('list.direction'));
+
+$formAction = [
+    'option'   => 'com_osmap',
+    'view'     => 'sitemaps',
+    'layout'   => 'modal',
+    'tmpl'     => 'component',
+    'function' => $function
+];
 ?>
-<form
-    action="<?php echo Route::_('index.php?option=com_osmap&view=sitemaps');?>"
-    method="post"
-    name="adminForm"
-    id="adminForm">
+<form action="<?php echo Route::_('index.php?' . http_build_query($formAction)); ?>"
+      method="post"
+      name="adminForm"
+      id="adminForm">
 
-<?php if (empty($this->items)) : ?>
-    <div class="alert alert-no-items">
-        <?php echo Text::_('COM_OSMAP_NO_MATCHING_RESULTS'); ?>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="j-main-container" class="j-main-container">
+                <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+
+                <?php if (empty($this->items)) : ?>
+                    <div class="alert alert-info">
+                        <?php echo Text::_('COM_OSMAP_NO_MATCHING_RESULTS'); ?>
+                    </div>
+
+                <?php else : ?>
+                    <table class="adminlist table table-sm">
+                        <thead>
+                        <tr>
+                            <th scope="col">
+                                <?php
+                                echo HTMLHelper::_(
+                                    'searchtools.sort',
+                                    'COM_OSMAP_HEADING_NAME',
+                                    'sitemap.name',
+                                    $direction,
+                                    $ordering
+                                ); ?>
+                            </th>
+
+                            <th scope="col" class="w-1 text-nowrap text-center">
+                                <?php
+                                echo HTMLHelper::_(
+                                    'searchtools.sort',
+                                    'COM_OSMAP_HEADING_STATUS',
+                                    'sitemap.published',
+                                    $direction,
+                                    $ordering
+                                );
+                                ?>
+                            </th>
+
+                            <th style="width: 8%" class="w-8 text-center text-nowrap ">
+                                <?php echo Text::_('COM_OSMAP_HEADING_NUM_LINKS'); ?>
+                            </th>
+
+                            <th class="w-1 text-nowrap">
+                                <?php
+                                echo HTMLHelper::_(
+                                    'searchtools.sort',
+                                    'COM_OSMAP_HEADING_ID',
+                                    'sitemap.id',
+                                    $direction,
+                                    $ordering
+                                ); ?>
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <?php foreach ($this->items as $i => $item) :
+                            ?>
+                            <tr class="<?php echo 'row' . ($i % 2); ?>">
+                                <td>
+                                    <?php
+                                    echo HTMLHelper::_(
+                                        'link',
+                                        null,
+                                        $this->escape($item->name),
+                                        [
+                                            'style'   => 'cursor: pointer;',
+                                            'onclick' => sprintf(
+                                                "if (window.parent) window.parent.%s('%s', '%s');",
+                                                $function,
+                                                $item->id,
+                                                $this->escape($item->name)
+                                            )
+                                        ]
+                                    );
+                                    ?>
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="btn-group osmap-modal-status">
+                                        <?php if ($item->published) : ?>
+                                            <i class="icon-save"></i>
+                                        <?php else : ?>
+                                            <i class="icon-remove"></i>
+                                        <?php endif; ?>
+
+                                        <?php if ($item->is_default) : ?>
+                                            <i class="icon-star"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+
+                                <td class="text-center">
+                                    <?php echo (int)$item->links_count; ?>
+                                </td>
+
+                                <td class="text-center">
+                                    <?php echo (int)$item->id; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
-<?php else : ?>
-    <div id="j-main-container">
-        <table class="adminlist table table-striped" id="sitemapList">
-            <thead>
-                <tr>
-                    <th class="title">
-                        <?php
-                        echo HTMLHelper::_(
-                            'grid.sort',
-                            'COM_OSMAP_HEADING_NAME',
-                            'sitemap.name',
-                            $listDir,
-                            $listOrder
-                        ); ?>
-                    </th>
 
-                    <th width="1%" style="min-width:55px" class="nowrap center">
-                        <?php
-                        echo HTMLHelper::_(
-                            'grid.sort',
-                            'COM_OSMAP_HEADING_STATUS',
-                            'sitemap.published',
-                            $listDir,
-                            $listOrder
-                        );
-                        ?>
-                    </th>
-
-                    <th width="8%" class="nowrap center">
-                        <?php echo Text::_('COM_OSMAP_HEADING_NUM_LINKS'); ?>
-                    </th>
-
-                    <th width="1%" class="nowrap">
-                        <?php
-                        echo HTMLHelper::_(
-                            'grid.sort',
-                            'COM_OSMAP_HEADING_ID',
-                            'sitemap.id',
-                            $listDir,
-                            $listOrder
-                        ); ?>
-                    </th>
-                </tr>
-            </thead>
-
-            <tbody>
-            <?php foreach ($this->items as $i => $item) :
-                $onClick = sprintf(
-                    "if (window.parent) window.parent.%s('%s', '%s');",
-                    $function,
-                    $item->id,
-                    $this->escape($item->name)
-                );
-                ?>
-                <tr class="<?php echo 'row' . ($i % 2); ?>">
-                    <td>
-                         <a
-                            style="cursor: pointer;"
-                            onclick="<?php echo $onClick; ?>">
-
-                            <?php echo $this->escape($item->name); ?>
-                        </a>
-                    </td>
-
-                    <td class="center">
-                        <div class="btn-group osmap-modal-status">
-                            <?php if ($item->published) : ?>
-                                <i class="icon-save"></i>
-                            <?php else : ?>
-                                <i class="icon-remove"></i>
-                            <?php endif; ?>
-
-                            <?php if ($item->is_default) : ?>
-                                <i class="icon-star"></i>
-                            <?php endif; ?>
-                        </div>
-                    </td>
-
-                    <td class="center">
-                        <?php echo (int) $item->links_count; ?>
-                    </td>
-
-                    <td class="center">
-                        <?php echo (int) $item->id; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-<?php endif; ?>
-
-    <input type="hidden" name="tmpl" value="component" />
-    <input type="hidden" name="layout" value="modal" />
-    <input type="hidden" name="task" value="" />
-    <input type="hidden" name="boxchecked" value="0" />
+    <input type="hidden" name="task" value=""/>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>

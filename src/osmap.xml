@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
     <name>COM_OSMAP</name>
-    <creationDate>June 14 2021</creationDate>
+    <creationDate>September 09 2021</creationDate>
     <copyright>Copyright 2016-2021 Joomlashack.com. All rights reserved</copyright>
     <license>GNU GPL; see LICENSE file</license>
     <author>Joomlashack</author>
     <authorEmail>help@joomlashack.com</authorEmail>
     <authorUrl>https://www.joomlashack.com</authorUrl>
-    <version>4.3.2</version>
+    <version>5.0.0b1</version>
     <variant>FREE</variant>
     <description>COM_OSMAP_DESCRIPTION</description>
 
@@ -42,14 +42,16 @@
 
     <media destination="com_osmap" folder="media">
         <folder>css</folder>
-        <folder>fonts</folder>
         <folder>images</folder>
         <folder>js</folder>
     </media>
 
     <administration>
         <menu>COM_OSMAP_TITLE</menu>
-
+        <submenu>
+            <menu view="sitemaps">COM_OSMAP_SUBMENU_SITEMAPS</menu>
+            <menu link="option=com_plugins&amp;filter[folder]=osmap">COM_OSMAP_SUBMENU_EXTENSIONS</menu>
+        </submenu>
         <files folder="admin">
             <filename>config.xml</filename>
             <filename>controller.php</filename>
@@ -77,7 +79,7 @@
         <namespace>OSMap</namespace>
         <license>free</license>
         <targetplatform>3.9</targetplatform>
-        <phpminimum>5.6</phpminimum>
+        <phpminimum>7.2</phpminimum>
 
         <minify>
             <script>media/js/sitemapitems.js</script>
@@ -85,13 +87,13 @@
 
         <relatedExtensions>
             <extension type="library"
-                       element="allediaframework">AllediaFramework</extension>
+                       element="allediaframework">ShackFramework</extension>
 
             <extension type="plugin"
                        group="system"
-                       element="ossystem"
+                       element="osmylicensesmanager"
                        publish="true"
-                       ordering="first">OSSystem</extension>
+                       ordering="last">ShackExtensionSupport</extension>
 
             <extension type="plugin"
                        group="osmap"
@@ -101,7 +103,7 @@
                        uninstall="true">plg_osmap_joomla</extension>
         </relatedExtensions>
 
-        <include>AllediaFreeDefaultFiles</include>
+        <include>ShackDefaultFiles</include>
 
         <obsolete>
             <extension type="plugin"
@@ -112,11 +114,13 @@
                        group="xmap"
                        element="com_content"/>
 
-            <folder>administrator/componentes/com_osmap/library/alledia/osmap/Joomla</folder>
+            <folder>administrator/components/com_osmap/library/alledia/osmap/Installer</folder>
+            <folder>administrator/components/com_osmap/library/alledia/osmap/Joomla</folder>
             <folder>administrator/components/com_osmap/library/Free</folder>
             <folder>administrator/components/com_osmap/models/fields</folder>
             <folder>administrator/components/com_osmap/models/forms</folder>
 
+            <file>administrator/components/com_osmap/form/fields/osmapmenus.php</file>
             <file>administrator/components/com_osmap/helpers/html/grid.php</file>
             <file>administrator/components/com_osmap/helpers/osmap.php</file>
             <file>administrator/components/com_osmap/library/alledia/osmap/Helper/ImagesPro.php</file>

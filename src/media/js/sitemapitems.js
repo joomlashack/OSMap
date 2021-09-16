@@ -22,9 +22,9 @@
  */
 
 ;(function($) {
-    var configureForm = function(lang) {
-        var $frequencyField = $('<select>'),
-            $priorityField = $('<select>');
+    let configureForm = function(lang) {
+        let $frequencyField = $('<select>'),
+            $priorityField  = $('<select>');
 
         $.each($.osmap.fields.frequencies, function(value, text) {
             $('<option>').attr('value', value).text(text).appendTo($frequencyField)
@@ -38,9 +38,9 @@
          * Add field to select priority of an item.
          */
         function createPriorityField($tr) {
-            $div = $tr.find('.sitemapitem-priority');
+            let $div   = $tr.find('.sitemapitem-priority'),
+                $input = $priorityField.clone();
 
-            $input = $priorityField.clone();
             $input.val($div.data('value'));
 
             $div.html('');
@@ -48,7 +48,7 @@
 
             $input.on('change',
                 function() {
-                    $this = $(this);
+                    let $this = $(this);
 
                     $this.parent().data('value', $this.val());
                     $this.parents('tr').addClass('updated');
@@ -61,25 +61,23 @@
          * parent element
          */
         function removePriorityField($tr) {
-            $div = $tr.find('.sitemapitem-priority');
+            let $div = $tr.find('.sitemapitem-priority');
 
             $div.text($div.data('value'));
         }
 
         // Add the event for the changefreq elements
         function createChangeFreqField($tr) {
-            $div = $tr.find('.sitemapitem-changefreq');
-
-            $input = $frequencyField.clone();
+            let $div   = $tr.find('.sitemapitem-changefreq'),
+                $input = $frequencyField.clone();
 
             $input.val($div.data('value'));
 
             $div.html('');
             $div.append($input);
 
-            $input.change(
-                function(event) {
-                    $this = $(this);
+            $input.on('change', function() {
+                    let $this = $(this);
 
                     $this.parent().data('value', $this.val());
                     $this.parents('tr').addClass('updated');
@@ -88,19 +86,18 @@
         }
 
         function removeChangeFreqField($tr) {
-            $div = $tr.find('.sitemapitem-changefreq');
+            let $div = $tr.find('.sitemapitem-changefreq');
 
             $div.text($div.find('option:selected').text());
         }
 
         // Adds the event for a hovered line
-        $('#itemList .sitemapitem').hover(
-            function(event) {
+        $('#itemList .sitemapitem').on('hover', function(event) {
                 if (event.target.tagName === 'TD') {
-                    $tr = $(event.currentTarget);
-                    $currentSelection = $('#itemList .selected');
+                    let $tr               = $(event.currentTarget),
+                        $currentSelection = $('#itemList .selected');
 
-                    if ($tr != $currentSelection) {
+                    if ($tr !== $currentSelection) {
                         // Remove the selected class from the last item
                         $currentSelection.removeClass('selected');
                         removePriorityField($currentSelection);
@@ -117,12 +114,11 @@
         );
 
         // Add the event for the publish status elements
-        $('#itemList .sitemapitem-published').click(
-            function(event) {
-                var $this = $(this),
-                    newValue  = $this.data('value') == 1 ? 0 : 1,
-                    spanClass = newValue == 1 ? 'publish' : 'unpublish',
-                    $span = $this.find('span');
+        $('#itemList .sitemapitem-published').on('click', function() {
+                let $this     = $(this),
+                    newValue  = $this.data('value') === 1 ? 0 : 1,
+                    spanClass = newValue === 1 ? 'publish' : 'unpublish',
+                    $span     = $this.find('span');
 
                 $this.data('value', newValue);
 
@@ -134,32 +130,32 @@
                 // Tooltip
                 $span.attr(
                     'title',
-                    newValue == 1 ? lang.COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH : lang.COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH
+                    newValue === 1 ? lang.COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH : lang.COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH
                 );
 
-                $span.tooltip('destroy');
+                $span.tooltip('dispose');
                 $span.tooltip();
             }
         );
 
-        Joomla.submitbutton = function (task) {
+        Joomla.submitbutton = function(task) {
             if (task === 'sitemapitems.save' || task === 'sitemapitems.apply') {
-                var $updateDataField = $('#update-data'),
-                    $updatedLines = $('.sitemapitem.updated'),
-                    data = [];
+                let $updateDataField = $('#update-data'),
+                    $updatedLines    = $('.sitemapitem.updated'),
+                    data             = [];
 
                 $updateDataField.val('');
 
                 // Grab updated values and build the post data
                 $updatedLines.each(function() {
-                    $tr = $(this);
+                    let $tr = $(this);
 
                     data.push({
-                        'uid': $tr.data('uid'),
+                        'uid'          : $tr.data('uid'),
                         'settings_hash': $tr.data('settings-hash'),
-                        'published': $tr.find('.sitemapitem-published').data('value'),
-                        'priority': $tr.find('.sitemapitem-priority').data('value'),
-                        'changefreq': $tr.find('.sitemapitem-changefreq').data('value')
+                        'published'    : $tr.find('.sitemapitem-published').data('value'),
+                        'priority'     : $tr.find('.sitemapitem-priority').data('value'),
+                        'changefreq'   : $tr.find('.sitemapitem-changefreq').data('value')
                     });
                 });
 
@@ -177,7 +173,7 @@
 
     $.fn.osmap = {
         loadSitemapItems: function(params) {
-            var url = params.baseUri.replace(/\/$/, '');
+            let url = params.baseUri.replace(/\/$/, '');
 
             url += '/index.php?option=com_osmap&view=adminsitemapitems&tmpl=component&id=' + params.sitemapId;
 
@@ -186,8 +182,8 @@
             }
 
             $.ajax({
-                url: url,
-                async: true,
+                url    : url,
+                async  : true,
                 success: function(data) {
                     $(params.container).html(data);
 

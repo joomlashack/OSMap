@@ -22,23 +22,24 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 
 defined('_JEXEC') or die();
 
 // Check if we need to inject the CSS
 if ($this->params->get('use_css', 1)) {
-    JHtml::stylesheet('media/com_osmap/css/sitemap_html.min.css');
+    HTMLHelper::_('stylesheet', 'com_osmap/sitemap_html.min.css', ['relative' => true]);
 }
 
 // If debug is enabled, use text content type
 if ($this->debug) {
-    OSMap\Factory::getApplication()->input->set('tmpl', 'component');
-    JHtml::stylesheet('media/com_osmap/css/sitemap_html_debug.min.css');
+    Factory::getApplication()->input->set('tmpl', 'component');
+    HTMLHelper::_('stylesheet', 'com_osmap/sitemap_html_debug.min.css', ['relative' => true]);
 }
 
 // Check if we have parameters from a menu, acknowledging we have a menu
-if (!is_null($this->params->get('menu_text'))) {
+if ($this->params->get('menu_text') !== null) {
     // We have a menu, so let's use its params to display the heading
     $pageHeading = $this->params->get('page_heading', $this->params->get('page_title'));
 } else {
@@ -47,7 +48,9 @@ if (!is_null($this->params->get('menu_text'))) {
 }
 ?>
 
-<div id="osmap" class="osmap-sitemap <?php echo $this->debug ? 'osmap-debug' : ''; ?> <?php echo $this->params->get('pageclass_sfx', ''); ?>">
+<div id="osmap"
+     class="osmap-sitemap <?php echo $this->debug ? 'osmap-debug' : ''; ?> <?php echo $this->params->get('pageclass_sfx',
+         ''); ?>">
     <!-- Heading -->
 
     <?php if ($this->params->get('show_page_heading', 1)) : ?>
@@ -57,7 +60,7 @@ if (!is_null($this->params->get('menu_text'))) {
     <?php endif; ?>
 
     <!-- Description -->
-    <?php if ($this->params->get('show_sitemap_description', 1)) :   ?>
+    <?php if ($this->params->get('show_sitemap_description', 1)) : ?>
         <div class="osmap-sitemap-description">
             <?php echo $this->params->get('sitemap_description', ''); ?>
         </div>

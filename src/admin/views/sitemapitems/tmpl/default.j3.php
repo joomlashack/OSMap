@@ -62,7 +62,7 @@ $container = OSMap\Factory::getPimpleContainer();
       id="adminForm"
       class="form-validate">
     <div class="row-fluid">
-        <div class="col-12">
+        <div class="span12">
             <div id="osmap-items-container">
                 <div class="osmap-loading">
                     <span class="icon-loop spin"></span>
@@ -81,6 +81,7 @@ $container = OSMap\Factory::getPimpleContainer();
     <input type="hidden" name="language" value="<?php echo $this->language; ?>"/>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>
+
 <script>
     ;jQuery(function($) {
         $(function() {

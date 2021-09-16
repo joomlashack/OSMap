@@ -22,7 +22,6 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap\Factory;
 use Alledia\OSMap\Sitemap\Item;
 use Joomla\Utilities\ArrayHelper;
 
@@ -33,7 +32,7 @@ $debug = $this->params->get('debug', 0) ? "\n" : '';
 $printNodeCallback = function (Item $node) {
     $display = !$node->ignore
         && $node->published
-        && (!$node->duplicate || ($node->duplicate && !$this->osmapParams->get('ignore_duplicated_uids', 1)))
+        && (!$node->duplicate || !$this->osmapParams->get('ignore_duplicated_uids', 1))
         && isset($node->newsItem)
         && !empty($node->newsItem)
         && $node->visibleForRobots
@@ -68,7 +67,7 @@ $printNodeCallback = function (Item $node) {
             echo '<news:keywords><![CDATA[' . $node->keywords . ']]></news:keywords>';
         }
 
-        echo "</news:news>";
+        echo '</news:news>';
         echo '</url>';
     }
 
@@ -77,10 +76,10 @@ $printNodeCallback = function (Item $node) {
 
 echo $this->addStylesheet();
 
-$attribs = array(
-    'xmlns'      => 'https://www.sitemaps.org/schemas/sitemap/0.9',
-    'xmlns:news' => 'https://www.google.com/schemas/sitemap-news/0.9'
-);
+$attribs = [
+    'xmlns'      => 'http://www.sitemaps.org/schemas/sitemap/0.9',
+    'xmlns:news' => 'http://www.google.com/schemas/sitemap-news/0.9'
+];
 
 echo sprintf($debug . '<urlset %s>' . $debug, ArrayHelper::toString($attribs));
 

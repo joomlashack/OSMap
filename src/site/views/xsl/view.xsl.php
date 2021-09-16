@@ -30,7 +30,10 @@ defined('_JEXEC') or die();
 
 class OSMapViewXsl extends HtmlView
 {
-    public function __construct($config = array())
+    /**
+     * @inheritDoc
+     */
+    public function __construct($config = [])
     {
         parent::__construct($config);
     }
@@ -64,7 +67,7 @@ class OSMapViewXsl extends HtmlView
         $this->icoMoonUri = HTMLHelper::_(
             'stylesheet',
             'jui/icomoon.css',
-            array('relative' => true, 'pathOnly' => true)
+            ['relative' => true, 'pathOnly' => true]
         );
 
         $this->pageHeading = htmlspecialchars(

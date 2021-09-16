@@ -23,6 +23,7 @@
  */
 
 use Alledia\OSMap;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 defined('_JEXEC') or die();
 
@@ -52,11 +53,11 @@ class OSMapViewSitemapItems extends OSMap\View\Admin\Base
 
         $this->setTitle('COM_OSMAP_PAGE_VIEW_SITEMAP_ITEMS');
 
-        JToolBarHelper::apply('sitemapitems.apply');
-        JToolBarHelper::save('sitemapitems.save');
+        ToolbarHelper::apply('sitemapitems.apply');
+        ToolbarHelper::save('sitemapitems.save');
 
         $alt = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
-        JToolBarHelper::cancel('sitemapitems.cancel', $alt);
+        ToolbarHelper::cancel('sitemapitems.cancel', $alt);
 
         parent::setToolBar($addDivider);
     }

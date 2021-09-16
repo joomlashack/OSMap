@@ -22,26 +22,25 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Joomla\CMS\Language\Text;
+use Alledia\OSMap\Factory;
+use Joomla\CMS\Layout\LayoutHelper;
 
-defined('_JEXEC') or die();
-?>
+defined('_JEXEC') or die;
 
-<?php if ($this->debug) : ?>
-    <div class="osmap-debug-sitemap">
-        <h1><?php echo Text::_('COM_OSMAP_DEBUG_ALERT_TITLE'); ?></h1>
-        <p><?php echo Text::_('COM_OSMAP_DEBUG_ALERT'); ?></p>
-        <?php echo Text::_('COM_OSMAP_SITEMAP_ID'); ?>: <?php echo $this->sitemap->id; ?>
-    </div>
-<?php endif; ?>
+$displayData = [
+    'textPrefix' => 'COM_OSMAPS',
+    'formURL'    => 'index.php?option=com_osmaps&view=sitemaps',
+    'helpURL'    => 'https://www.joomlashack.com/docs/osmaps/start/',
+    'icon'       => 'icon-copy article',
+];
 
-<div class="osmap-items">
-    <?php $this->sitemap->traverse([$this, 'registerNodeIntoList']); ?>
-    <?php $this->renderSitemap(); ?>
-</div>
+$user = Factory::getApplication()->getIdentity();
 
-<?php if ($this->debug) : ?>
-    <div class="osmap-debug-items-count">
-        <?php echo Text::_('COM_OSMAP_SITEMAP_ITEMS_COUNT'); ?>: <?php echo $this->generalCounter; ?>
-    </div>
-<?php endif; ?>
+if (
+    $user->authorise('core.create', 'com_osmaps')
+    || count($user->getAuthorisedCategories('com_osmaps', 'core.create')) > 0
+) {
+    $displayData['createURL'] = 'index.php?option=com_osmaps&task=sitemap.add';
+}
+
+echo LayoutHelper::render('joomla.content.emptystate', $displayData);

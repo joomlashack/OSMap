@@ -34,14 +34,14 @@ $debug                = $this->params->get('debug', 0) ? "\n" : '';
 $printNodeCallback = function (Item $node) use ($showExternalLinks, $ignoreDuplicatedUIDs, $debug) {
     $display = !$node->ignore
         && $node->published
-        && (!$node->duplicate || ($node->duplicate && !$ignoreDuplicatedUIDs))
+        && (!$node->duplicate || !$ignoreDuplicatedUIDs)
         && $node->visibleForRobots
         && $node->parentIsVisibleForRobots
         && $node->visibleForXML
         && trim($node->fullLink) != '';
 
-    // Check if is external URL and if should be ignored
     if ($display && !$node->isInternal) {
+        // Show external links
         $display = $showExternalLinks === 1;
     }
 

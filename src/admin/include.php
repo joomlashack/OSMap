@@ -24,51 +24,53 @@
 
 defined('_JEXEC') or die();
 
-use Alledia\Framework;
-use Alledia\OSMap;
+use Alledia\Framework\AutoLoader;
+use Alledia\OSMap\Helper\General;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Table\Table;
 
-// Alledia Framework
-if (!defined('ALLEDIA_FRAMEWORK_LOADED')) {
-    $allediaFrameworkPath = JPATH_SITE . '/libraries/allediaframework/include.php';
+try {
+    $frameworkPath = JPATH_SITE . '/libraries/allediaframework/include.php';
+    if (!(is_file($frameworkPath) && include $frameworkPath)) {
+        $app = Factory::getApplication();
 
-    if (file_exists($allediaFrameworkPath)) {
-        require_once $allediaFrameworkPath;
-    } else {
-        JFactory::getApplication()
-            ->enqueueMessage('[OSMap] Alledia framework not found', 'error');
+        if ($app->isClient('administrator')) {
+            $app->enqueueMessage('[OSMap] Joomlashack framework not found', 'error');
+        }
+        return false;
     }
+
+    if (defined('ALLEDIA_FRAMEWORK_LOADED') && !defined('OSMAP_LOADED')) {
+        define('OSMAP_LOADED', 1);
+        define('OSMAP_ADMIN_PATH', JPATH_ADMINISTRATOR . '/components/com_osmap');
+        define('OSMAP_SITE_PATH', JPATH_SITE . '/components/com_osmap');
+        define('OSMAP_LIBRARY_PATH', OSMAP_ADMIN_PATH . '/library');
+
+        define('OSMAP_LICENSE', is_file(OSMAP_LIBRARY_PATH . '/alledia/osmap/Services/Pro.php') ? 'pro' : 'free');
+
+        AutoLoader::register('Alledia\OSMap', OSMAP_LIBRARY_PATH . '/alledia/osmap');
+        AutoLoader::register('Pimple', OSMAP_LIBRARY_PATH . '/pimple/pimple');
+
+        PluginHelper::importPlugin('osmap');
+
+        General::loadOptionLanguage();
+
+        Table::addIncludePath(OSMAP_ADMIN_PATH . '/tables');
+        Form::addFieldPath(OSMAP_ADMIN_PATH . '/fields');
+        Form::addFormPath(OSMAP_ADMIN_PATH . '/form');
+        HTMLHelper::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
+
+        Log::addLogger(['text_file' => 'com_osmap.errors.php'], Log::ALL, ['com_osmap']);
+    }
+
+} catch (Throwable $error) {
+    Factory::getApplication()->enqueueMessage('[OSMap] Unable to initialize: ' . $error->getMessage(), 'error');
+
+    return false;
 }
 
-if (!defined('OSMAP_LOADED')) {
-    define('OSMAP_LOADED', 1);
-    define('OSMAP_ADMIN_PATH', JPATH_ADMINISTRATOR . '/components/com_osmap');
-    define('OSMAP_SITE_PATH', JPATH_SITE . '/components/com_osmap');
-    define('OSMAP_LIBRARY_PATH', OSMAP_ADMIN_PATH . '/library');
-
-    // Define the constant for the license
-    define(
-        'OSMAP_LICENSE',
-        file_exists(OSMAP_LIBRARY_PATH . '/alledia/osmap/Services/Pro.php') ? 'pro' : 'free'
-    );
-
-    // Setup autoload libraries
-    Framework\AutoLoader::register('Alledia\OSMap', OSMAP_LIBRARY_PATH . '/alledia/osmap');
-    Framework\AutoLoader::register('Pimple', OSMAP_LIBRARY_PATH . '/pimple/pimple');
-
-    PluginHelper::importPlugin('osmap');
-
-    // Load the language files
-    OSMap\Helper\General::loadOptionLanguage('com_osmap', OSMAP_ADMIN_PATH, OSMAP_SITE_PATH);
-
-    Table::addIncludePath(OSMAP_ADMIN_PATH . '/tables');
-    Form::addFieldPath(OSMAP_ADMIN_PATH . '/fields');
-    Form::addFormPath(OSMAP_ADMIN_PATH . '/form');
-    HTMLHelper::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
-
-    Log::addLogger(['text_file' => 'com_osmap.errors.php'], Log::ALL, ['com_osmap']);
-}
+return defined('ALLEDIA_FRAMEWORK_LOADED') && defined('OSMAP_LOADED');

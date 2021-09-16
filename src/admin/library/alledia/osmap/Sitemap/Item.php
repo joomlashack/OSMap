@@ -24,7 +24,11 @@
 
 namespace Alledia\OSMap\Sitemap;
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Helper\General;
+use Joomla\CMS\Date\Date;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die();
@@ -35,12 +39,7 @@ defined('_JEXEC') or die();
 class Item extends BaseItem
 {
     /**
-     * The constructor
-     *
-     * @param array $itemData
-     * @param int   $currentMenuItemId
-     *
-     * @return void
+     * @inheritDoc
      * @throws \Exception
      */
     public function __construct($itemData, $currentMenuItemId)
@@ -50,8 +49,6 @@ class Item extends BaseItem
         $this->published  = (bool)$this->published;
         $this->isMenuItem = (bool)$this->isMenuItem;
         $this->params     = new Registry($this->params);
-
-        $itemData = null;
 
         // Check if the link is an internal link
         $this->isInternal = $this->checkLinkIsInternal();
@@ -74,7 +71,7 @@ class Item extends BaseItem
         $this->rawLink = $this->fullLink;
 
         // Removes the hash segment from the Full link, if exists
-        $container      = OSMap\Factory::getContainer();
+        $container      = Factory::getPimpleContainer();
         $this->fullLink = $container->router->removeHashFromURL($this->fullLink);
 
         // Make sure to have a unique hash for the settings
@@ -113,16 +110,14 @@ class Item extends BaseItem
     public function addAdminNote($note)
     {
         if (!is_array($this->adminNotes)) {
-            $this->adminNotes = array();
+            $this->adminNotes = [];
         }
 
-        $this->adminNotes[] = \JText::_($note);
+        $this->adminNotes[] = Text::_($note);
     }
 
     /**
-     * Returns the admin notes as a string.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getAdminNotesString()
     {
@@ -134,74 +129,67 @@ class Item extends BaseItem
     }
 
     /**
-     * Check if the current link is an internal link.
-     *
-     * @return bool
-     * @throws \Exception
+     * @inheritDoc
      */
     protected function checkLinkIsInternal()
     {
-        $container = OSMap\Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         return $container->router->isInternalURL($this->link)
             || in_array(
                 $this->type,
-                array(
+                [
                     'separator',
                     'heading'
-                )
+                ]
             );
     }
 
     /**
      * Set the correct date for the attribute
      *
-     * @param string $attributeName
-     * @param string $default
+     * @param string  $attributeName
+     * @param ?string $default
      *
      * @return void
+     * @throws \Exception
      */
-    public function prepareDate($attributeName, $default = null)
+    public function prepareDate(string $attributeName, ?string $default = null)
     {
-        if (!is_null($default)) {
-            if (empty($this->$attributeName)) {
-                $this->$attributeName = $default;
-            }
+        if ($default !== null && empty($this->{$attributeName})) {
+            $this->{$attributeName} = $default;
         }
 
-        if (OSMap\Helper\General::isEmptyDate($this->$attributeName)) {
-            $this->$attributeName = null;
+        if (General::isEmptyDate($this->{$attributeName})) {
+            $this->{$attributeName} = null;
         }
 
-        if (!OSMap\Helper\General::isEmptyDate($this->$attributeName)) {
-            if (!is_numeric($this->$attributeName)) {
-                $date                 = new \JDate($this->$attributeName);
-                $this->$attributeName = $date->toUnix();
+        if (!General::isEmptyDate($this->{$attributeName})) {
+            if (!is_numeric($this->{$attributeName})) {
+                $date                   = new Date($this->{$attributeName});
+                $this->{$attributeName} = $date->toUnix();
             }
 
             // Convert dates from UTC
-            if (intval($this->$attributeName)) {
-                if ($this->$attributeName < 0) {
-                    $this->$attributeName = null;
+            if (intval($this->{$attributeName})) {
+                if ($this->{$attributeName} < 0) {
+                    $this->{$attributeName} = null;
                 } else {
-                    $date                 = new \JDate($this->$attributeName);
-                    $this->$attributeName = $date->toISO8601();
+                    $date                   = new Date($this->{$attributeName});
+                    $this->{$attributeName} = $date->toISO8601();
                 }
             }
         }
     }
 
     /**
-     * Check if the item's language has compatible language with
-     * the current language.
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function hasCompatibleLanguage()
     {
         // Check the language
-        if (\JLanguageMultilang::isEnabled() && isset($this->language)) {
-            if ($this->language === '*' || $this->language === \JFactory::getLanguage()->getTag()) {
+        if (Multilanguage::isEnabled() && isset($this->language)) {
+            if ($this->language === '*' || $this->language === Factory::getLanguage()->getTag()) {
                 return true;
             }
 
@@ -238,7 +226,7 @@ class Item extends BaseItem
         // If is an alias, use the Itemid stored in the parameters to get the correct url
         if ($this->type === 'alias') {
             // Get the related menu item's link
-            $db = OSMap\Factory::getDbo();
+            $db = Factory::getDbo();
 
             $query = $db->getQuery(true)
                 ->select('link')
@@ -257,7 +245,7 @@ class Item extends BaseItem
      */
     protected function sanitizeFullLink()
     {
-        $container = OSMap\Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
         $this->fullLink = $container->router->sanitizeURL($this->fullLink);
     }
@@ -273,27 +261,27 @@ class Item extends BaseItem
      */
     protected function setFullLink()
     {
-        $container = OSMap\Factory::getContainer();
+        $container = Factory::getPimpleContainer();
 
-        if ((bool)$this->home) {
+        if ($this->home) {
             // Correct the URL for the home page.
             // Check if multi-language is enabled to use the proper route
-            if (\JLanguageMultilang::isEnabled()) {
-                $lang = OSMap\Factory::getLanguage();
+            if (Multilanguage::isEnabled()) {
+                $lang = Factory::getLanguage();
                 $tag  = $lang->getTag();
                 $lang = null;
 
-                $homes = \JLanguageMultilang::getSiteHomePages();
+                $homes = Multilanguage::getSiteHomePages();
 
-                $home = isset($homes[$tag]) ? $homes[$tag] : $home = $homes['*'];
+                $home = $homes[$tag] ?? $homes['*'];
 
                 // Joomla bug? When in subfolder, multilingual home page doubles up the base path
-                $uri            = $container->uri->getInstance();
-                $this->fullLink = $uri->toString(array('scheme', 'host', 'port'))
+                $uri            = $container->uri::getInstance();
+                $this->fullLink = $uri->toString(['scheme', 'host', 'port'])
                     . $container->router->routeURL('index.php?Itemid=' . $home->id);
 
             } else {
-                $this->fullLink = $container->uri->root();
+                $this->fullLink = $container->uri::root();
             }
 
             $this->fullLink = $container->router->sanitizeURL($this->fullLink);
@@ -301,17 +289,14 @@ class Item extends BaseItem
             return;
         }
 
-        // Check if is not a url, and disable browser nav
         if ($this->type === 'separator' || $this->type === 'heading') {
+            // Not a url so disable browser nav
             $this->browserNav = 3;
-            // Always a unique UID, since this only appears in the HTML sitemap
-            $this->uid = $this->type . '.' . md5($this->name . $this->id);
+            $this->uid        = $this->type . '.' . md5($this->name . $this->id);
 
             return;
         }
 
-        // If is an URL, but external, return the external URL. If internal,
-        // follow with the routing
         if ($this->type === 'url') {
             $this->link = trim($this->link);
             // Check if it is a single Hash char, the user doesn't want to point to any URL
@@ -334,7 +319,7 @@ class Item extends BaseItem
             $this->fullLink = $this->link;
 
             if (!$this->isInternal) {
-                // External URLS have UID as a hash of its url
+                // External URLS have UID as a hash as part of its url
                 $this->calculateUID(true, 'external.');
 
                 return;

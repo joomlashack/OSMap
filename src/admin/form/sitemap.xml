@@ -12,7 +12,7 @@
     <fieldset name="menus">
         <field id="menus"
                name="menus"
-               type="osmapmenus"
+               type="osmap.menus"
                label="COM_OSMAP_SITEMAP_MENUS_LABEL"
                description="COM_OSMAP_SITEMAP_MENUS_DESC"
                class="inputbox"

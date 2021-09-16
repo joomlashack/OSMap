@@ -53,7 +53,6 @@ defined('_JEXEC') or die();
  * @property Uri              $uri
  * @property Images           $imagesHelper
  *
- * @method JEventDispatcher getEvents()
  * @method WebApplication   getApp()
  * @method JDatabaseDriver  getDb()
  * @method Input            getInput()
@@ -122,8 +121,7 @@ class Container extends \Pimple\Container
             }
         }
 
-        $instance = $class->newInstanceArgs($dependencies);
-        return $instance;
+        return  $class->newInstanceArgs($dependencies);
     }
 
     /**
