@@ -24,6 +24,7 @@
 
 use Alledia\OSMap\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
@@ -61,7 +62,7 @@ $actionQuery = array(
       id="adminForm"
       class="form-validate sitemap">
 
-    <?php echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
+    <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
     <div class="form-horizontal">
         <div class="row-fluid">

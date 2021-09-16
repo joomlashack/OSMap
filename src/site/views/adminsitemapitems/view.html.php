@@ -22,9 +22,12 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-defined('_JEXEC') or die();
+use Alledia\OSMap\Component\Helper as ComponentHelper;
+use Alledia\OSMap\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\Input\Input;
 
-use Alledia\OSMap;
+defined('_JEXEC') or die();
 
 class OSMapViewAdminSitemapItems extends JViewLegacy
 {
@@ -38,16 +41,17 @@ class OSMapViewAdminSitemapItems extends JViewLegacy
     {
         $this->checkAccess();
 
-        $container = OSMap\Factory::getPimpleContainer();
+        $container = Factory::getPimpleContainer();
 
         try {
             $id = $container->input->getInt('id');
 
-            $this->params = OSMap\Factory::getApplication()->getParams();
+            $this->params = Factory::getApplication()->getParams();
 
             // Load the sitemap instance
-            $this->sitemap     = OSMap\Factory::getSitemap($id, 'standard');
-            $this->osmapParams = JComponentHelper::getParams('com_osmap');
+            $this->sitemap     = Factory::getSitemap($id, 'standard');
+            $this->osmapParams = ComponentHelper::getParams();
+
         } catch (Exception $e) {
             $this->message = $e->getMessage();
         }
@@ -63,7 +67,7 @@ class OSMapViewAdminSitemapItems extends JViewLegacy
      */
     protected function checkAccess()
     {
-        $server  = new JInput(array_change_key_case($_SERVER, CASE_LOWER));
+        $server  = new Input(array_change_key_case($_SERVER, CASE_LOWER));
         $referer = parse_url($server->getString('http_referer'));
 
         if (!empty($referer['query'])) {
@@ -78,6 +82,6 @@ class OSMapViewAdminSitemapItems extends JViewLegacy
             }
         }
 
-        throw new Exception(\Joomla\CMS\Language\Text::_('JERROR_PAGE_NOT_FOUND'), 404);
+        throw new Exception(Text::_('JERROR_PAGE_NOT_FOUND'), 404);
     }
 }

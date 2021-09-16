@@ -24,10 +24,12 @@
 
 namespace Alledia\OSMap\Component;
 
+use Joomla\CMS\Component\ComponentHelper;
+
 defined('_JEXEC') or die();
 
 
-abstract class Helper extends \JComponentHelper
+abstract class Helper extends ComponentHelper
 {
     public static function getParams($option = 'com_osmap', $strict = false)
     {

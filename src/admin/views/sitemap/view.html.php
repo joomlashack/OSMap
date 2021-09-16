@@ -26,6 +26,7 @@ use Alledia\OSMap\Factory;
 use Alledia\OSMap\View\Admin\Base;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 defined('_JEXEC') or die();
 
@@ -66,16 +67,16 @@ class OSMapViewSitemap extends Base
         $title = 'COM_OSMAP_PAGE_VIEW_SITEMAP_' . ($isNew ? 'ADD' : 'EDIT');
         $this->setTitle($title);
 
-        JToolBarHelper::apply('sitemap.apply');
-        JToolBarHelper::save('sitemap.save');
-        JToolBarHelper::save2new('sitemap.save2new');
+        ToolbarHelper::apply('sitemap.apply');
+        ToolbarHelper::save('sitemap.save');
+        ToolbarHelper::save2new('sitemap.save2new');
 
         if (!$isNew) {
-            JToolBarHelper::save2copy('sitemap.save2copy');
+            ToolbarHelper::save2copy('sitemap.save2copy');
         }
 
         $alt = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
-        JToolBarHelper::cancel('sitemap.cancel', $alt);
+        ToolbarHelper::cancel('sitemap.cancel', $alt);
 
         parent::setToolBar($addDivider);
     }
