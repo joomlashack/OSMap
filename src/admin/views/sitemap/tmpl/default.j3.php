@@ -23,6 +23,7 @@
  */
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
@@ -53,7 +54,7 @@ $actionQuery = array(
     })(jQuery);
 </script>
 
-<form action="<?php echo JRoute::_('index.php?' . http_build_query($actionQuery)); ?>"
+<form action="<?php echo Route::_('index.php?' . http_build_query($actionQuery)); ?>"
       method="post"
       name="adminForm"
       id="adminForm"

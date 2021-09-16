@@ -25,6 +25,7 @@
 use Alledia\OSMap;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
@@ -55,19 +56,16 @@ HTMLHelper::_('script', 'com_osmap/sitemapitems.min.js', ['relative' => true]);
 $container = OSMap\Factory::getPimpleContainer();
 ?>
 
-<form
-    action="<?php echo JRoute::_('index.php?option=com_osmap&view=sitemapitems&id=' . (int)$this->sitemapId); ?>"
-    method="post"
-    name="adminForm"
-    id="adminForm"
-    class="form-validate">
-
+<form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemapitems&id=' . (int)$this->sitemapId); ?>"
+      method="post"
+      name="adminForm"
+      id="adminForm"
+      class="form-validate">
     <div class="row-fluid">
         <div class="span12">
             <div id="osmap-items-container">
                 <div class="osmap-loading">
                     <span class="icon-loop spin"></span>
-                    &nbsp;
                     <?php echo Text::_('COM_OSMAP_LOADING'); ?>
                 </div>
 
@@ -85,7 +83,7 @@ $container = OSMap\Factory::getPimpleContainer();
 </form>
 
 <script>
-    ;(function($) {
+    ;jQuery(function($) {
         $(function() {
             $.fn.osmap.loadSitemapItems({
                 baseUri  : '<?php echo $container->uri->root(); ?>',
@@ -104,5 +102,5 @@ $container = OSMap\Factory::getPimpleContainer();
                 }
             });
         });
-    })(jQuery);
+    });
 </script>

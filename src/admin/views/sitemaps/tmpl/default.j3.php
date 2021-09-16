@@ -42,7 +42,7 @@ $baseUrl   = $container->router->sanitizeURL(Uri::root());
 $listOrder = $this->state->get('list.ordering');
 $listDir   = $this->state->get('list.direction');
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_osmap&view=sitemaps'); ?>"
+<form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemaps'); ?>"
       method="post"
       name="adminForm"
       id="adminForm">

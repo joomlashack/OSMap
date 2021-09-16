@@ -40,7 +40,7 @@ class Router
     /**
      * Route the given URL using the site application. If in admin, the result
      * needs to be the same as the frontend. Replicates partially the native
-     * JRoute::_ method, but forcing to use the frontend routes. Required to
+     * Route::_ method, but forcing to use the frontend routes. Required to
      * allow see correct routed URLs in the admin while editing a sitemap.
      *
      * @param string $url
@@ -51,7 +51,7 @@ class Router
     public function routeURL($url)
     {
         if (!$this->joomlaRouter) {
-            // Get the router.
+            // Avoid caching to get the router
             $app = CMSApplication::getInstance('site');
 
             $this->joomlaRouter = $app::getRouter('site');

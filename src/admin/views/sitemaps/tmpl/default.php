@@ -32,7 +32,7 @@ HTMLHelper::_('behavior.multiselect');
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_osmap&view=sitemaps'); ?>"
+<form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemaps'); ?>"
       method="post"
       name="adminForm"
       id="adminForm">
