@@ -46,16 +46,19 @@ $listDir   = $this->state->get('list.direction');
       method="post"
       name="adminForm"
       id="adminForm">
+    <div id="j-sidebar-container" class="span2">
+        <?php echo $this->sidebar; ?>
+    </div>
 
-    <?php
-    echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
+    <div id="j-main-container" class="span10">
+        <?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 
-    if (empty($this->items)) : ?>
-        <div class="alert alert-no-items">
-            <?php echo Text::_('COM_OSMAP_NO_MATCHING_RESULTS'); ?>
-        </div>
-    <?php else : ?>
-        <div id="j-main-container">
+        <?php if (empty($this->items)) : ?>
+            <div class="alert alert-no-items">
+                <?php echo Text::_('COM_OSMAP_NO_MATCHING_RESULTS'); ?>
+            </div>
+
+        <?php else : ?>
             <table class="adminlist table table-striped" id="sitemapList">
                 <thead>
                 <tr>
@@ -181,8 +184,8 @@ $listDir   = $this->state->get('list.direction');
                 <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
-    <?php endif; ?>
+        <?php endif; ?>
+    </div>
 
     <input type="hidden" name="task" value=""/>
     <input type="hidden" name="boxchecked" value="0"/>

@@ -24,8 +24,9 @@
 
 use Alledia\OSMap\Factory;
 use Alledia\OSMap\Helper\General;
-use Alledia\OSMap\View\Admin\Base;
+use Alledia\OSMap\View\Admin\AbstractList;
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -33,7 +34,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 defined('_JEXEC') or die();
 
 
-class OSMapViewSitemaps extends Base
+class OSMapViewSitemaps extends AbstractList
 {
     /**
      * @var string[]
@@ -61,6 +62,7 @@ class OSMapViewSitemaps extends Base
         // We don't need toolbar or submenus in the modal window
         if (stripos($this->getLayout(), 'modal') !== 0) {
             $this->setToolbar();
+            $this->sidebar = Sidebar::render();
         }
 
         // Get the active languages for multi-language sites
@@ -75,7 +77,7 @@ class OSMapViewSitemaps extends Base
     /**
      * @inheritDoc
      */
-    protected function setToolbar($addDivider = true)
+    protected function setToolbar()
     {
         $this->setTitle('COM_OSMAP_SUBMENU_SITEMAPS');
 
@@ -99,7 +101,7 @@ class OSMapViewSitemaps extends Base
             ToolbarHelper::trash('sitemaps.trash');
         }
 
-        parent::setToolBar($addDivider);
+        parent::setToolBar();
     }
 
     /**
