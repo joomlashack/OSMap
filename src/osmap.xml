@@ -126,6 +126,7 @@
             <file>administrator/components/com_osmap/helpers/osmap.php</file>
             <file>administrator/components/com_osmap/library/alledia/osmap/Helper/ImagesPro.php</file>
             <file>administrator/components/com_osmap/library/alledia/osmap/Services/Pro.php</file>
+            <file>administrator/components/com_osmap/library/alledia/osmap/View/Admin/Base.php</file>
             <file>administrator/components/com_osmap/library/alledia/osmap/View/Base.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/default.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/edit.php</file>
