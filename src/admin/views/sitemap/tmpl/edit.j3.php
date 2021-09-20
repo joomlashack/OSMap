@@ -46,7 +46,7 @@ $actionQuery = [
 <script>
     ;(function($) {
         Joomla.submitbutton = function(task) {
-            if (task === 'sitemap.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
+            if (task === 'sitemap.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
                 let ordering = $('#ul_menus').sortable('toArray').toString();
                 $('#menus_ordering').val(ordering);
 
