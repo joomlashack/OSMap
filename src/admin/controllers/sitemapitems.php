@@ -75,25 +75,21 @@ class OSMapControllerSitemapItems extends Form
             }
         }
 
-        $query = [
-            'option' => 'com_osmap',
-            'view'   => 'sitemaps'
-        ];
-
         if ($this->getTask() === 'apply') {
-            $query = array_merge(
-                $query,
-                [
-                    'view' => 'sitemapitems',
-                    'id'   => $sitemapId
-                ]
-            );
+            $query = [
+                'option' => 'com_osmap',
+                'view'   => 'sitemapitems',
+                'id'     => $sitemapId
+            ];
 
             if ($language) {
                 $query['lang'] = $language;
             }
 
-            $this->setRedirect(Route::_('index.php?' . http_build_query($query)));
+            $this->setRedirect('index.php?' . http_build_query($query));
+
+        } else {
+            $this->setRedirect('index.php?option=com_osmap&view=sitemaps');
         }
     }
 }
