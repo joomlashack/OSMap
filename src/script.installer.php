@@ -22,7 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\Installer\Osmap\Free\AbstractScript;
+use Alledia\Installer\OSMap\Free\AbstractScript;
 
 defined('_JEXEC') or die();
 

@@ -22,9 +22,9 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Alledia\Installer\Osmap\Free;
+namespace Alledia\Installer\OSMap\Free;
 
-use Alledia\Installer\Osmap\XmapConverter;
+use Alledia\Installer\OSMap\XmapConverter;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;

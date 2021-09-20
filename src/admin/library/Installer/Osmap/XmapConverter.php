@@ -22,7 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Alledia\Installer\Osmap;
+namespace Alledia\Installer\OSMap;
 
 use Alledia\Framework\Joomla\Extension\Generic;
 use Joomla\CMS\Factory;
