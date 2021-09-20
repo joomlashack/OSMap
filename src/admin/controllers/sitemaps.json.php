@@ -23,7 +23,7 @@
  */
 
 
-use Alledia\Installer\Osmap\XmapConverter;
+use Alledia\Installer\OSMap\XmapConverter;
 use Alledia\OSMap\Controller\Json;
 
 defined('_JEXEC') or die();
