@@ -50,10 +50,10 @@ try {
         define('OSMAP_SITE_PATH', JPATH_SITE . '/components/com_osmap');
         define('OSMAP_LIBRARY_PATH', OSMAP_ADMIN_PATH . '/library');
 
-        define('OSMAP_LICENSE', is_file(OSMAP_LIBRARY_PATH . '/alledia/osmap/Services/Pro.php') ? 'pro' : 'free');
+        define('OSMAP_LICENSE', is_file(OSMAP_LIBRARY_PATH . '/Alledia/OSMap/Services/Pro.php') ? 'pro' : 'free');
 
-        AutoLoader::register('Alledia\OSMap', OSMAP_LIBRARY_PATH . '/alledia/osmap');
-        AutoLoader::register('Pimple', OSMAP_LIBRARY_PATH . '/pimple/pimple');
+        AutoLoader::register('Alledia\OSMap', OSMAP_LIBRARY_PATH . '/Alledia/OSMap');
+        AutoLoader::register('Pimple', OSMAP_LIBRARY_PATH . '/Pimple');
 
         PluginHelper::importPlugin('osmap');
 
