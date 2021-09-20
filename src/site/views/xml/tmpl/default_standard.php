@@ -73,7 +73,7 @@ $printNodeCallback = function (Item $node) use ($showExternalLinks, $ignoreDupli
 
 echo $this->addStylesheet();
 
-echo $debug . '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">' . $debug;
+echo $debug . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . $debug;
 
 $this->sitemap->traverse($printNodeCallback);
 
