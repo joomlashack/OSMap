@@ -28,7 +28,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 defined('_JEXEC') or die();
 
 
-class OSMapViewSitemapItems extends OSMap\View\Admin\Base
+class OSMapViewSitemapItems extends OSMap\View\Admin\AbstractList
 {
     /**
      * @param string $tpl

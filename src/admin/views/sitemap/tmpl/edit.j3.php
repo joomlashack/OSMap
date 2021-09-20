@@ -29,7 +29,7 @@ use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
-HTMLHelper::_('behavior.formvalidation');
+HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
 

@@ -26,6 +26,7 @@ namespace Alledia\OSMap\View\Admin;
 
 use Alledia\OSMap\Controller\Form;
 use Alledia\OSMap\Factory;
+use Alledia\OSMap\View\TraitOSMapView;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
@@ -35,50 +36,5 @@ defined('_JEXEC') or die();
 
 class AbstractList extends \Alledia\Framework\Joomla\View\Admin\AbstractList
 {
-    /**
-     * Default admin screen title
-     *
-     * @param ?string $sub
-     * @param string  $icon
-     *
-     * @return void
-     */
-    protected function setTitle(?string $sub = null, string $icon = 'osmap')
-    {
-        $img = HTMLHelper::_('image', "com_osmap/icon-48-{$icon}.png", null, null, true, true);
-        if ($img) {
-            $doc = Factory::getDocument();
-            $doc->addStyleDeclaration(".icon-48-{$icon} { background-image: url({$img}); }");
-        }
-
-        $title = Text::_('COM_OSMAP');
-        if ($sub) {
-            $title .= ': ' . Text::_($sub);
-        }
-
-        ToolbarHelper::title($title, $icon);
-    }
-
-    /**
-     * Render the admin screen toolbar buttons
-     *
-     * @return void
-     * @throws \Exception
-     */
-    protected function setToolBar()
-    {
-        $user = Factory::getUser();
-        if ($user->authorise('core.admin', 'com_osmap')) {
-            ToolbarHelper::preferences('com_osmap');
-        }
-
-        // Prepare the plugins
-        PluginHelper::importPlugin('osmap');
-
-        $viewName    = strtolower(str_replace('OSMapView', '', $this->getName()));
-        $eventParams = [
-            $viewName
-        ];
-        Factory::getApplication()->triggerEvent('osmapOnAfterSetToolBar', $eventParams);
-    }
+    use TraitOSMapView;
 }

@@ -23,15 +23,14 @@
  */
 
 use Alledia\OSMap\Factory;
-use Alledia\OSMap\View\Admin\Base;
-use Joomla\CMS\Form\Form;
+use Alledia\OSMap\View\Admin\AbstractForm;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 defined('_JEXEC') or die();
 
 
-class OSMapViewSitemap extends Base
+class OSMapViewSitemap extends AbstractForm
 {
     /**
      * @var CMSObject
@@ -39,10 +38,8 @@ class OSMapViewSitemap extends Base
     protected $item = null;
 
     /**
-     * @var Form
+     * @inheritDoc
      */
-    public $form = null;
-
     public function display($tpl = null)
     {
         $this->form = $this->get('Form');
@@ -59,7 +56,7 @@ class OSMapViewSitemap extends Base
      * @return void
      * @throws Exception
      */
-    protected function setToolBar($addDivider = true)
+    protected function setToolBar()
     {
         $isNew = ($this->item->id == 0);
         Factory::getApplication()->input->set('hidemainmenu', true);
@@ -78,6 +75,6 @@ class OSMapViewSitemap extends Base
         $alt = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
         ToolbarHelper::cancel('sitemap.cancel', $alt);
 
-        parent::setToolBar($addDivider);
+        parent::setToolBar();
     }
 }
