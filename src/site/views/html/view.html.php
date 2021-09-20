@@ -22,10 +22,10 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\OSMap\View\Site\AbstractList;
+
 defined('_JEXEC') or die();
 
-use Alledia\OSMap;
-
-class OSMapViewAbstractBase extends OSMap\View\Sitemap\AbstractBase
+class OSMapViewHtml extends AbstractList
 {
 }
