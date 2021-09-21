@@ -491,43 +491,40 @@ class Collector
      */
     protected function callPluginsPreparingTheItem($item)
     {
-        // Call the OSMap and XMap legacy plugins, if exists
         $plugins = General::getPluginsForComponent($item->component);
 
-        if (!empty($plugins)) {
-            foreach ($plugins as $plugin) {
-                $className = '\\' . $plugin->className;
+        foreach ($plugins as $plugin) {
+            $className = '\\' . $plugin->className;
 
-                if (method_exists($className, 'prepareMenuItem')) {
-                    if ($plugin->isLegacy) {
-                        $params = $plugin->params->toArray();
-                    } else {
-                        $params =& $plugin->params;
-                    }
-
-                    $arguments = [
-                        &$item,
-                        &$params
-                    ];
-
-                    // If a legacy plugin doesn't specify this method as static, fix the plugin to avoid warnings
-                    $result = General::callUserFunc(
-                        $className,
-                        $plugin->instance,
-                        'prepareMenuItem',
-                        $arguments
-                    );
-
-                    // If a plugin doesn't return true we ignore the item and break
-                    if ($result === false) {
-                        $item->set('ignore', true);
-
-                        break;
-                    }
+            if (method_exists($className, 'prepareMenuItem')) {
+                if ($plugin->isLegacy) {
+                    $params = $plugin->params->toArray();
+                } else {
+                    $params =& $plugin->params;
                 }
 
-                $plugin = null;
+                $arguments = [
+                    &$item,
+                    &$params
+                ];
+
+                // If a legacy plugin doesn't specify this method as static, fix the plugin to avoid warnings
+                $result = General::callUserFunc(
+                    $className,
+                    $plugin->instance,
+                    'prepareMenuItem',
+                    $arguments
+                );
+
+                // If a plugin doesn't return true we ignore the item and break
+                if ($result === false) {
+                    $item->set('ignore', true);
+
+                    break;
+                }
             }
+
+            $plugin = null;
         }
     }
 
@@ -543,35 +540,32 @@ class Collector
      */
     protected function callPluginsGetItemTree($item, $callback)
     {
-        // Register the current callback
         $this->printNodeCallback = $callback;
 
-        // Call the OSMap and XMap legacy plugins, if exists
+        // Call the OSMap and XMap legacy plugins
         $plugins = General::getPluginsForComponent($item->component);
 
-        if (!empty($plugins)) {
-            foreach ($plugins as $plugin) {
-                $className = '\\' . $plugin->className;
-                if (method_exists($className, 'getTree')) {
-                    if ($plugin->isLegacy) {
-                        $params = $plugin->params->toArray();
-                    } else {
-                        $params = $plugin->params;
-                    }
-
-                    $arguments = [
-                        &$this,
-                        &$item,
-                        &$params
-                    ];
-
-                    General::callUserFunc(
-                        $className,
-                        $plugin->instance,
-                        'getTree',
-                        $arguments
-                    );
+        foreach ($plugins as $plugin) {
+            $className = '\\' . $plugin->className;
+            if (method_exists($className, 'getTree')) {
+                if ($plugin->isLegacy) {
+                    $params = $plugin->params->toArray();
+                } else {
+                    $params = $plugin->params;
                 }
+
+                $arguments = [
+                    &$this,
+                    &$item,
+                    &$params
+                ];
+
+                General::callUserFunc(
+                    $className,
+                    $plugin->instance,
+                    'getTree',
+                    $arguments
+                );
             }
         }
     }

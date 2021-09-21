@@ -209,15 +209,15 @@ abstract class General
     /**
      * Gets the plugins according to the given option/component
      *
-     * @param string $option
+     * @param ?string $option
      *
      * @return object[]
      * @throws \Exception
      */
-    public static function getPluginsForComponent(string $option): array
+    public static function getPluginsForComponent(?string $option): array
     {
         // Check if there is a cached list of plugins for this option
-        if (!isset(static::$plugins[$option])) {
+        if ($option && empty(static::$plugins[$option])) {
             $compatiblePlugins = [];
 
             $plugins = static::getPluginsFromDatabase();
@@ -233,7 +233,7 @@ abstract class General
             static::$plugins[$option] = $compatiblePlugins;
         }
 
-        return static::$plugins[$option];
+        return static::$plugins[$option] ?? [];
     }
 
     /**
