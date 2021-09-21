@@ -114,20 +114,17 @@
                        group="xmap"
                        element="com_content"/>
 
-            <folder>administrator/components/com_osmap/library/alledia/osmap/Installer</folder>
-            <folder>administrator/components/com_osmap/library/alledia/osmap/Joomla</folder>
-            <folder>administrator/components/com_osmap/library/alledia/osmap/View/Sitemap</folder>
+            <folder>administrator/components/com_osmap/library/alledia</folder>
             <folder>administrator/components/com_osmap/library/Free</folder>
+            <folder>administrator/components/com_osmap/library/osmap</folder>
+            <folder>administrator/components/com_osmap/library/Osmap</folder>
+            <folder>administrator/components/com_osmap/library/pimple</folder>
             <folder>administrator/components/com_osmap/models/fields</folder>
             <folder>administrator/components/com_osmap/models/forms</folder>
 
             <file>administrator/components/com_osmap/form/fields/osmapmenus.php</file>
             <file>administrator/components/com_osmap/helpers/html/grid.php</file>
             <file>administrator/components/com_osmap/helpers/osmap.php</file>
-            <file>administrator/components/com_osmap/library/alledia/osmap/Helper/ImagesPro.php</file>
-            <file>administrator/components/com_osmap/library/alledia/osmap/Services/Pro.php</file>
-            <file>administrator/components/com_osmap/library/alledia/osmap/View/Admin/Base.php</file>
-            <file>administrator/components/com_osmap/library/alledia/osmap/View/Base.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/default.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/edit.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/edit_legacy.php</file>
