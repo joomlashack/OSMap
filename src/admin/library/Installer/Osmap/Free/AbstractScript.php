@@ -63,9 +63,6 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
         // save Xmap plugins params to re-apply after install OSMap plugins
         $xmapConverter->saveXmapPluginParamsIfExists();
 
-        // Runs the post install/update method
-        parent::postFlight($type, $parent);
-
         // Load Alledia Framework
         require_once JPATH_ADMINISTRATOR . '/components/com_osmap/include.php';
 
