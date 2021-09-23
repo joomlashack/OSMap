@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
     <name>COM_OSMAP</name>
-    <creationDate>September 20 2021</creationDate>
+    <creationDate>September 23 2021</creationDate>
     <copyright>Copyright 2016-2021 Joomlashack.com. All rights reserved</copyright>
     <license>GNU GPL; see LICENSE file</license>
     <author>Joomlashack</author>
     <authorEmail>help@joomlashack.com</authorEmail>
     <authorUrl>https://www.joomlashack.com</authorUrl>
-    <version>5.0.0rc2</version>
+    <version>5.0.0rc3</version>
     <description>COM_OSMAP_DESCRIPTION</description>
     <variant>FREE</variant>
 
