@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="plugin" group="osmap" method="upgrade">
     <name>PLG_OSMAP_JOOMLA</name>
-    <creationDate>September 23 2021</creationDate>
+    <creationDate>September 24 2021</creationDate>
     <copyright>Copyright 2016-2020 Joomlashack.com. All rights reserved</copyright>
     <license>GNU GPL; see LICENSE file</license>
     <author>Joomlashack</author>
     <authorEmail>help@joomlashack.com</authorEmail>
     <authorUrl>https://www.joomlashack.com</authorUrl>
-    <version>5.0.0rc3</version>
+    <version>5.0.0rc4</version>
     <variant>FREE</variant>
     <description>PLG_OSMAP_JOOMLA_PLUGIN_DESCRIPTION</description>
 
