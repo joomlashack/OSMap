@@ -32,41 +32,6 @@ defined('_JEXEC') or die();
 class OSMapTableSitemap extends Table
 {
     /**
-     * @var int Primary key
-     */
-    public $id = null;
-
-    /**
-     * @var string
-     */
-    public $name = null;
-
-    /**
-     * @var string
-     */
-    public $params = null;
-
-    /**
-     * @var string
-     */
-    public $created_on = null;
-
-    /**
-     * @var int
-     */
-    public $is_default = 0;
-
-    /**
-     * @var int
-     */
-    public $published = 1;
-
-    /**
-     * @var int
-     */
-    public $links_count = 0;
-
-    /**
      * @var array
      */
     public $menus = [];
@@ -130,19 +95,49 @@ class OSMapTableSitemap extends Table
 
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function store($updateNulls = false)
     {
-        $db   = Factory::getDbo();
-        $date = Factory::getDate();
-
-        if (!$this->id) {
-            $this->created_on = $date->toSql();
+        if (empty($this->get('id'))) {
+            $this->set('created_on', Factory::getDate()->toSql());
         }
 
+        $this->checkDefault();
+
+        $menuKeys = [
+            'menus',
+            'menus_priority',
+            'menus_changefreq',
+            'menus_ordering'
+        ];
+        $menus    = [];
+        foreach ($menuKeys as $menuKey) {
+            $menus[$menuKey] = $this->get($menuKey);
+            if (isset($this->{$menuKey})) {
+                unset($this->{$menuKey});
+            }
+        }
+
+        if (parent::store($updateNulls)) {
+            return $this->updateMenus($menus);
+        }
+
+        return false;
+    }
+
+    /**
+     * Make sure we have one and only one default sitemap
+     *
+     * @throws Exception
+     */
+    protected function checkDefault()
+    {
+        $db = Factory::getDbo();
+
         // Make sure we have only one default sitemap
-        if ($this->is_default) {
-            // Set as not default any other sitemap
+        if ($this->get('is_default')) {
+            // Set all other sitemaps as not default
             $query = $db->getQuery(true)
                 ->update('#__osmap_sitemaps')
                 ->set('is_default = 0');
@@ -155,12 +150,12 @@ class OSMapTableSitemap extends Table
                 ->select('COUNT(*)')
                 ->from('#__osmap_sitemaps')
                 ->where('is_default = 1')
-                ->where('id <> ' . $db->quote($this->id));
+                ->where('id <> ' . (int)$this->get('id'));
 
             $count = (int)$db->setQuery($query)->loadResult();
 
             if ($count == 0) {
-                $this->is_default = 1;
+                $this->set('is_default', 1);
 
                 Factory::getApplication()->enqueueMessage(
                     Text::_('COM_OSMAP_MSG_SITEMAP_FORCED_AS_DEFAULT'),
@@ -168,66 +163,70 @@ class OSMapTableSitemap extends Table
                 );
             }
         }
-
-        // Get the menus
-        $menus           = $this->menus;
-        $menusPriority   = $this->menus_priority;
-        $menusChangeFreq = $this->menus_changefreq;
-        $menusOrdering   = explode(',', $this->menus_ordering);
-
-        unset($this->menus, $this->menus_priority, $this->menus_changefreq, $this->menus_ordering);
-
-        // Store the sitemap data
-        $result = parent::store($updateNulls);
-
-        if ($result) {
-            // Remove the current menus
-            $this->removeMenus();
-
-            if (!empty($menus)) {
-                $ordering = 0;
-
-                // Store the menus for this sitemap
-                foreach ($menus as $menuId) {
-                    // Get the index of the selected menu in the ordering array
-                    $index = array_search('menu_' . $menuId, $menusOrdering);
-
-                    $query = $db->getQuery(true)
-                        ->insert('#__osmap_sitemap_menus')
-                        ->set([
-                            'sitemap_id = ' . $db->quote($this->id),
-                            'menutype_id = ' . $db->quote($menuId),
-                            'priority = ' . $db->quote($menusPriority[$index]),
-                            'changefreq = ' . $db->quote($menusChangeFreq[$index]),
-                            'ordering = ' . $ordering
-                        ]);
-                    $db->setQuery($query)->execute();
-
-                    $ordering++;
-                }
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     /**
-     * Remove all the menus for the given sitemap
+     * Update the related menu table
      *
-     * @return void
+     * @param array $menus
+     *
+     * @return bool
      */
-    public function removeMenus()
+    protected function updateMenus(array $menus): bool
     {
-        if ($this->id) {
-            $db    = Factory::getDbo();
-            $query = $db->getQuery(true)
-                ->delete('#__osmap_sitemap_menus')
-                ->where('sitemap_id = ' . $db->quote($this->id));
+        $id = (int)$this->get('id');
 
-            $db->setQuery($query)->execute();
+        if ($id) {
+            $db           = Factory::getDbo();
+            $ordering     = 1;
+            $insertValues = [];
+
+            $menuOrder  = array_map('trim', explode(',', $menus['menus_ordering'] ?? ''));
+            $changeFreq = $menus['menus_changefreq'] ?? null;
+            $priority   = $menus['menus_priority'] ?? null;
+            $menus      = $menus['menus'] ?? null;
+
+            // Store the menus for this sitemap
+            foreach ($menus as $menuId) {
+                // Get the index of the selected menu in the ordering array
+                $index = array_search('menu_' . $menuId, $menuOrder);
+
+                $insertValues[] = [
+                    'sitemap_id'  => (int)$this->get('id'),
+                    'menutype_id' => (int)$menus[$index],
+                    'priority'    => (float)$priority[$index],
+                    'changefreq'  => $db->quote($changeFreq[$index]),
+                    'ordering'    => $ordering++
+                ];
+            }
+
+            // Clear the menu list
+            if ($id) {
+                $db    = Factory::getDbo();
+                $query = $db->getQuery(true)
+                    ->delete('#__osmap_sitemap_menus')
+                    ->where('sitemap_id = ' . $id);
+
+                $db->setQuery($query)->execute();
+            }
+
+            try {
+                // Insert the updated list
+                foreach ($insertValues as $insertValue) {
+                    $query = $db->getQuery(true)
+                        ->insert('#__osmap_sitemap_menus')
+                        ->columns(array_keys($insertValue))
+                        ->values(join(',',$insertValue));
+
+                    $db->setQuery($query)->execute();
+                }
+
+            } catch (Throwable $e) {
+                echo $db->replacePrefix($query);
+            }
         }
+
+        return true;
     }
 
     /**
@@ -243,7 +242,7 @@ class OSMapTableSitemap extends Table
             $query = $db->getQuery(true)
                 ->select('*')
                 ->from('#__osmap_sitemap_menus')
-                ->where('sitemap_id = ' . $db->quote($this->id))
+                ->where('sitemap_id = ' . (int)$this->get('id'))
                 ->order('ordering');
 
             $menusRows = $db->setQuery($query)->loadObjectList();
