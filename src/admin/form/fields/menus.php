@@ -92,10 +92,6 @@ class OsmapFormFieldMenus extends FormField
 
         $options = $db->setQuery($query)->loadObjectList();
 
-        //echo '<pre>';
-        //print_r($this->value);
-        //echo '</pre>';
-
         uasort($options, [$this, 'sortOptions']);
 
         return $options;
