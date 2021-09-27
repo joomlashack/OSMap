@@ -43,19 +43,6 @@ $actionQuery = [
     'id'     => (int)$this->item->id
 ];
 ?>
-<script>
-    ;(function($) {
-        Joomla.submitbutton = function(task) {
-            if (task === 'sitemap.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
-                let ordering = $('#ul_menus').sortable('toArray').toString();
-                $('#menus_ordering').val(ordering);
-
-                Joomla.submitform(task, document.getElementById('adminForm'));
-            }
-        }
-    })(jQuery);
-</script>
-
 <form action="<?php echo Route::_('index.php?' . http_build_query($actionQuery)); ?>"
       method="post"
       name="adminForm"
@@ -76,7 +63,6 @@ $actionQuery = [
         </div>
     </div>
 
-    <input type="hidden" id="menus_ordering" name="jform[menus_ordering]" value=""/>
     <input type="hidden" name="task" value=""/>
     <input type="hidden" name="return" value="<?php echo $input->getCmd('return'); ?>"/>
     <?php echo HTMLHelper::_('form.token'); ?>
