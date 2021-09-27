@@ -22,7 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 
@@ -57,7 +57,7 @@ class OSMapModelSitemap extends AdminModel
      */
     protected function loadFormData()
     {
-        $data = OSMap\Factory::getApplication()->getUserState('com_osmap.edit.sitemap.data', []);
+        $data = Factory::getApplication()->getUserState('com_osmap.edit.sitemap.data', []);
 
         if (empty($data)) {
             $data = $this->getItem();
@@ -66,12 +66,12 @@ class OSMapModelSitemap extends AdminModel
             $id = $data->get('id');
             if (empty($id)) {
                 $data->set('published', 1);
-                $data->set('created', OSMap\Factory::getDate()->toSql());
+                $data->set('created', Factory::getDate()->toSql());
             }
 
             // Load the menus
-            if (!empty($id)) {
-                $db    = OSMap\Factory::getDbo();
+            if ($id) {
+                $db    = Factory::getDbo();
                 $query = $db->getQuery(true)
                     ->select('*')
                     ->from('#__osmap_sitemap_menus')
@@ -91,22 +91,5 @@ class OSMapModelSitemap extends AdminModel
         }
 
         return $data;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function prepareTable($table)
-    {
-    }
-
-    /**
-     * Returns an array with a list of the selected menus
-     *
-     * @return array
-     */
-    public function getSelectedMenus($sitemapId)
-    {
-        return [];
     }
 }

@@ -32,6 +32,7 @@ trait TraitOsmapField
     {
         if (is_callable('parent::setup') && parent::setup($element, $value, $group)) {
             $include = JPATH_ADMINISTRATOR . '/components/com_osmap/include.php';
+
             return is_file($include) && include $include;
         }
 
