@@ -73,7 +73,7 @@ abstract class JHtmlOSMap
     {
         $priorities = [];
         for ($i = 0.1; $i <= 1; $i += 0.1) {
-            $priorities[] = sprintf('%03.1f', $i);
+            $priorities[] = number_format($i, 1);
         }
 
         return $priorities;
