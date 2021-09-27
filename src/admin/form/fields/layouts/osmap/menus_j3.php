@@ -134,7 +134,7 @@ $titleLabel           = Text::_('COM_OSMAP_TITLE_LABEL');
             $changePriorityField   = HTMLHelper::_(
                 'osmap.priorities',
                 $prioritiesName,
-                ($selected ? $value[$option->value]['priority'] : '0.5'),
+                ($selected ? number_format($value[$option->value]['priority'], 1) : '0.5'),
                 $idx
             );
             $changeChangeFreqField = HTMLHelper::_(
