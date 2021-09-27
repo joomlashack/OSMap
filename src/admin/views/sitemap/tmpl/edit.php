@@ -33,7 +33,6 @@ HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
 $input = Factory::getApplication()->input;
 
 $actionQuery = [
