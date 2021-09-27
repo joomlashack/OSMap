@@ -22,14 +22,11 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
-use Joomla\CMS\HTML\HTMLHelper;
+use Alledia\OSMap\Factory;
 
 defined('_JEXEC') or die();
 
-OSMap\Factory::getApplication()->input->set('tmpl', 'component');
-
-HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
+Factory::getApplication()->input->set('tmpl', 'component');
 
 if (!empty($this->message)) : ?>
     <div class="alert alert-warning">

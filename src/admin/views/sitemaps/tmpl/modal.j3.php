@@ -34,8 +34,6 @@ HTMLHelper::_('behavior.core');
 HTMLHelper::_('bootstrap.tooltip', '.hasTooltip', ['placement' => 'bottom']);
 HTMLHelper::_('bootstrap.popover', '.hasPopover', ['placement' => 'bottom']);
 
-HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
-
 $function  = Factory::getApplication()->input->getString('function', 'jSelectSitemap');
 $baseUrl   = Uri::root();
 $ordering  = $this->escape($this->state->get('list.ordering'));

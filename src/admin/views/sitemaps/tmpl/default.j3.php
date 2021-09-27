@@ -34,8 +34,6 @@ defined('_JEXEC') or die();
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
-
 $container = Factory::getPimpleContainer();
 
 $baseUrl   = $container->router->sanitizeURL(Uri::root());

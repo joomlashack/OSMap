@@ -24,6 +24,7 @@
 
 use Alledia\OSMap\Controller\Base;
 use Alledia\OSMap\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
@@ -34,6 +35,8 @@ include JPATH_COMPONENT_ADMINISTRATOR . '/include.php';
 if (!Factory::getUser()->authorise('core.manage', 'com_osmap')) {
     throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 404);
 }
+
+HTMLHelper::_('stylesheet', 'com_osmap/admin.min.css', ['relative' => true]);
 
 $input = Factory::getApplication()->input;
 
