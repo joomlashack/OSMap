@@ -46,7 +46,19 @@ abstract class JHtmlOSMap
             $options[] = HTMLHelper::_('select.option', $priority, $priority);
         }
 
-        return HTMLHelper::_('select.genericlist', $options, $name, null, 'value', 'text', $selected, $name . $j);
+        return HTMLHelper::_(
+            'select.genericlist',
+            $options,
+            $name,
+            [
+                'class' => 'form-select',
+                'style' => 'width: fit-content'
+            ],
+            'value',
+            'text',
+            $selected,
+            $name . $j
+        );
     }
 
     /**
@@ -63,7 +75,16 @@ abstract class JHtmlOSMap
             $options[] = HTMLHelper::_('select.option', $value, $text);
         }
 
-        return HTMLHelper::_('select.genericlist', $options, $name, null, 'value', 'text', $selected, $name . $j);
+        return HTMLHelper::_(
+            'select.genericlist',
+            $options,
+            $name,
+            ['class' => 'form-select'],
+            'value',
+            'text',
+            $selected,
+            $name . $j
+        );
     }
 
     /**
