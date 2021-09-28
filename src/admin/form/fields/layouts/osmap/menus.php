@@ -73,25 +73,33 @@ $attributes = [
     'class' => $class,
 ];
 
-$wa = Factory::getDocument()->getWebAssetManager();
-$wa->useScript('dragula');
-
 $sortableId = $id . '_menus';
+
+HTMLHelper::_('draggablelist.draggable');
 
 $script = <<<JSCRIPT
 ;jQuery(document).ready(function ($) { 
-    let \$menus = $('#{$sortableId}').find('[id^="{$id}_"]:checkbox'),
-        \$ordering = $('#{$id}_menus_ordering');
-        
-    \$menus.on('click', function(evt) {
+    let \$ordering = $('#{$id}_menus_ordering'),
+        drake      = dragula([document.querySelector('.osmap-draggable')]);
+
+    let menuItems = function() {
+        return $('#{$sortableId}').find('[id^="{$id}_"]:checkbox');
+    };
+            
+    let setOrdering = function() {
         let menu_ordering = [];
-        \$menus.each(function() {
+        
+        menuItems().each(function() {
             if (this.checked) {
                 menu_ordering.push('menu_' + this.value);
             }
         });
         \$ordering.val(menu_ordering.join(','));
-    });
+    };
+    
+    menuItems().on('click', setOrdering);
+    drake.on('drop', setOrdering);
+    setOrdering();
 });
 JSCRIPT;
 
@@ -117,7 +125,7 @@ $titleLabel           = Text::_('COM_OSMAP_TITLE_LABEL');
     </tr>
     </thead>
 
-    <tbody>
+    <tbody class="osmap-draggable">
     <?php
     $currentItems            = array_keys($value);
     $nameRegex               = sprintf('/(%s\[[^]]+)(].*)/', $field->formControl);
