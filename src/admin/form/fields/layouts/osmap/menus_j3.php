@@ -89,16 +89,6 @@ $script = <<<JSCRIPT
             $('#{$id}_menus_ordering').val(ordering);
         })
         .trigger('sortupdate');
-
-    // Toggle checkbox clicking on the line
-    $('#{$sortableId} li').on('click', function(event) {
-        if ($(event.srcElement).hasClass('osmap-menu-item')
-            || $(event.srcElement).hasClass('control-label')
-            || $(event.srcElement).hasClass('osmap-menu-options')) {
-
-            $(this).children('input').click();
-        }
-    });
 });
 JSCRIPT;
 
@@ -173,14 +163,12 @@ $titleLabel           = Text::_('COM_OSMAP_TITLE_LABEL');
 
                 <div class="osmap-cell osmap-col-priority osmap-menu-options"
                      data-title="<?php echo $changeFrequencyLabel; ?>">
-                    <div class="controls">
-                        <?php echo $changePriorityField; ?>
-                    </div>
+                    <?php echo $changePriorityField; ?>
                 </div>
 
                 <div class="osmap-cell osmap-col-changefreq osmap-menu-options"
                      data-title="<?php echo $changeFrequencyLabel; ?>">
-                    <div class="controls"><?php echo $changeChangeFreqField; ?></div>
+                    <?php echo $changeChangeFreqField; ?>
                 </div>
             </li>
         <?php endforeach; ?>
