@@ -80,7 +80,18 @@ $sortableId = $id . '_menus';
 
 $script = <<<JSCRIPT
 ;jQuery(document).ready(function ($) { 
-    let \$menus = $('#{$sortableId}');
+    let \$menus = $('#{$sortableId}').find('[id^="{$id}_"]:checkbox'),
+        \$ordering = $('#{$id}_menus_ordering');
+        
+    \$menus.on('click', function(evt) {
+        let menu_ordering = [];
+        \$menus.each(function() {
+            if (this.checked) {
+                menu_ordering.push('menu_' + this.value);
+            }
+        });
+        \$ordering.val(menu_ordering.join(','));
+    });
 });
 JSCRIPT;
 
@@ -95,7 +106,7 @@ $priorityLabel        = Text::_('COM_OSMAP_PRIORITY_LABEL');
 $selectedLabel        = Text::_('COM_OSMAP_SELECTED_LABEL');
 $titleLabel           = Text::_('COM_OSMAP_TITLE_LABEL');
 ?>
-<table class="adminlist table table-striped">
+<table id="<?php echo $sortableId; ?>" class="adminlist table table-striped">
     <thead>
     <tr>
         <th scope="col" class="w-1 text-center"><?php echo $selectedLabel; ?></th>
