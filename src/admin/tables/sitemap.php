@@ -210,19 +210,14 @@ class OSMapTableSitemap extends Table
                 $db->setQuery($query)->execute();
             }
 
-            try {
-                // Insert the updated list
-                foreach ($insertValues as $insertValue) {
-                    $query = $db->getQuery(true)
-                        ->insert('#__osmap_sitemap_menus')
-                        ->columns(array_keys($insertValue))
-                        ->values(join(',',$insertValue));
+            // Insert the updated list
+            foreach ($insertValues as $insertValue) {
+                $query = $db->getQuery(true)
+                    ->insert('#__osmap_sitemap_menus')
+                    ->columns(array_keys($insertValue))
+                    ->values(join(',', $insertValue));
 
-                    $db->setQuery($query)->execute();
-                }
-
-            } catch (Throwable $e) {
-                echo $db->replacePrefix($query);
+                $db->setQuery($query)->execute();
             }
         }
 
