@@ -75,6 +75,7 @@ $attributes = [
 
 $sortableId = $id . '_menus';
 
+HTMLHelper::_('jquery.framework');
 HTMLHelper::_('draggablelist.draggable');
 
 $script = <<<JSCRIPT
