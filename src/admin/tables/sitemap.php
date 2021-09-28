@@ -193,7 +193,7 @@ class OSMapTableSitemap extends Table
 
                 $insertValues[] = [
                     'sitemap_id'  => (int)$this->get('id'),
-                    'menutype_id' => (int)$menus[$index],
+                    'menutype_id' => (int)$menuId,
                     'priority'    => (float)$priority[$index],
                     'changefreq'  => $db->quote($changeFreq[$index]),
                     'ordering'    => $ordering++
