@@ -151,23 +151,21 @@ $titleLabel           = Text::_('COM_OSMAP_TITLE_LABEL');
             ?>
             <li id="<?php echo 'menu_' . $option->value; ?>"
                 class="osmap-menu-item">
-                <div class="osmap-cell osmap-col-selected" data-title="<?php echo $selectedLabel; ?>">
+                <div class="osmap-cell osmap-col-selected">
                     <input <?php echo ArrayHelper::toString($currentAttributes); ?>/>
                 </div>
 
-                <div class="osmap-cell osmap-col-title" data-title="<?php echo $titleLabel; ?>">
+                <div class="osmap-cell osmap-col-title">
                     <label for="<?php echo $thisId . '_id'; ?>" class="menu_label">
                         <?php echo $option->text; ?>
                     </label>
                 </div>
 
-                <div class="osmap-cell osmap-col-priority osmap-menu-options"
-                     data-title="<?php echo $changeFrequencyLabel; ?>">
+                <div class="osmap-cell osmap-col-priority osmap-menu-options">
                     <?php echo $changePriorityField; ?>
                 </div>
 
-                <div class="osmap-cell osmap-col-changefreq osmap-menu-options"
-                     data-title="<?php echo $changeFrequencyLabel; ?>">
+                <div class="osmap-cell osmap-col-changefreq osmap-menu-options">
                     <?php echo $changeChangeFreqField; ?>
                 </div>
             </li>
