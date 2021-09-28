@@ -75,6 +75,14 @@ class OsmapFormFieldMenus extends FormField
 
     /**
      * @inheritDoc
+     */
+    protected function getLabel()
+    {
+        return '';
+    }
+
+    /**
+     * @return object[]
      * @throws Exception
      */
     protected function getOptions()

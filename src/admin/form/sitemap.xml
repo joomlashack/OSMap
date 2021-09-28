@@ -34,7 +34,6 @@
         <field name="id"
                type="hidden"/>
 
-
         <field name="is_default"
                type="radio"
                class="btn-group btn-group-yesno"
