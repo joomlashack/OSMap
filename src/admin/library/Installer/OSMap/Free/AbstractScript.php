@@ -45,10 +45,8 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
     /**
      * @inheritDoc
      */
-    public function postFlight($type, $parent)
+    public function customPostFlight($type, $parent)
     {
-        parent::postFlight($type, $parent);
-
         if ($type == 'uninstall') {
             return;
         }
