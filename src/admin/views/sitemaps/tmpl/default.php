@@ -22,6 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\Button\PublishedButton;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -126,12 +127,16 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 <td class="text-center">
                                     <div class="btn-group" role="group" aria-label="">
                                         <?php
-                                        echo HTMLHelper::_(
-                                            'jgrid.published',
-                                            $this->item->published,
+
+                                        $options = [
+                                            'task_prefix' => 'sitemaps.',
+                                            'id'          => 'state-' . $this->item->id
+                                        ];
+
+                                        echo (new PublishedButton())->render(
+                                            (int)$this->item->published,
                                             $i,
-                                            'sitemaps.',
-                                            'cb'
+                                            $options
                                         );
 
                                         $defaultAttribs = [
