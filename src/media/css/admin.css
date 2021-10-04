@@ -122,6 +122,10 @@ ul.ul_sortable li {
   display: table;
 }
 
+.osmap-draggable td {
+  cursor: move;
+}
+
 ul.ul_sortable li label.menu_label {
   font-weight: bold;
   display: inline-block;
