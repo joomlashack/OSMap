@@ -488,6 +488,29 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         $db        = Factory::getDbo();
         $container = Factory::getPimpleContainer();
 
+        $nullDate = $db->quote($db->getNullDate());
+        $nowDate  = $db->quote(Factory::getDate()->toSql());
+
+        $selectFields = [
+            'a.id',
+            'a.title',
+            'a.alias',
+            'a.catid',
+            'a.created',
+            'a.modified',
+            'a.publish_up',
+            'a.attribs AS params',
+            'a.metadata',
+            'a.language',
+            'a.metakey',
+            'a.images',
+            'c.title AS categMetakey'
+        ];
+        if ($params->get('add_images', 1) || $params->get('add_pagebreaks', 1)) {
+            $selectFields[] = 'a.introtext';
+            $selectFields[] = 'a.fulltext';
+        }
+
         if ($params->get('include_archived', 2)) {
             $where = ['(a.state = 1 or a.state = 2)'];
         } else {
@@ -506,42 +529,24 @@ class PlgOSMapJoomla extends Base implements ContentInterface
             $where[] = 'a.access IN (' . General::getAuthorisedViewLevels() . ') ';
         }
 
-        $nullDate = $db->quote($db->getNullDate());
-        $nowDate  = $db->quote(Factory::getDate()->toSql());
-
-        $query = $db->getQuery(true)
-            ->select([
-                'a.id',
-                'a.title',
-                'a.alias',
-                'a.catid',
-                'a.created',
-                'a.modified',
-                'a.publish_up',
-                'a.attribs AS params',
-                'a.metadata',
-                'a.language',
-                'a.metakey',
-                'a.images',
-                'c.title AS categMetakey'
-            ]);
-
-        if ($params->get('add_images', 1) || $params->get('add_pagebreaks', 1)) {
-            $query->select([
-                'a.introtext',
-                'a.fulltext'
-            ]);
-        }
+        $where[] = sprintf(
+            '(ISNULL(a.publish_up) OR a.publish_up = %s OR a.publish_up <= %s)',
+            $nullDate,
+            $nowDate
+        );
+        $where[] = sprintf(
+            '(ISNULL(a.publish_down) OR a.publish_down = %s OR a.publish_down >= %s)',
+            $nullDate,
+            $nowDate
+        );
 
         //@todo: Do we need join for frontpage?
-        $query
+        $query = $db->getQuery(true)
+            ->select($selectFields)
             ->from('#__content AS a')
             ->join('LEFT', '#__content_frontpage AS fp ON (a.id = fp.content_id)')
             ->join('LEFT', '#__categories AS c ON (a.catid = c.id)')
-            ->where($where)
-            ->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')')
-            ->where('(a.publish_down = ' . $nullDate . ' OR a.publish_down >= ' . $nowDate . ')');
-
+            ->where($where);
 
         // Ordering
         $orderOptions    = [
