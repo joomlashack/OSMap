@@ -111,10 +111,8 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
 
         $this->osmapParams = ComponentHelper::getParams('com_osmap');
 
-        // Load the sitemap instance
         $this->sitemap = Factory::getSitemap($id);
 
-        // Check if the sitemap is published
         if (!$this->sitemap->isPublished) {
             throw new \Exception(Text::_('COM_OSMAP_MSG_SITEMAP_IS_UNPUBLISHED'));
         }
@@ -153,7 +151,7 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
      *
      * @return bool
      */
-    public function registerNodeIntoList($node)
+    public function registerNodeIntoList(object $node): bool
     {
         $ignoreDuplicatedUIDs = (int)$this->osmapParams->get('ignore_duplicated_uids', 1);
 
@@ -264,7 +262,7 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
      *
      * @return void
      */
-    public function printItem($item)
+    public function printItem(object $item)
     {
         $this->generalCounter++;
 
@@ -345,11 +343,11 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
      * Render the menu item and its children items
      *
      * @param object $menu
-     * @param int    $columns
+     * @param ?int   $columns
      *
      * @return void
      */
-    protected function printMenu($menu, $columns = null)
+    protected function printMenu(object $menu, ?int $columns = null)
     {
         if (isset($menu->menuItemType)) {
             $sanitizedUID = ApplicationHelper::stringURLSafe($menu->menuItemType);
