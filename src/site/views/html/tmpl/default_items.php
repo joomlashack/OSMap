@@ -25,9 +25,8 @@
 use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
-?>
 
-<?php if ($this->debug) : ?>
+if ($this->debug) : ?>
     <div class="osmap-debug-sitemap">
         <h1><?php echo Text::_('COM_OSMAP_DEBUG_ALERT_TITLE'); ?></h1>
         <p><?php echo Text::_('COM_OSMAP_DEBUG_ALERT'); ?></p>

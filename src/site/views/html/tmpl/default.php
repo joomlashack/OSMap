@@ -27,32 +27,32 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 defined('_JEXEC') or die();
 
-// Check if we need to inject the CSS
-if ($this->params->get('use_css', 1)) {
+if ($this->params->get('use_css', 1)) :
     HTMLHelper::_('stylesheet', 'com_osmap/sitemap_html.min.css', ['relative' => true]);
-}
+endif;
 
-// If debug is enabled, use text content type
-if ($this->debug) {
+if ($this->debug) :
     Factory::getApplication()->input->set('tmpl', 'component');
     HTMLHelper::_('stylesheet', 'com_osmap/sitemap_html_debug.min.css', ['relative' => true]);
-}
+endif;
 
-// Check if we have parameters from a menu, acknowledging we have a menu
-if ($this->params->get('menu_text') !== null) {
+if ($this->params->get('menu_text') !== null) :
     // We have a menu, so let's use its params to display the heading
     $pageHeading = $this->params->get('page_heading', $this->params->get('page_title'));
-} else {
+else :
     // We don't have a menu, so lets use the sitemap name
     $pageHeading = $this->sitemap->name;
-}
+endif;
+
+$class = join(' ', array_filter([
+    'osmap-sitemap',
+    $this->debug ? 'osmap-debug' : '',
+    $this->params->get('pageclass_sfx', '')
+]));
 ?>
 
-<div id="osmap"
-     class="osmap-sitemap <?php echo $this->debug ? 'osmap-debug' : ''; ?> <?php echo $this->params->get('pageclass_sfx',
-         ''); ?>">
+<div id="osmap" class="<?php echo $class; ?>">
     <!-- Heading -->
-
     <?php if ($this->params->get('show_page_heading', 1)) : ?>
         <div class="page-header">
             <h1><?php echo $this->escape($pageHeading); ?></h1>
@@ -66,15 +66,6 @@ if ($this->params->get('menu_text') !== null) {
         </div>
     <?php endif; ?>
 
-    <!-- Error message, if exists -->
-    <?php if (!empty($this->message)) : ?>
-        <div class="alert alert-warning">
-            <?php echo $this->message; ?>
-        </div>
-    <?php endif; ?>
-
     <!-- Items -->
-    <?php if (empty($this->message)) : ?>
-        <?php echo $this->loadTemplate('items'); ?>
-    <?php endif; ?>
+    <?php echo $this->loadTemplate('items'); ?>
 </div>
