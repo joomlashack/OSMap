@@ -37,7 +37,11 @@ foreach ($languages as $language) :
             'link',
             $this->getLink($this->item, 'xml', $langCode),
             Text::_('COM_OSMAP_XML_LINK'),
-            sprintf('target="_blank" title="%s"', Text::_('COM_OSMAP_XML_LINK_TOOLTIP', true))
+            [
+                'target' => '_blank',
+                'title'  => Text::_('COM_OSMAP_XML_LINK_TOOLTIP', true),
+                'class'  => 'hasTooltip'
+            ]
         );
         ?>
         <span class="icon-new-tab"></span>
@@ -49,7 +53,11 @@ foreach ($languages as $language) :
             'link',
             $this->getLink($this->item, 'html', $langCode),
             Text::_('COM_OSMAP_HTML_LINK'),
-            sprintf('target="_blank" title="%s"', Text::_('COM_OSMAP_HTML_LINK_TOOLTIP', true))
+            [
+                'target' => '_blank',
+                'title'  => Text::_('COM_OSMAP_HTML_LINK_TOOLTIP', true),
+                'class'  => 'hasTooltip'
+            ]
         );
         ?>
         <span class="icon-new-tab"></span>
@@ -61,7 +69,11 @@ foreach ($languages as $language) :
             'link',
             $this->getLink($this->item, 'news', $langCode),
             Text::_('COM_OSMAP_NEWS_LINK'),
-            sprintf('target="_blank" title="%s"', Text::_('COM_OSMAP_NEWS_LINK_TOOLTIP', true))
+            [
+                'target' => '_blank',
+                'title'  => Text::_('COM_OSMAP_NEWS_LINK_TOOLTIP', true),
+                'class'  => 'hasTooltip'
+            ]
         );
         ?>
         <span class="icon-new-tab"></span>
@@ -73,7 +85,11 @@ foreach ($languages as $language) :
             'link',
             $this->getLink($this->item, 'images', $langCode),
             Text::_('COM_OSMAP_IMAGES_LINK'),
-            sprintf('target="_blank" title="%s"', Text::_('COM_OSMAP_IMAGES_LINK_TOOLTIP', true))
+            [
+                'target' => '_blank',
+                'title'  => Text::_('COM_OSMAP_IMAGES_LINK_TOOLTIP', true),
+                'class'  => 'hasTooltip'
+            ]
         );
         ?>
         <span class="icon-new-tab"></span>

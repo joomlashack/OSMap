@@ -22,13 +22,14 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\OSMap\Button\DefaultButton;
 use Joomla\CMS\Button\PublishedButton;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
-HTMLHelper::_('behavior.multiselect');
+HTMLHelper::_('bootstrap.tooltip');
 
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
@@ -52,7 +53,7 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                     </div>
 
                 <?php else : ?>
-                    <table class="adminlist table table-striped">
+                    <table class="table itemList">
                         <caption class="visually-hidden">
                             <?php echo Text::_('COM_OSMAP_SITEMAP_TABLE_CAPTION'); ?>,
                             <span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
@@ -73,6 +74,9 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                     $listOrder
                                 );
                                 ?>
+                            </th>
+                            <th scope="col" class="w-1 text-center">
+                                <?php echo Text::_('COM_OSMAP_HEADING_DEFAULT'); ?>
                             </th>
                             <th scope="col">
                                 <?php
@@ -125,40 +129,28 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 </td>
 
                                 <td class="text-center">
-                                    <div class="btn-group" role="group" aria-label="">
                                         <?php
-
-                                        $options = [
-                                            'task_prefix' => 'sitemaps.',
-                                            'id'          => 'state-' . $this->item->id
-                                        ];
-
                                         echo (new PublishedButton())->render(
                                             (int)$this->item->published,
                                             $i,
-                                            $options
-                                        );
-
-                                        $defaultAttribs = [
                                             [
-                                                'onclick'             => $this->item->is_default
-                                                    ? 'javascript:void(0);'
-                                                    : "return listItemTask('cb{$i}','sitemap.setAsDefault')",
-                                                'class'               => 'ms-2',
-                                                'data-original-title' => Text::_('COM_OSMAP_SITEMAP_IS_DEFAULT_DESC')
+                                                'task_prefix' => 'sitemaps.',
+                                                'id'          => 'state-' . $this->item->id
                                             ]
-                                        ];
-                                        echo HTMLHelper::_(
-                                            'link',
-                                            '#',
-                                            sprintf(
-                                                '<span class="icon-%s"></span>',
-                                                $this->item->is_default ? 'featured' : 'unfeatured'
-                                            ),
-                                            $defaultAttribs
                                         );
                                         ?>
-                                    </div>
+                                </td>
+
+                                <td class="text-center">
+                                    <?php
+                                    echo (new DefaultButton())->render(
+                                        (int)$this->item->is_default,
+                                        $i,
+                                        [
+                                            'id' => 'state-' . $this->item->id
+                                        ]
+                                    );
+                                    ?>
                                 </td>
 
                                 <td class="text-nowrap">

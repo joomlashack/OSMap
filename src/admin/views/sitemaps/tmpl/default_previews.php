@@ -28,7 +28,7 @@ use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die();
 
 $languages = $this->languages ?: [''];
-foreach ($languages as $language) :
+foreach ($languages as $idx => $language) :
     $langCode = empty($language->sef) ? null : $language->sef;
     ?>
     <span class="osmap-link">
@@ -37,9 +37,15 @@ foreach ($languages as $language) :
             'link',
             $this->getLink($this->item, 'xml', $langCode),
             Text::_('COM_OSMAP_XML_LINK'),
-            sprintf('target="_blank" title="%s"', Text::_('COM_OSMAP_XML_LINK_TOOLTIP', true))
+            [
+                'target'           => '_blank',
+                'aria-describedby' => 'tip-xml-' . $idx
+            ]
         );
         ?>
+        <div role="tooltip" id="<?php echo 'tip-xml-' . $idx; ?>">
+            <?php echo Text::_('COM_OSMAP_XML_LINK_TOOLTIP'); ?>
+        </div>
     </span>
 
     <span class="osmap-link">
@@ -48,9 +54,15 @@ foreach ($languages as $language) :
             'link',
             $this->getLink($this->item, 'html', $langCode),
             Text::_('COM_OSMAP_HTML_LINK'),
-            sprintf('target="_blank" title="%s"', Text::_('COM_OSMAP_HTML_LINK_TOOLTIP', true))
+            [
+                'target'           => '_blank',
+                'aria-describedby' => 'tip-html-' . $idx
+            ]
         );
         ?>
+        <div role="tooltip" id="<?php echo 'tip-html-' . $idx; ?>">
+            <?php echo Text::_('COM_OSMAP_HTML_LINK_TOOLTIP'); ?>
+        </div>
     </span>
 
     <span class="osmap-link">
@@ -59,9 +71,15 @@ foreach ($languages as $language) :
             'link',
             $this->getLink($this->item, 'news', $langCode),
             Text::_('COM_OSMAP_NEWS_LINK'),
-            sprintf('target="_blank" title="%s"', Text::_('COM_OSMAP_NEWS_LINK_TOOLTIP', true))
+            [
+                'target'           => '_blank',
+                'aria-describedby' => 'tip-news-' . $idx
+            ]
         );
         ?>
+        <div role="tooltip" id="<?php echo 'tip-news-' . $idx; ?>">
+            <?php echo Text::_('COM_OSMAP_NEWS_LINK_TOOLTIP'); ?>
+        </div>
     </span>
 
     <span class="osmap-link">
@@ -70,10 +88,16 @@ foreach ($languages as $language) :
             'link',
             $this->getLink($this->item, 'images', $langCode),
             Text::_('COM_OSMAP_IMAGES_LINK'),
-            sprintf('target="_blank" title="%s"', Text::_('COM_OSMAP_IMAGES_LINK_TOOLTIP', true))
+            [
+                'target' => '_blank',
+                'aria-describedby'=>'tip-images-' . $idx
+            ]
         );
         ?>
+        <div role="tooltip" id="<?php echo 'tip-images-' . $idx; ?>">
+            <?php echo Text::_('COM_OSMAP_IMAGES_LINK_TOOLTIP'); ?>
+        </div>
     </span>
-    <br/>
+    <br>
 <?php
 endforeach;
