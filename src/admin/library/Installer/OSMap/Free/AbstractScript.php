@@ -30,6 +30,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
@@ -45,7 +46,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
     /**
      * @inheritDoc
      */
-    public function customPostFlight($type, $parent)
+    protected function customPostFlight(string $type, InstallerAdapter $parent)
     {
         if ($type == 'uninstall') {
             return;
