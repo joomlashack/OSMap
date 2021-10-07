@@ -21,13 +21,13 @@
 
     <uninstall>
         <sql>
-            <file driver="mysql" charset="utf8">sql/uninstall/mysql/utf8.sql</file>
+            <file driver="mysql" charset="utf8">sql/uninstall/mysql/install.sql</file>
         </sql>
     </uninstall>
 
     <update>
         <schemas>
-            <schemapath type="mysql">sql/updates/mysql/utf8</schemapath>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
         </schemas>
     </update>
 
@@ -124,10 +124,13 @@
             <folder>administrator/components/com_osmap/library/Osmap</folder>
             <folder>administrator/components/com_osmap/models/fields</folder>
             <folder>administrator/components/com_osmap/models/forms</folder>
+            <folder>administrator/components/com_osmap/sql/updates/utf8</folder>
 
             <file>administrator/components/com_osmap/form/fields/osmapmenus.php</file>
             <file>administrator/components/com_osmap/helpers/html/grid.php</file>
             <file>administrator/components/com_osmap/helpers/osmap.php</file>
+            <file>administrator/components/com_osmap/sql/install/mysql/utf8.sql</file>
+            <file>administrator/components/com_osmap/sql/uninstall/mysql/utf8.sql</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/default.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/edit_legacy.php</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/navigator.php</file>
