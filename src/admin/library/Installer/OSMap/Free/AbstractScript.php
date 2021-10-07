@@ -68,17 +68,14 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
         switch ($type) {
             case 'install':
             case 'discover_install':
-                // New installation [discover_install|install]
                 $this->createDefaultSitemap();
-
-                $app = Factory::getApplication();
 
                 $link = HTMLHelper::_(
                     'link',
                     'index.php?option=com_plugins&view=plugins&filter.search=OSMap',
                     Text::_('COM_OSMAP_INSTALLER_PLUGINS_PAGE')
                 );
-                $app->enqueueMessage(Text::sprintf('COM_OSMAP_INSTALLER_GOTOPLUGINS', $link), 'warning');
+                $this->sendMessage(Text::sprintf('COM_OSMAP_INSTALLER_GOTOPLUGINS', $link), 'warning');
                 break;
 
             case 'update':
@@ -440,7 +437,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
      */
     protected function getMenuTypeId(string $menuType): int
     {
-        $db = Factory::getDbo();
+        $db = $this->dbo;
 
         $query = $db->getQuery(true)
             ->select('id')
@@ -519,7 +516,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
      */
     protected function fixXMLMenus()
     {
-        $db      = Factory::getDbo();
+        $db      = $this->dbo;
         $siteApp = SiteApplication::getInstance('site');
 
         $query = $db->getQuery(true)
