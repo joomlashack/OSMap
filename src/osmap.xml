@@ -80,6 +80,7 @@
         <license>free</license>
         <targetplatform>3.9</targetplatform>
         <phpminimum>7.2</phpminimum>
+        <previousminimum>4.2.1</previousminimum>
 
         <minify>
             <script>media/js/sitemapitems.js</script>
