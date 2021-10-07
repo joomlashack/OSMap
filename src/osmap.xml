@@ -15,13 +15,13 @@
 
     <install>
         <sql>
-            <file driver="mysql" charset="utf8">sql/install/mysql/utf8.sql</file>
+            <file driver="mysql" charset="utf8">sql/install/mysql/install.sql</file>
         </sql>
     </install>
 
     <uninstall>
         <sql>
-            <file driver="mysql" charset="utf8">sql/uninstall/mysql/install.sql</file>
+            <file driver="mysql" charset="utf8">sql/uninstall/mysql/uninstall.sql</file>
         </sql>
     </uninstall>
 
@@ -125,7 +125,7 @@
             <folder>administrator/components/com_osmap/library/Osmap</folder>
             <folder>administrator/components/com_osmap/models/fields</folder>
             <folder>administrator/components/com_osmap/models/forms</folder>
-            <folder>administrator/components/com_osmap/sql/updates/utf8</folder>
+            <folder>administrator/components/com_osmap/sql/updates/mysql/utf8</folder>
 
             <file>administrator/components/com_osmap/form/fields/osmapmenus.php</file>
             <file>administrator/components/com_osmap/helpers/html/grid.php</file>
