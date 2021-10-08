@@ -483,6 +483,8 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
         $this->dropIndexes([
             '#__osmap_sitemaps.default_idx',
             '#__osmap_sitemap_menus.idx_sitemap_menus',
+            '#__osmap_sitemap_menus.fk_sitemaps_idx',
+            '#__osmap_sitemap_menus.ordering_idx',
             '#__osmap_sitemap_menus.idx_ordering'
         ]);
     }
