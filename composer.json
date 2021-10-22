@@ -21,10 +21,6 @@
         {
             "name" : "Joomlashack.com",
             "email": "help@joomlashack.com"
-        },
-        {
-            "name" : "Anderson Grudtner Martins",
-            "email": "anderson@ostraining.com"
         }
     ],
     "require"          : {
