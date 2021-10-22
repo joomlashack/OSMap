@@ -249,31 +249,27 @@ class Collector
      * the counter. It can receive an array or object and returns true or false
      * according to the result of the callback.
      *
-     * @param array|object $item
+     * @param array|object $itemData
      * @param callable     $callback
      * @param bool         $prepareItem
      *
      * @return bool
      * @throws \Exception
      */
-    public function submitItemToCallback(&$item, $callback, $prepareItem = false)
+    public function submitItemToCallback(&$itemData, $callback, $prepareItem = false)
     {
         $currentMenuItemId = $this->getCurrentMenuItemId();
 
-        // Add the menu information
-        if (is_array($item)) {
-            $item['menuItemId']    = $this->currentMenu->id;
-            $item['menuItemTitle'] = $this->currentMenu->name;
-            $item['menuItemType']  = $this->currentMenu->menutype;
+        $itemData = (object)$itemData;
 
-        } else {
-            $item->menuItemId    = $this->currentMenu->id;
-            $item->menuItemTitle = $this->currentMenu->name;
-            $item->menuItemType  = $this->currentMenu->menutype;
-        }
+        // Add the menu information
+        $itemData->menuItemId    = $this->currentMenu->id;
+        $itemData->menuItemTitle = $this->currentMenu->name;
+        $itemData->menuItemType  = $this->currentMenu->menutype;
+
 
         // Converts to an Item instance, setting internal attributes
-        $item = new Item($item, $currentMenuItemId);
+        $item = new Item($itemData, $currentMenuItemId);
 
         if ($prepareItem) {
             // Call the plugins to prepare the item
