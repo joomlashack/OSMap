@@ -289,7 +289,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                 }
 
                 if ($paramExpandCategories && $id) {
-                    self::expandCategory($collector, $parent, $id, $params, $parent->id);
+                    static::expandCategory($collector, $parent, $id, $params, $parent->id);
                 }
 
                 break;
@@ -307,7 +307,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                         $id = 1;
                     }
 
-                    self::expandCategory($collector, $parent, $id, $params, $parent->id);
+                    static::expandCategory($collector, $parent, $id, $params, $parent->id);
                 }
 
                 break;
@@ -351,7 +351,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                         $parent->link,
                         $item->uid
                     );
-                    self::printSubNodes($collector, $parent, $params, $parent->subnodes, $item);
+                    static::printSubNodes($collector, $parent, $params, $parent->subnodes, $item);
                 }
         }
     }
@@ -456,7 +456,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                     $node->link = $linkUri->toString();
 
                     if ($collector->printNode($node)) {
-                        self::expandCategory($collector, $parent, $item->id, $params, $node->itemid, $curlevel);
+                        static::expandCategory($collector, $parent, $item->id, $params, $node->itemid, $curlevel);
                     }
                 }
 
@@ -665,7 +665,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                 }
 
                 if ($collector->printNode($node) && $node->expandible) {
-                    self::printSubNodes($collector, $parent, $params, $node->subnodes, $node);
+                    static::printSubNodes($collector, $parent, $params, $node->subnodes, $node);
                 }
             }
 
