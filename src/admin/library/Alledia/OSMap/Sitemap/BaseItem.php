@@ -245,7 +245,7 @@ class BaseItem extends \JObject
     /**
      * The constructor
      *
-     * @param array $itemData
+     * @param array|object $itemData
      *
      * @return void
      */
