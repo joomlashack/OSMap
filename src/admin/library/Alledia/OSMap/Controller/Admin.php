@@ -29,6 +29,7 @@ use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Session\Session;
 
 defined('_JEXEC') or die();
 
@@ -78,13 +79,16 @@ abstract class Admin extends AdminController
         return $result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function checkToken($method = 'post', $redirect = true)
     {
         if (is_callable('parent::checkToken')) {
             return parent::checkToken($method, $redirect);
         }
 
-        \JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         return true;
     }
