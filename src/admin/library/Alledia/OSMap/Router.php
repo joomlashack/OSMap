@@ -24,7 +24,7 @@
 
 namespace Alledia\OSMap;
 
-use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 defined('_JEXEC') or die();
@@ -33,51 +33,26 @@ defined('_JEXEC') or die();
 class Router
 {
     /**
-     * @var object
-     */
-    protected $joomlaRouter;
-
-    /**
      * Route the given URL using the site application. If in admin, the result
-     * needs to be the same as the frontend. Replicates partially the native
-     * Route::_ method, but forcing to use the frontend routes. Required to
-     * allow see correct routed URLs in the admin while editing a sitemap.
+     * needs to be the same as the frontend.
      *
      * @param string $url
+     * @param bool   $absolute
      *
      * @return string
-     * @throws \Exception
      */
-    public function routeURL($url)
+    public function routeURL(string $url, bool $absolute = false): string
     {
-        if (!$this->joomlaRouter) {
-            // Avoid caching to get the router
-            $app = CMSApplication::getInstance('site');
-
-            $this->joomlaRouter = $app::getRouter('site');
-
-            // Make sure that we have our router
-            if (!$this->joomlaRouter) {
-                return null;
-            }
-        }
-
-        if (is_string($url) && (strpos($url, '&') !== 0) && (strpos($url, 'index.php') !== 0)) {
+        if ((strpos($url, '&') !== 0) && (strpos($url, 'index.php') !== 0)) {
+            // Not a routable URL
             return $url;
         }
 
-        // Build route
-        $scheme = ['path', 'query', 'fragment'];
-        $uri    = $this->joomlaRouter->build($url);
-        $url    = $uri->toString($scheme);
+        if ($absolute) {
+            return Route::link('site', $url, true,Route::TLS_IGNORE, true);
+        }
 
-        // Replace spaces.
-        $url = preg_replace('/\s/u', '%20', $url);
-
-        // Remove application subpaths (typically /administrator)
-        $adminPath = str_replace(Uri::root(), '', Uri::base());
-
-        return str_replace($adminPath, '', $url);
+        return Route::link('site', $url);
     }
 
     /**

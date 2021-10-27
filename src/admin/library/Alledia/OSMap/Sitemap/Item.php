@@ -275,10 +275,7 @@ class Item extends BaseItem
 
                 $home = $homes[$tag] ?? $homes['*'];
 
-                // Joomla bug? When in subfolder, multilingual home page doubles up the base path
-                $uri            = $container->uri::getInstance();
-                $this->fullLink = $uri->toString(['scheme', 'host', 'port'])
-                    . $container->router->routeURL('index.php?Itemid=' . $home->id);
+                $this->fullLink = $container->router->routeURL('index.php?Itemid=' . $home->id, true);
 
             } else {
                 $this->fullLink = $container->uri::root();
@@ -343,11 +340,7 @@ class Item extends BaseItem
         }
 
         if ($this->isInternal) {
-            // Route the full link
-            $this->fullLink = $container->router->routeURL($this->fullLink);
-
-            // Make sure the link has the base uri
-            $this->fullLink = $container->router->convertRelativeUriToFullUri($this->fullLink);
+            $this->fullLink = $container->router->routeURL($this->fullLink, true);
         }
 
         $this->fullLink = $container->router->sanitizeURL($this->fullLink);
