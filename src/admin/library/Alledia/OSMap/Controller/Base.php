@@ -40,11 +40,10 @@ class Base extends BaseController
             $home      = Factory::getApplication()->getMenu()->getDefault();
             $container = Factory::getPimpleContainer();
 
-            Factory::getApplication()->redirect(
-                $container->router->routeURL('index.php?Itemid=' . $home->id),
-                Text::_('JINVALID_TOKEN'),
-                'error'
-            );
+            $app = Factory::getApplication();
+
+            $app->enqueueMessage(Text::_('JINVALID_TOKEN'), 'error');
+            $app->redirect($container->router->routeURL('index.php?Itemid=' . $home->id));
         }
 
         return $valid;
