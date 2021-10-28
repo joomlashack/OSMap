@@ -33,8 +33,11 @@ interface SitemapInterface
      * passing each node as parameter.
      *
      * @param callable $callback
+     * @param bool $triggerEvents
+     * @param bool $updateCount
      *
      * @return void
+     * @throws \Exception
      */
-    public function traverse($callback);
+    public function traverse(callable $callback, bool $triggerEvents = true, bool $updateCount = false);
 }

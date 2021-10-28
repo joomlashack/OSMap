@@ -91,14 +91,14 @@ class Collector
      *
      * @var array
      */
-    protected $itemsSettings;
+    protected $itemsSettings = null;
 
     /**
      * The legacy custom settings for items. Which will be upgraded
      *
      * @var array
      */
-    protected $legacyItemsSettings;
+    protected $legacyItemsSettings = null;
 
     /**
      * If false, say that any next sub-level should be unpublished
@@ -135,7 +135,7 @@ class Collector
      *
      * @var int
      */
-    protected $currentMenuItemId;
+    protected $currentMenuItemId = null;
 
     /**
      * The component's params
@@ -150,7 +150,6 @@ class Collector
      * @param SitemapInterface $sitemap
      *
      * @return void
-     * @throws \Exception
      */
     public function __construct(SitemapInterface $sitemap)
     {
@@ -178,9 +177,8 @@ class Collector
      * @param callable $callback
      *
      * @return int
-     * @throws \Exception
      */
-    public function fetch($callback)
+    public function fetch(callable $callback): int
     {
         $menus = $this->getSitemapMenus();
 
@@ -239,7 +237,6 @@ class Collector
 
         $this->currentMenu            = null;
         $this->tmpItemDefaultSettings = [];
-        $callback                     = null;
 
         return $this->counter;
     }
@@ -254,9 +251,8 @@ class Collector
      * @param bool         $prepareItem
      *
      * @return bool
-     * @throws \Exception
      */
-    public function submitItemToCallback(&$item, $callback, $prepareItem = false)
+    public function submitItemToCallback(&$item, callable $callback, bool $prepareItem = false): bool
     {
         $currentMenuItemId = $this->getCurrentMenuItemId();
 
@@ -316,10 +312,9 @@ class Collector
      *  - changefrq
      *  - ordering
      *
-     * @return array;
-     * @throws \Exception
+     * @return object[];
      */
-    protected function getSitemapMenus()
+    protected function getSitemapMenus(): array
     {
         $db = Factory::getDbo();
 
@@ -346,9 +341,8 @@ class Collector
      * @param object $menu
      *
      * @return array
-     * @throws \Exception
      */
-    protected function getMenuItems($menu)
+    protected function getMenuItems(object $menu): array
     {
         $container = Factory::getPimpleContainer();
         $db        = $container->db;
@@ -414,11 +408,11 @@ class Collector
      * item to be ignored and return true. If negative, register the item and
      * return false.
      *
-     * @param object $item
+     * @param Item $item
      *
      * @return bool
      */
-    protected function checkDuplicatedUIDToIgnore($item)
+    protected function checkDuplicatedUIDToIgnore(Item $item): bool
     {
         // If is already set, interrupt the flux and ignore the item
         if (isset($this->uidList[$item->uid])) {
@@ -445,12 +439,11 @@ class Collector
      * Checks if the item's full link was already registered. If positive,
      * set the item to be ignored and return true. If negative, register the item and return false
      *
-     * @param object $item
+     * @param Item $item
      *
      * @return bool
-     * @throws \Exception
      */
-    protected function checkDuplicatedURLToIgnore($item)
+    protected function checkDuplicatedURLToIgnore(Item $item): bool
     {
         if (!empty($item->fullLink)) {
             $container = Factory::getPimpleContainer();
@@ -483,9 +476,8 @@ class Collector
      * @param Item $item
      *
      * @return void
-     * @throws \Exception
      */
-    protected function callPluginsPreparingTheItem($item)
+    protected function callPluginsPreparingTheItem(Item $item)
     {
         $plugins = General::getPluginsForComponent($item->component);
 
@@ -529,12 +521,11 @@ class Collector
      * component/option. Get additional items and send to the callback.
      *
      * @param Item     $item
-     * @param Callable $callback
+     * @param callable $callback
      *
      * @return void
-     * @throws \Exception
      */
-    protected function callPluginsGetItemTree($item, $callback)
+    protected function callPluginsGetItemTree(Item $item, callable $callback)
     {
         $this->printNodeCallback = $callback;
 
@@ -573,7 +564,7 @@ class Collector
      *
      * @return bool
      */
-    protected function itemIsBlackListed($item)
+    protected function itemIsBlackListed(array $item): bool
     {
         $blackList = [
             'administrator' => 1
@@ -594,23 +585,20 @@ class Collector
      *
      * @return void
      */
-    public function changeLevel($step)
+    public function changeLevel(int $step)
     {
-        if (is_numeric($step)) {
-            $this->currentLevel += (int)$step;
-        }
+        $this->currentLevel += $step;
     }
 
     /**
      * Method called by legacy plugins, which will pass the new item to the
      * callback. Returns the result of the callback converted to boolean.
      *
-     * @param object $node
+     * @param array|object $node
      *
      * @return bool
-     * @throws \Exception
      */
-    public function printNode($node)
+    public function printNode($node): bool
     {
         return $this->submitItemToCallback($node, $this->printNodeCallback);
     }
@@ -620,7 +608,7 @@ class Collector
      *
      * @return array;
      */
-    protected function getItemsSettings()
+    protected function getItemsSettings(): array
     {
         if (empty($this->itemsSettings)) {
             $db = Factory::getDbo();
@@ -650,15 +638,15 @@ class Collector
      *
      * @param string $key
      *
-     * @return array[]|false
+     * @return ?array[]
      */
-    public function getItemCustomSettings($key)
+    public function getItemCustomSettings(string $key): ?array
     {
         if (isset($this->itemsSettings[$key])) {
             return $this->itemsSettings[$key];
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -667,9 +655,9 @@ class Collector
      *
      * @return array
      */
-    protected function getLegacyItemsSettings()
+    protected function getLegacyItemsSettings(): array
     {
-        if (!isset($this->legacyItemsSettings)) {
+        if ($this->legacyItemsSettings === null) {
             $db = Factory::getDbo();
 
             $query = $db->getQuery(true)
@@ -690,15 +678,15 @@ class Collector
      *
      * @param string $uid
      *
-     * @return array[]|false
+     * @return ?array[]
      */
-    protected function getLegacyItemCustomSettings($uid)
+    protected function getLegacyItemCustomSettings(string $uid): ?array
     {
         if (isset($this->legacyItemsSettings[$uid])) {
             return $this->legacyItemsSettings[$uid];
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -712,7 +700,7 @@ class Collector
      *
      * @return void
      */
-    public function setItemCustomSettings($item)
+    public function setItemCustomSettings(Item $item)
     {
         // Check if the menu item has custom settings. If not, use the values from the menu
         // Check if there is a custom settings specific for this URL. Sometimes the same page has different URLs.
@@ -722,30 +710,31 @@ class Collector
 
         // Check if there is a custom settings for all links with that UID (happens right after a migration from
         // versions before 4.0.0 or before 4.2.1)
-        if ($settings === false) {
+        if (empty($settings)) {
             $settings = $this->getLegacyItemCustomSettings($item->uid);
 
             // The Joomla plugin changed the UID
             // from joomla.archive => joomla.archive.[id] and joomla.featured => joomla.featured[id]
             // So we need to try getting the settings from the old UID
-            if ($settings === false) {
+            if ($settings === null) {
                 if (preg_match('/^joomla.(archive|featured)/', $item->uid, $matches)) {
                     $settings = $this->getLegacyItemCustomSettings('joomla.' . $matches[1]);
                 }
             }
         }
 
-        if ($settings === false) {
+        if (empty($settings)) {
             // No custom settings, so let's use the menu's settings
             if ($item->isMenuItem) {
                 $item->changefreq = $this->tmpItemDefaultSettings['changefreq'];
                 $item->priority   = $this->tmpItemDefaultSettings['priority'];
             }
+
         } else {
             // Apply the custom settings
-            $item->changefreq = $settings['changefreq'];
-            $item->priority   = (float)$settings['priority'];
-            $item->published  = (bool)$settings['published'];
+            $item->changefreq = $settings['changefreq'] ?? 'weekly';
+            $item->priority   = (float)$settings['priority'] ?? .5;
+            $item->published  = (bool)$settings['published'] ?? true;
         }
     }
 
@@ -756,7 +745,7 @@ class Collector
      *
      * @return void
      */
-    protected function checkParentIsUnpublished($item)
+    protected function checkParentIsUnpublished(Item $item)
     {
         // Check if this item belongs to a sub-level which needs to be unpublished
         if ($this->unpublishLevel !== false && $item->level > $this->unpublishLevel) {
@@ -787,9 +776,9 @@ class Collector
      *
      * @return int
      */
-    public function getCurrentMenuItemId()
+    public function getCurrentMenuItemId(): int
     {
-        return $this->currentMenuItemId;
+        return (int)$this->currentMenuItemId;
     }
 
     /**

@@ -120,7 +120,6 @@ abstract class General
      * ordering.
      *
      * @return object[]
-     * @throws \Exception
      */
     public static function getPluginsFromDatabase(): array
     {
@@ -156,7 +155,7 @@ abstract class General
      *
      * @return bool
      */
-    protected static function checkPluginCompatibilityWithOption(object $plugin, ?string $option)
+    protected static function checkPluginCompatibilityWithOption(object $plugin, ?string $option): bool
     {
         if (empty($option)) {
             return false;
@@ -212,7 +211,6 @@ abstract class General
      * @param ?string $option
      *
      * @return object[]
-     * @throws \Exception
      */
     public static function getPluginsForComponent(?string $option): array
     {
@@ -286,7 +284,6 @@ abstract class General
      * @param mixed $date
      *
      * @return bool
-     * @throws \Exception
      */
     public static function isEmptyDate($date): bool
     {
@@ -316,7 +313,6 @@ abstract class General
      * @param bool $asString
      *
      * @return string|string[]
-     * @throws \Exception
      */
     public static function getAuthorisedViewLevels(bool $asString = true)
     {
@@ -388,14 +384,20 @@ abstract class General
      * @param array  $params
      *
      * @return mixed
-     * @throws \Exception
      */
-    public static function callUserFunc($class, $instance, $method, array $params = [])
+    public static function callUserFunc(string $class, object $instance, string $method, array $params = [])
     {
-        $reflection = new \ReflectionMethod($class, $method);
+        try {
+            $reflection = new \ReflectionMethod($class, $method);
 
-        return $reflection->isStatic()
-            ? call_user_func_array([$class, $method], $params)
-            : call_user_func_array([$instance, $method], $params);
+            return $reflection->isStatic()
+                ? call_user_func_array([$class, $method], $params)
+                : call_user_func_array([$instance, $method], $params);
+
+        } catch (\Exception $error) {
+            // Just ignore this?
+        }
+
+        return null;
     }
 }

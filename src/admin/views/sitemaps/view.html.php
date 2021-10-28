@@ -48,6 +48,7 @@ class OSMapViewSitemaps extends AbstractList
 
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function display($tpl = null)
     {
@@ -151,6 +152,7 @@ class OSMapViewSitemaps extends AbstractList
             $query['lang'] = $lang;
         }
 
-        return Factory::getPimpleContainer()->router->routeURL('index.php?' . http_build_query($query));
+        return Factory::getPimpleContainer()
+            ->router->routeURL('index.php?' . http_build_query($query));
     }
 }

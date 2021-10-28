@@ -49,7 +49,7 @@ class Router
         }
 
         if ($absolute) {
-            return Route::link('site', $url, true,Route::TLS_IGNORE, true);
+            return Route::link('site', $url, true, Route::TLS_IGNORE, true);
         }
 
         return Route::link('site', $url);
@@ -60,12 +60,9 @@ class Router
      *
      * @param string $url
      *
-     * @return boolean
-     *
      * @return bool
-     * @throws \Exception
      */
-    public function isInternalURL($url)
+    public function isInternalURL(string $url): bool
     {
         $uri      = Uri::getInstance($url);
         $base     = $uri->toString(['scheme', 'host', 'port', 'path']);
@@ -95,28 +92,24 @@ class Router
      * all the urls, which should point to the frontend only.
      *
      * @return string
-     * @throws \Exception
      */
-    public function getFrontendBase()
+    public function getFrontendBase(): string
     {
         return Factory::getPimpleContainer()->uri::root();
     }
 
     /**
-     * Check if the given URL is a relative URI. Returns true, if afirmative.
+     * Check if the given URL is a relative URI. Returns true, if affirmative.
      *
-     * @param string
+     * @param string $url
      *
      * @return bool
-     * @throws \Exception
      */
-    public function isRelativeUri($url)
+    public function isRelativeUri(string $url): bool
     {
-        $container = Factory::getPimpleContainer();
+        $urlPath = Factory::getPimpleContainer()->uri::getInstance($url)->toString(['path']);
 
-        $uri = $container->uri::getInstance($url);
-
-        return $uri->toString(['path']) === $url;
+        return $urlPath === $url;
     }
 
     /**
@@ -125,9 +118,8 @@ class Router
      * @param string $path
      *
      * @return string
-     * @throws \Exception
      */
-    public function convertRelativeUriToFullUri($path)
+    public function convertRelativeUriToFullUri(string $path): string
     {
         if ($path[0] == '/') {
             $scheme = ['scheme', 'user', 'pass', 'host', 'port'];
@@ -143,9 +135,11 @@ class Router
     /**
      * Returns a sanitized URL, removing double slashes and trailing slash.
      *
+     * @param string $url
+     *
      * @return string
      */
-    public function sanitizeURL($url)
+    public function sanitizeURL(string $url): string
     {
         return preg_replace('#([^:])(/{2,})#', '$1/', $url);
     }
@@ -153,9 +147,11 @@ class Router
     /**
      * Returns a URL without the hash
      *
+     * @param string $url
+     *
      * @return string
      */
-    public function removeHashFromURL($url)
+    public function removeHashFromURL(string $url): string
     {
         // Check if the URL has a hash to remove it (XML sitemap shouldn't have hash on the URL)
         $hashPos = strpos($url, '#');
@@ -174,9 +170,8 @@ class Router
      * @param string $url
      *
      * @return string
-     * @throws \Exception
      */
-    public function createUrlHash($url)
+    public function createUrlHash(string $url): string
     {
         return md5(str_replace(Factory::getPimpleContainer()->uri::root(), '', $url));
     }

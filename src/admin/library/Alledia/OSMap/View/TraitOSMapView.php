@@ -70,13 +70,13 @@ trait TraitOSMapView
             ToolbarHelper::preferences('com_osmap');
         }
 
-        // Prepare the plugins
         PluginHelper::importPlugin('osmap');
 
-        $viewName    = strtolower(str_replace('OSMapView', '', $this->getName()));
-        $eventParams = [
-            $viewName
-        ];
-        Factory::getApplication()->triggerEvent('osmapOnAfterSetToolBar', $eventParams);
+        Factory::getApplication()->triggerEvent(
+            'osmapOnAfterSetToolBar',
+            [
+            strtolower(str_replace('OSMapView', '', $this->getName()))
+        ]
+        );
     }
 }

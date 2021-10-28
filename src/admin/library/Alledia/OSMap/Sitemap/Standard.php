@@ -66,7 +66,7 @@ class Standard implements SitemapInterface
     /**
      * @var int
      */
-    public $linkCount = 0;
+    public $linksCount = 0;
 
     /**
      * @var string
@@ -93,28 +93,24 @@ class Standard implements SitemapInterface
      * @return void
      * @throws \Exception
      */
-    public function __construct($id)
+    public function __construct(int $id)
     {
-        $row = Factory::getTable('Sitemap');
-        $row->load($id);
+        /** @var \OSMapTableSitemap $sitemap */
+        $sitemap = Factory::getTable('Sitemap');
+        $sitemap->load($id);
 
-        if (empty($row) || !$row->id) {
+        if (empty($sitemap) || !$sitemap->id) {
             throw new \Exception(Text::_('COM_OSMAP_SITEMAP_NOT_FOUND'), 404);
         }
 
-        $this->id          = $row->id;
-        $this->name        = $row->name;
-        $this->isDefault   = (bool)$row->is_default;
-        $this->isPublished = $row->published == 1;
-        $this->createdOn   = $row->created_on;
-        $this->linksCount  = (int)$row->links_count;
+        $this->id          = $sitemap->id;
+        $this->name        = $sitemap->name;
+        $this->isDefault   = $sitemap->is_default == 1;
+        $this->isPublished = $sitemap->published == 1;
+        $this->createdOn   = $sitemap->created_on;
+        $this->linksCount  = (int)$sitemap->links_count;
+        $this->params      = new Registry($sitemap->params);
 
-        $this->params = new Registry();
-        $this->params->loadString($row->params);
-
-        $row = null;
-
-        // Initiate the collector
         $this->initCollector();
     }
 
@@ -122,7 +118,6 @@ class Standard implements SitemapInterface
      * Method to initialize the items collector
      *
      * @return void
-     * @throws \Exception
      */
     protected function initCollector()
     {
@@ -132,7 +127,7 @@ class Standard implements SitemapInterface
     /**
      * @inheritDoc
      */
-    public function traverse($callback, $triggerEvents = true, $updateCount = false)
+    public function traverse(callable $callback, $triggerEvents = true, $updateCount = false)
     {
         if ($triggerEvents) {
             // Call the plugins, allowing to interact or override the collector
@@ -169,13 +164,13 @@ class Standard implements SitemapInterface
      *
      * @return void
      */
-    protected function updateLinksCount($count)
+    protected function updateLinksCount(int $count)
     {
         $db = Factory::getDbo();
 
         $updateObject = (object)[
             'id'          => $this->id,
-            'links_count' => (int)$count
+            'links_count' => $count
         ];
 
         $db->updateObject('#__osmap_sitemaps', $updateObject, ['id']);

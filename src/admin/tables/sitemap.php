@@ -129,6 +129,7 @@ class OSMapTableSitemap extends Table
     /**
      * Make sure we have one and only one default sitemap
      *
+     * @return void
      * @throws Exception
      */
     protected function checkDefault()
@@ -174,7 +175,7 @@ class OSMapTableSitemap extends Table
      */
     protected function updateMenus(array $menus): bool
     {
-        $id = (int)$this->get('id');
+        $id = (int)$this->id;
 
         if ($id) {
             $db           = Factory::getDbo();
@@ -201,14 +202,11 @@ class OSMapTableSitemap extends Table
             }
 
             // Clear the menu list
-            if ($id) {
-                $db    = Factory::getDbo();
-                $query = $db->getQuery(true)
-                    ->delete('#__osmap_sitemap_menus')
-                    ->where('sitemap_id = ' . $id);
+            $query = $db->getQuery(true)
+                ->delete('#__osmap_sitemap_menus')
+                ->where('sitemap_id = ' . $id);
 
-                $db->setQuery($query)->execute();
-            }
+            $db->setQuery($query)->execute();
 
             // Insert the updated list
             foreach ($insertValues as $insertValue) {

@@ -24,7 +24,6 @@
 
 namespace Alledia\OSMap;
 
-use Alledia\Framework;
 use Alledia\OSMap\Sitemap\SitemapInterface;
 use Joomla\CMS\Table\Table;
 
@@ -34,7 +33,7 @@ defined('_JEXEC') or die();
 /**
  * OSMap Factory
  */
-class Factory extends Framework\Factory
+class Factory extends \Alledia\Framework\Factory
 {
     /**
      * @var Container
@@ -45,9 +44,8 @@ class Factory extends Framework\Factory
      * Get a OSMap container class
      *
      * @return Container
-     * @throws \Exception
      */
-    public static function getPimpleContainer()
+    public static function getPimpleContainer(): Container
     {
         if (empty(static::$pimpleContainer)) {
             $config = [];
@@ -75,7 +73,7 @@ class Factory extends Framework\Factory
      * @return SitemapInterface
      * @throws \Exception
      */
-    public static function getSitemap($id, $type = 'standard')
+    public static function getSitemap(int $id, string $type = 'standard')
     {
         switch ($type) {
             case 'standard':
@@ -97,10 +95,11 @@ class Factory extends Framework\Factory
      * prefix as default.
      *
      * @param string $tableName
+     * @param ?string $prefix
      *
      * @return Table
      */
-    public static function getTable($tableName, $prefix = 'OSMapTable')
+    public static function getTable(string $tableName, ?string $prefix = 'OSMapTable'): ?Table
     {
         return Table::getInstance($tableName, $prefix);
     }
