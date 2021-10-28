@@ -130,6 +130,7 @@
             <file>administrator/components/com_osmap/form/fields/osmapmenus.php</file>
             <file>administrator/components/com_osmap/helpers/html/grid.php</file>
             <file>administrator/components/com_osmap/helpers/osmap.php</file>
+            <file>administrator/components/com_osmap/library/Alledia/OSMap/Sitemap/BaseItem.php</file>
             <file>administrator/components/com_osmap/sql/install/mysql/utf8.sql</file>
             <file>administrator/components/com_osmap/sql/uninstall/mysql/utf8.sql</file>
             <file>administrator/components/com_osmap/views/sitemap/tmpl/default.php</file>
