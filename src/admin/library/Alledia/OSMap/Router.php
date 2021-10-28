@@ -86,19 +86,6 @@ class Router
     }
 
     /**
-     * Returns the result of JUri::base() from the site used in the sitemap.
-     * This is better than the JUri::base() because when we are editing a
-     * sitemap in the admin that method returns the /administrator and mess
-     * all the urls, which should point to the frontend only.
-     *
-     * @return string
-     */
-    public function getFrontendBase(): string
-    {
-        return Factory::getPimpleContainer()->uri::root();
-    }
-
-    /**
      * Check if the given URL is a relative URI. Returns true, if affirmative.
      *
      * @param string $url
@@ -126,7 +113,7 @@ class Router
             $path   = Factory::getPimpleContainer()->uri::getInstance()->toString($scheme) . $path;
 
         } elseif ($this->isRelativeUri($path)) {
-            $path = $this->getFrontendBase() . $path;
+            $path = Uri::root() . $path;
         }
 
         return $path;
