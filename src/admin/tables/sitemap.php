@@ -32,6 +32,41 @@ defined('_JEXEC') or die();
 class OSMapTableSitemap extends Table
 {
     /**
+     * @var int
+     */
+    public $id = null;
+
+    /**
+     * @var string
+     */
+    public $name = null;
+
+    /**
+     * @var string|Registry
+     */
+    public $params = null;
+
+    /**
+     * @var int
+     */
+    public $is_default = null;
+
+    /**
+     * @var int
+     */
+    public $published = null;
+
+    /**
+     * @var string|DateTime
+     */
+    public $created_on = null;
+
+    /**
+     * @var int
+     */
+    public $links_count = null;
+
+    /**
      * @var array
      */
     public $menus = [];
