@@ -58,28 +58,30 @@ class Router
     /**
      * Checks if the supplied URL is internal
      *
-     * @param string $url
+     * @param ?string $url
      *
      * @return bool
      */
-    public function isInternalURL(string $url): bool
+    public function isInternalURL(?string $url): bool
     {
-        $uri      = Uri::getInstance($url);
-        $base     = $uri->toString(['scheme', 'host', 'port', 'path']);
-        $host     = $uri->toString(['scheme', 'host', 'port']);
-        $path     = $uri->toString(['path']);
-        $baseHost = Uri::getInstance($uri::root())->toString(['host']);
+        if ($url) {
+            $uri      = Uri::getInstance($url);
+            $base     = $uri->toString(['scheme', 'host', 'port', 'path']);
+            $host     = $uri->toString(['scheme', 'host', 'port']);
+            $path     = $uri->toString(['path']);
+            $baseHost = Uri::getInstance($uri::root())->toString(['host']);
 
-        if ($path === $url) {
-            return true;
+            if ($path === $url) {
+                return true;
 
-        } elseif (empty($host) && strpos($path, 'index.php') === 0
-            || !empty($host) && preg_match('#' . preg_quote($uri::root(), '#') . '#', $base)
-            || !empty($host) && $host === $baseHost && strpos($path, 'index.php') !== false
-            || !empty($host) && $base === $host
-            && preg_match('#' . preg_quote($base, '#') . '#', $uri::root())
-        ) {
-            return true;
+            } elseif (empty($host) && strpos($path, 'index.php') === 0
+                || !empty($host) && preg_match('#' . preg_quote($uri::root(), '#') . '#', $base)
+                || !empty($host) && $host === $baseHost && strpos($path, 'index.php') !== false
+                || !empty($host) && $base === $host
+                && preg_match('#' . preg_quote($base, '#') . '#', $uri::root())
+            ) {
+                return true;
+            }
         }
 
         return false;
@@ -88,15 +90,19 @@ class Router
     /**
      * Check if the given URL is a relative URI. Returns true, if affirmative.
      *
-     * @param string $url
+     * @param ?string $url
      *
      * @return bool
      */
-    public function isRelativeUri(string $url): bool
+    public function isRelativeUri(?string $url): bool
     {
-        $urlPath = Factory::getPimpleContainer()->uri::getInstance($url)->toString(['path']);
+        if ($url) {
+            $urlPath = (new Uri($url))->toString(['path']);
 
-        return $urlPath === $url;
+            return $urlPath === $url;
+        }
+
+        return false;
     }
 
     /**
@@ -110,7 +116,7 @@ class Router
     {
         if ($path[0] == '/') {
             $scheme = ['scheme', 'user', 'pass', 'host', 'port'];
-            $path   = Factory::getPimpleContainer()->uri::getInstance()->toString($scheme) . $path;
+            $path   = Uri::getInstance()->toString($scheme) . $path;
 
         } elseif ($this->isRelativeUri($path)) {
             $path = Uri::root() . $path;
@@ -122,44 +128,52 @@ class Router
     /**
      * Returns a sanitized URL, removing double slashes and trailing slash.
      *
-     * @param string $url
+     * @param ?string $url
      *
-     * @return string
+     * @return ?string
      */
-    public function sanitizeURL(string $url): string
+    public function sanitizeURL(?string $url): ?string
     {
-        return preg_replace('#([^:])(/{2,})#', '$1/', $url);
+        if ($url) {
+            return preg_replace('#([^:])(/{2,})#', '$1/', $url);
+        }
+
+        return null;
     }
 
     /**
      * Returns a URL without the hash
      *
-     * @param string $url
+     * @param ?string $url
      *
-     * @return string
+     * @return ?string
      */
-    public function removeHashFromURL(string $url): string
+    public function removeHashFromURL(?string $url): ?string
     {
-        // Check if the URL has a hash to remove it (XML sitemap shouldn't have hash on the URL)
-        $hashPos = strpos($url, '#');
+        if ($url) {
+            // Check if the URL has a hash to remove it (XML sitemap shouldn't have hash on the URL)
+            $hashPos = strpos($url, '#');
 
-        if ($hashPos !== false) {
-            // Remove the hash
-            $url = substr($url, 0, $hashPos);
+            if ($hashPos !== false) {
+                // Remove the hash
+                $url = substr($url, 0, $hashPos);
+            }
+
+            return trim($url);
         }
 
-        return trim($url);
+        return null;
     }
 
     /**
      * Create a consistent url hash regardless of scheme or site root.
      *
-     * @param string $url
+     * @param ?string $url
      *
      * @return string
      */
-    public function createUrlHash(string $url): string
+    public function createUrlHash(?string $url): string
     {
-        return md5(str_replace(Factory::getPimpleContainer()->uri::root(), '', $url));
+        return md5(str_replace(Uri::root(), '', (string)$url));
     }
 }
