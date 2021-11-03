@@ -29,6 +29,7 @@ use Alledia\OSMap\Plugin\ContentInterface;
 use Alledia\OSMap\Sitemap\Collector;
 use Alledia\OSMap\Sitemap\Item;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
@@ -451,7 +452,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                     $node->itemid = $itemid;
 
                     // Correct for an issue in Joomla core with occasional empty variables
-                    $linkUri = new JUri($node->link);
+                    $linkUri = new Uri($node->link);
                     $linkUri->setQuery(array_filter((array)$linkUri->getQuery(true)));
                     $node->link = $linkUri->toString();
 
