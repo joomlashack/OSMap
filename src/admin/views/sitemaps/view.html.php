@@ -105,28 +105,34 @@ class OSMapViewSitemaps extends AbstractList
     }
 
     /**
-     * @param string $type
-     * @param string $lang
+     * @param object  $item
+     * @param string  $type
+     * @param ?string $lang
      *
      * @return string
      * @throws Exception
      */
-    protected function getLink($item, $type, $lang = null)
+    protected function getLink(object $item, string $type, ?string $lang = null): string
     {
         $view   = in_array($type, ['news', 'images']) ? 'xml' : $type;
         $menuId = $item->menuIdList[$view] ?? null;
 
-        $query = [];
+        $query = [
+            'option' => 'com_osmap',
+        ];
+
         if ($menuId) {
             $query['Itemid'] = $menuId;
         }
 
         if (empty($query['Itemid'])) {
-            $query = [
-                'option' => 'com_osmap',
-                'view'   => $view,
-                'id'     => $item->id
-            ];
+            $query = array_merge(
+                $query,
+                [
+                    'view' => $view,
+                    'id'   => $item->id
+                ]
+            );
         }
 
         if ($type != $view) {
@@ -145,8 +151,6 @@ class OSMapViewSitemaps extends AbstractList
             $query['lang'] = $lang;
         }
 
-        $router = Factory::getPimpleContainer()->router;
-
-        return $router->routeURL('index.php?' . http_build_query($query));
+        return Factory::getPimpleContainer()->router->routeURL('index.php?' . http_build_query($query));
     }
 }

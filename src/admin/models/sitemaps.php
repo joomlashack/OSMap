@@ -23,6 +23,7 @@
  */
 
 use Alledia\OSMap\Factory;
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 
@@ -99,13 +100,14 @@ class OSMapModelSitemaps extends ListModel
     public function getItems()
     {
         if ($items = parent::getItems()) {
-            $siteApp = JApplicationCms::getInstance('site');
+            $siteApp = CMSApplication::getInstance('site');
             $menus   = $siteApp->getMenu()->getItems('component', 'com_osmap');
+
             foreach ($items as $item) {
                 $item->menuIdList = [];
                 foreach ($menus as $menu) {
-                    $view  = empty($menu->query['view']) ? null : $menu->query['view'];
-                    $mapId = empty($menu->query['id']) ? null : $menu->query['id'];
+                    $view  = $menu->query['view'] ?? null;
+                    $mapId = $menu->query['id'] ?? null;
 
                     if (
                         $mapId == $item->id
