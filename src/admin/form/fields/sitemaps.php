@@ -45,6 +45,9 @@ class OsmapFormFieldSitemaps extends FormField
      */
     protected static $scripts = [];
 
+    /**
+     * @inheritDoc
+     */
     protected function getInput()
     {
         if ($value = $this->value ?: '') {
@@ -86,10 +89,6 @@ class OsmapFormFieldSitemaps extends FormField
                 'hint'     => $selectedName,
                 'value'    => $value,
                 'required' => $this->required,
-                //'height'     => '400px',
-                //'width'      => '100%',
-                //'bodyHeight' => 70,
-                //'modalWidth' => 80,
             ]
         );
     }
