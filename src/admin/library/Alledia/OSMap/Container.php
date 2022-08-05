@@ -27,7 +27,6 @@ namespace Alledia\OSMap;
 use Alledia\Framework\Profiler;
 use Alledia\OSMap\Helper\Images;
 use JDatabaseDriver;
-use JEventDispatcher;
 use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Language\Language;
 use Joomla\CMS\Uri\Uri;
@@ -42,16 +41,15 @@ defined('_JEXEC') or die();
  *
  * @package OSMap
  *
- * @property JEventDispatcher $events
- * @property WebApplication   $app
- * @property JDatabaseDriver  $db
- * @property Input            $input
- * @property User             $user
- * @property Language         $language
- * @property Profiler         $profiler
- * @property Router           $router
- * @property Uri              $uri
- * @property Images           $imagesHelper
+ * @property WebApplication  $app
+ * @property JDatabaseDriver $db
+ * @property Input           $input
+ * @property User            $user
+ * @property Language        $language
+ * @property Profiler        $profiler
+ * @property Router          $router
+ * @property Uri             $uri
+ * @property Images          $imagesHelper
  *
  * @method WebApplication   getApp()
  * @method JDatabaseDriver  getDb()
@@ -121,7 +119,7 @@ class Container extends \Pimple\Container
             }
         }
 
-        return  $class->newInstanceArgs($dependencies);
+        return $class->newInstanceArgs($dependencies);
     }
 
     /**
