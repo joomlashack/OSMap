@@ -28,7 +28,6 @@ use Alledia\Framework\Profiler;
 use Alledia\OSMap\Factory;
 use Alledia\OSMap\Helper\Images;
 use Alledia\OSMap\Router;
-use JEventDispatcher;
 use Joomla\CMS\Uri\Uri;
 use Pimple\Container as Pimple;
 use Pimple\ServiceProviderInterface;
