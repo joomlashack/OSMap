@@ -278,7 +278,7 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
         echo sprintf('<li class="%s" id="osmap-li-uid-%s">', $liClass, $sanitizedUID);
 
         // Some items are just separator, without a link. Do not print as link then
-        if (trim($item->rawLink) === '') {
+        if (trim($item->rawLink ?? '') === '') {
             $type = $item->type ?? 'separator';
             echo sprintf('<span class="osmap-item-%s">%s</span>', $type, htmlspecialchars($item->name));
 
