@@ -108,8 +108,7 @@
 
         <obsolete>
             <preflight>
-                <folder>administrator/components/com_osmap/library/alledia</folder>
-                <folder>administrator/components/com_osmap/library/pimple</folder>
+                <folder>administrator/components/com_osmap/library</folder>
             </preflight>
 
             <extension type="plugin"
