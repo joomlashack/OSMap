@@ -112,16 +112,21 @@ class Images
         $images      = [];
 
         if (isset($imagesParam->image_intro) && !empty($imagesParam->image_intro)) {
-            $images[] = (object)[
+            $ignoreAlt = $imagesParam->image_intro_alt_empty ?? false;
+
+            $images[]  = (object)[
                 'src'   => $container->router->convertRelativeUriToFullUri($imagesParam->image_intro),
                 'title' => $imagesParam->image_intro_caption
+                    ?: ($ignoreAlt ? null : $imagesParam->image_intro_alt)
             ];
         }
 
         if (isset($imagesParam->image_fulltext) && !empty($imagesParam->image_fulltext)) {
-            $images[] = (object)[
+            $ignoreAlt = $imagesParam->image_fulltext_alt_empty ?? true;
+            $images[]  = (object)[
                 'src'   => $container->router->convertRelativeUriToFullUri($imagesParam->image_fulltext),
                 'title' => $imagesParam->image_fulltext_caption
+                    ?: ($ignoreAlt ? null : $imagesParam->image_fulltext_all)
             ];
         }
 
