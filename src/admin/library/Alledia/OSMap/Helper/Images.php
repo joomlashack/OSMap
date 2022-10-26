@@ -112,7 +112,7 @@ class Images
         if (isset($imagesParam->image_intro) && !empty($imagesParam->image_intro)) {
             $ignoreAlt = $imagesParam->image_intro_alt_empty ?? false;
 
-            $images[]  = (object)[
+            $images[] = (object)[
                 'src'   => $container->router->convertRelativeUriToFullUri($imagesParam->image_intro),
                 'title' => $imagesParam->image_intro_caption
                     ?: ($ignoreAlt ? null : $imagesParam->image_intro_alt)
