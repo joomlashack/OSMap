@@ -51,7 +51,7 @@ class Images
 
         // Look for <img> tags
         preg_match_all(
-            '/<img[^>]*?(?:(?:[^>]*src="(?P<src>[^"]+)")|(?:[^>]*alt="(?P<alt>[^"]+)")|(?:[^>]*title="(?P<title>[^"]+)"))+[^>]*>/i',
+            '/<img[^>](?=.*(?:src="(?P<src>[^"]*")))?(?=.*(title="(?P<title>[^"]*)"))?(?=.*(alt="(?P<alt>[^"]*)"))?.[^>]*>/i',
             $text,
             $matches1,
             PREG_SET_ORDER
@@ -59,7 +59,7 @@ class Images
 
         // Look for <a> tags with href to images
         preg_match_all(
-            '/<a[^>]*?(?:(?:[^>]*href="(?P<src>[^"]+\.(gif|png|jpg|jpeg))")|(?:[^>]*alt="(?P<alt>[^"]+)")|(?:[^>]*title="(?P<title>[^"]+)"))+[^>]*>/i',
+            '/<a[^>](?=.*(?:href="(?P<src>[^"]+\.(gif|png|jpg|jpeg))"))(?=.*(title="(?P<title>[^"]*)"))?.[^>]*>/i',
             $text,
             $matches2,
             PREG_SET_ORDER
