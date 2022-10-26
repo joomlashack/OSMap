@@ -44,7 +44,7 @@ class Images
      * @return array
      * @throws Exception
      */
-    public function getImagesFromText(string $text, int $max = 9999): array
+    public function getImagesFromText(string $text, int $max = 0): array
     {
         $container = Factory::getPimpleContainer();
         $images    = [];
@@ -68,31 +68,26 @@ class Images
         $matches = array_merge($matches1, $matches2);
 
         if (count($matches)) {
-            $count = count($matches);
+            if ($max > 0) {
+                $matches = array_slice($matches, 0, $max);
+            }
 
-            $j = 0;
-            for ($i = 0; $i < $count && $j < $max; $i++) {
-                $src = trim($matches[$i]['src']);
-
-                if (!empty($src)) {
-                    if ($container->router->isInternalURL($src)) {
-                        if ($container->router->isRelativeUri($src)) {
-                            $src = $container->router->convertRelativeUriToFullUri($src);
-                        }
-
-                        $image = (object)[
-                            'src'   => $src,
-                            'title' => empty($matches[$i]['title'])
-                                ? (empty($matches[$i]['alt'])
-                                    ? ''
-                                    : $matches[$i]['alt'])
-                                : $matches[$i]['title']
-                        ];
-
-                        $images[] = $image;
-
-                        $j++;
+            foreach ($matches as $match) {
+                if (
+                    ($src = trim($match['src'] ?? ''))
+                    && $container->router->isInternalURL($src)
+                ) {
+                    if ($container->router->isRelativeUri($src)) {
+                        $src = $container->router->convertRelativeUriToFullUri($src);
                     }
+
+                    $title = trim($match['title'] ?? '');
+                    $alt   = trim($match['alt'] ?? '');
+
+                    $images[] = (object)[
+                        'src'   => $src,
+                        'title' => $title ?: ($alt ?: '')
+                    ];
                 }
             }
         }
