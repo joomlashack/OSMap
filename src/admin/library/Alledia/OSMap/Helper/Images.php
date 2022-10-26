@@ -27,7 +27,10 @@ namespace Alledia\OSMap\Helper;
 use Alledia\OSMap\Factory;
 use Exception;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 
 class Images
@@ -36,17 +39,17 @@ class Images
      * Extracts images from the given text.
      *
      * @param string $text
-     * @param int    $max
+     * @param ?int   $max
      *
      * @return array
      * @throws Exception
      */
-    public function getImagesFromText($text, $max = 9999)
+    public function getImagesFromText(string $text, int $max = 9999): array
     {
         $container = Factory::getPimpleContainer();
         $images    = [];
 
-        // Look <img> tags
+        // Look for <img> tags
         preg_match_all(
             '/<img[^>]*?(?:(?:[^>]*src="(?P<src>[^"]+)")|(?:[^>]*alt="(?P<alt>[^"]+)")|(?:[^>]*title="(?P<title>[^"]+)"))+[^>]*>/i',
             $text,
