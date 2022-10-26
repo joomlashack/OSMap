@@ -24,8 +24,10 @@
 
 namespace Alledia\OSMap;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Version;
 
 defined('_JEXEC') or die();
 
@@ -114,6 +116,14 @@ class Router
      */
     public function convertRelativeUriToFullUri(string $path): string
     {
+        if (
+            Version::MAJOR_VERSION > 3
+            && strpos($path, '#joomlaImage:') !== false
+        ) {
+            $media = HTMLHelper::_('cleanImageURL', $path);
+            $path  = $media->url;
+        }
+
         if ($path[0] == '/') {
             $scheme = ['scheme', 'user', 'pass', 'host', 'port'];
             $path   = Uri::getInstance()->toString($scheme) . $path;
