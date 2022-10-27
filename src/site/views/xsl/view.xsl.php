@@ -57,11 +57,6 @@ class OsmapViewXsl extends HtmlView
     protected $language = null;
 
     /**
-     * @var string
-     */
-    protected $icoMoonUri = null;
-
-    /**
      * @inheritDoc
      * @throws Exception
      */
@@ -79,12 +74,7 @@ class OsmapViewXsl extends HtmlView
     {
         $document = $this->app->getDocument();
 
-        $this->language   = $document->getLanguage();
-        $this->icoMoonUri = HTMLHelper::_(
-            'stylesheet',
-            'jui/icomoon.css',
-            ['relative' => true, 'pathOnly' => true]
-        );
+        $this->language = $document->getLanguage();
 
         $menu    = $this->app->getMenu()->getActive();
         $params  = $this->app->getParams();

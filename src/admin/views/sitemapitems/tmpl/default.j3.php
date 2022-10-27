@@ -34,8 +34,6 @@ HTMLHelper::_('behavior.core');
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
 
-HTMLHelper::_('stylesheet', 'jui/icomoon.css', ['relative' => true]);
-
 $listFields = json_encode([
     'frequencies' => HTMLHelper::_('osmap.frequencyList'),
     'priorities'  => HTMLHelper::_('osmap.priorityList')

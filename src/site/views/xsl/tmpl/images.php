@@ -49,7 +49,6 @@ defined('_JEXEC') or die();
 <html lang="<?php echo $this->language; ?>">
 <head>
 <title><?php echo $this->pageTitle; ?></title>
-<link rel="stylesheet" type="text/css" href="<?php echo $this->icoMoonUri; ?>" />
 <style>
     <![CDATA[
     body {

@@ -37,7 +37,6 @@ defined('_JEXEC') or die();
  * @var string       $filetofind
  */
 
-$icoMoon = HTMLHelper::_('stylesheet', 'jui/icomoon.css', ['relative' => true, 'pathOnly' => true]);
 ?>
 <xsl:stylesheet
     version="1.0"
@@ -50,7 +49,6 @@ $icoMoon = HTMLHelper::_('stylesheet', 'jui/icomoon.css', ['relative' => true, '
         <html lang="<?php echo $this->language; ?>">
         <head>
             <title><?php echo $this->pageTitle; ?></title>
-            <link rel="stylesheet" type="text/css" href="<?php echo $icoMoon; ?>"/>
             <style>
                 <![CDATA[
                 body {
