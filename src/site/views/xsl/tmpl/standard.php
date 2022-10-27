@@ -39,7 +39,7 @@ $icoMoon = HTMLHelper::_('stylesheet', 'jui/icomoon.css', ['relative' => true, '
     <xsl:template match="/">
         <html lang="<?php echo $this->language; ?>">
         <head>
-            <title><?php echo Text::_('COM_OSMAP_XML_SITEMAP_FILE'); ?></title>
+            <title><?php echo $this->pageTitle; ?></title>
             <link rel="stylesheet" type="text/css" href="<?php echo $icoMoon; ?>"/>
             <style>
                 <![CDATA[
@@ -88,7 +88,7 @@ $icoMoon = HTMLHelper::_('stylesheet', 'jui/icomoon.css', ['relative' => true, '
         <body>
         <div class="header">
             <div class="title">
-                <?php if (!empty($this->pageHeading)) : ?>
+                <?php if ($this->pageHeading) : ?>
                     <h1><?php echo Text::_($this->pageHeading); ?></h1>
                 <?php endif; ?>
                 <div class="count">

@@ -111,12 +111,6 @@ class OSMapViewXml extends HtmlView
         $this->language    = $document->getLanguage();
         $this->newsCutoff  = new DateTime('-' . $this->sitemap->newsDateLimit . ' days');
 
-        if ($this->params->get('show_page_heading', 1)) {
-            $this->pageHeading = $this->params->get('page_heading')
-                ?: $this->params->get('page_title')
-                    ?: $this->sitemap->name;
-        }
-
         if ($this->params->get('debug', 0)) {
             $document->setMimeEncoding('text/plain');
         }
@@ -141,9 +135,6 @@ class OSMapViewXml extends HtmlView
                 'layout' => $this->type,
                 'id'     => $this->sitemap->id
             ];
-            if ($this->params->get('show_page_heading', 1)) {
-                $query['title'] = urlencode($this->pageHeading);
-            }
 
             return sprintf(
                 '<?xml-stylesheet type="text/xsl" href="%s"?>',

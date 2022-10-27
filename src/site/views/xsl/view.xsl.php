@@ -23,7 +23,10 @@
  */
 
 use Alledia\OSMap\Factory;
+use Alledia\OSMap\Helper\General;
+use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 defined('_JEXEC') or die();
@@ -31,17 +34,19 @@ defined('_JEXEC') or die();
 class OSMapViewXsl extends HtmlView
 {
     /**
-     * @inheritDoc
+     * @var SiteApplication
      */
-    public function __construct($config = [])
-    {
-        parent::__construct($config);
-    }
+    protected $app = null;
 
     /**
      * @var string
      */
     protected $pageHeading = null;
+
+    /**
+     * @var string
+     */
+    protected $pageTitle = null;
 
     /**
      * @var string
@@ -54,14 +59,22 @@ class OSMapViewXsl extends HtmlView
     protected $icoMoonUri = null;
 
     /**
-     * @param string $tpl
-     *
-     * @return void
+     * @inheritDoc
      * @throws Exception
+     */
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+
+        $this->app = Factory::getApplication();
+    }
+
+    /**
+     * @inheritDoc
      */
     public function display($tpl = null)
     {
-        $document = Factory::getDocument();
+        $document = $this->app->getDocument();
 
         $this->language   = $document->getLanguage();
         $this->icoMoonUri = HTMLHelper::_(
@@ -70,11 +83,31 @@ class OSMapViewXsl extends HtmlView
             ['relative' => true, 'pathOnly' => true]
         );
 
-        $this->pageHeading = htmlspecialchars(
-            urldecode(
-                Factory::getApplication()->input->getString('title')
-            )
-        );
+        $menu    = $this->app->getMenu()->getActive();
+        $params  = $this->app->getParams();
+        $type    = General::getSitemapTypeFromInput();
+        $sitemap = Factory::getSitemap($this->app->input->getInt('id'), $type);
+
+        $title = $params->get('page_title', '');
+        if (($menu->query['option'] ?? null) !== 'com_osmap') {
+            $title = $sitemap->name ?: $title;
+        }
+
+        if (empty($title)) {
+            $title = $this->app->get('sitename');
+
+        } elseif ($this->app->get('sitename_pagetitles', 0) == 1) {
+            $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
+
+        } elseif ($this->app->get('sitename_pagetitles', 0) == 2) {
+            $title = JText::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
+        }
+
+        $this->pageTitle = $title;
+
+        if ($params->get('show_page_heading')) {
+            $this->pageHeading = $params->get('page_heading') ?: $sitemap->name;
+        }
 
         // We're going to cheat Joomla here because some referenced urls MUST remain http/insecure
         header(sprintf('Content-Type: text/xsl; charset="%s"', $this->_charset));
