@@ -23,9 +23,19 @@
  */
 
 use Alledia\OSMap\Sitemap\Item;
+use Joomla\CMS\Language\Language;
 use Joomla\Utilities\ArrayHelper;
 
 defined('_JEXEC') or die();
+
+/**
+ * @var OSMapViewXml $this
+ * @var string       $template
+ * @var string       $layout
+ * @var string       $layoutTemplate
+ * @var Language     $lang
+ * @var string       $filetofind
+ */
 
 $debug = $this->params->get('debug', 0) ? "\n" : '';
 
@@ -46,7 +56,7 @@ $printNodeCallback = function (Item $node) {
     $publicationDate = $this->isNewsPublication($node);
     if ($display && $publicationDate) {
         echo '<url>';
-        echo '<loc><![CDATA[' . $node->fullLink . ']]></loc>';
+        echo sprintf('<loc><![CDATA[%s]]></loc>', $node->fullLink);
         echo '<news:news>';
 
         echo '<news:publication>';

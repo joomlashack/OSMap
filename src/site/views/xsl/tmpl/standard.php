@@ -23,9 +23,19 @@
  */
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Language;
 use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
+
+/**
+ * @var OSMapViewXsl $this
+ * @var string       $template
+ * @var string       $layout
+ * @var string       $layoutTemplate
+ * @var Language     $lang
+ * @var string       $filetofind
+ */
 
 $icoMoon = HTMLHelper::_('stylesheet', 'jui/icomoon.css', ['relative' => true, 'pathOnly' => true]);
 ?>

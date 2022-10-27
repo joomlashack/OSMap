@@ -24,17 +24,27 @@
 
 use Alledia\OSMap\Helper\General;
 use Alledia\OSMap\Sitemap\Item;
+use Joomla\CMS\Language\Language;
 
 defined('_JEXEC') or die();
 
-$showExternalLinks    = (int)$this->osmapParams->get('show_external_links', 0);
-$ignoreDuplicatedUIDs = (int)$this->osmapParams->get('ignore_duplicated_uids', 1);
-$debug                = $this->params->get('debug', 0) ? "\n" : '';
+/**
+ * @var OSMapViewXml $this
+ * @var string       $template
+ * @var string       $layout
+ * @var string       $layoutTemplate
+ * @var Language     $lang
+ * @var string       $filetofind
+ */
 
-$printNodeCallback = function (Item $node) use ($showExternalLinks, $ignoreDuplicatedUIDs, $debug) {
+$showExternalLinks = (int)$this->osmapParams->get('show_external_links', 0);
+$ignoreDuplicates  = (int)$this->osmapParams->get('ignore_duplicated_uids', 1);
+$debug             = $this->params->get('debug', 0) ? "\n" : '';
+
+$printNodeCallback = function (Item $node) use ($showExternalLinks, $ignoreDuplicates, $debug) {
     $display = !$node->ignore
         && $node->published
-        && (!$node->duplicate || !$ignoreDuplicatedUIDs)
+        && (!$node->duplicate || !$ignoreDuplicates)
         && $node->visibleForRobots
         && $node->parentIsVisibleForRobots
         && $node->visibleForXML

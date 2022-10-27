@@ -23,16 +23,26 @@
  */
 
 use Alledia\OSMap\Sitemap\Item;
+use Joomla\CMS\Language\Language;
 use Joomla\Utilities\ArrayHelper;
 
 defined('_JEXEC') or die();
 
-$ignoreDuplicatedUIDs = (int)$this->osmapParams->get('ignore_duplicated_uids', 1);
+/**
+ * @var OSMapViewXml $this
+ * @var string       $template
+ * @var string       $layout
+ * @var string       $layoutTemplate
+ * @var Language     $lang
+ * @var string       $filetofind
+ */
 
-$printNodeCallback = function (Item $node) use ($ignoreDuplicatedUIDs) {
+$ignoreDuplicates = (int)$this->osmapParams->get('ignore_duplicated_uids', 1);
+
+$printNodeCallback = function (Item $node) use ($ignoreDuplicates) {
     $display = !$node->ignore
         && $node->published
-        && (!$node->duplicate || !$ignoreDuplicatedUIDs)
+        && (!$node->duplicate || !$ignoreDuplicates)
         && $node->visibleForRobots
         && $node->parentIsVisibleForRobots
         && $node->visibleForXML
@@ -42,7 +52,7 @@ $printNodeCallback = function (Item $node) use ($ignoreDuplicatedUIDs) {
 
     if ($display && !empty($node->images)) {
         echo '<url>';
-        echo '<loc><![CDATA[' . $node->fullLink . ']]></loc>';
+        echo sprintf('<loc><![CDATA[%s]]></loc>', $node->fullLink);
 
         foreach ($node->images as $image) {
             if (!empty($image->src)) {

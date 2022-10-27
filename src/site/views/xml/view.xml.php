@@ -25,6 +25,7 @@
 use Alledia\OSMap\Factory;
 use Alledia\OSMap\Helper\General;
 use Alledia\OSMap\Sitemap\Item;
+use Alledia\OSMap\Sitemap\Standard;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Text;
@@ -33,10 +34,19 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-class OSMapViewXml extends HtmlView
+
+class OsmapViewXml extends HtmlView
 {
+    /**
+     * @var SiteApplication
+     */
+    protected $app = null;
+
     /**
      * @var string
      */
@@ -53,7 +63,7 @@ class OSMapViewXml extends HtmlView
     protected $osmapParams = null;
 
     /**
-     * @var Alledia\OSMap\Sitemap\Standard
+     * @var Standard
      */
     protected $sitemap = null;
 
@@ -73,40 +83,40 @@ class OSMapViewXml extends HtmlView
     protected $newsLimit = 1000;
 
     /**
-     * @var string
+     * @inheritDoc
+     * @throws Exception
      */
-    protected $pageHeading = null;
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+
+        $this->app = Factory::getApplication();
+    }
 
     /**
-     * @param null $tpl
-     *
-     * @return void
-     * @throws Exception
+     * @inheritDoc
      */
     public function display($tpl = null)
     {
-        $document = Factory::getDocument();
+        $document = $this->app->getDocument();
         if ($document->getType() != 'xml') {
             // There are ways to get here with a non-xml document, so we have to redirect
             $uri = Uri::getInstance();
             $uri->setVar('format', 'xml');
 
-            Factory::getApplication()->redirect($uri);
+            $this->app->redirect($uri);
 
             // Not strictly necessary, but makes the point :)
             return;
         }
 
-        /** @var SiteApplication $app */
-        $app = Factory::getApplication();
-
         $this->type    = General::getSitemapTypeFromInput();
-        $this->sitemap = Factory::getSitemap($app->input->getInt('id'), $this->type);
+        $this->sitemap = Factory::getSitemap($this->app->input->getInt('id'), $this->type);
         if (!$this->sitemap->isPublished) {
             throw new Exception(Text::_('COM_OSMAP_MSG_SITEMAP_IS_UNPUBLISHED'));
         }
 
-        $this->params      = $app->getParams();
+        $this->params      = $this->app->getParams();
         $this->osmapParams = ComponentHelper::getParams('com_osmap');
         $this->language    = $document->getLanguage();
         $this->newsCutoff  = new DateTime('-' . $this->sitemap->newsDateLimit . ' days');
@@ -116,16 +126,12 @@ class OSMapViewXml extends HtmlView
         }
 
         parent::display($tpl);
-
-        // @TODO: Does this really help at all?
-        $this->sitemap->cleanup();
-        $this->sitemap = null;
     }
 
     /**
      * @return string
      */
-    protected function addStylesheet()
+    protected function addStylesheet(): string
     {
         if ($this->params->get('add_styling', 1)) {
             $query = [
@@ -133,7 +139,7 @@ class OSMapViewXml extends HtmlView
                 'view'   => 'xsl',
                 'format' => 'xsl',
                 'layout' => $this->type,
-                'id'     => $this->sitemap->id
+                'id'     => $this->sitemap->id,
             ];
 
             return sprintf(
@@ -148,26 +154,30 @@ class OSMapViewXml extends HtmlView
     /**
      * @param Item $node
      *
-     * @return DateTime
-     * @throws Exception
+     * @return ?DateTime
      */
-    protected function isNewsPublication(Item $node)
+    protected function isNewsPublication(Item $node): ?DateTime
     {
-        $publicationDate = (
-            !empty($node->publishUp)
-            && $node->publishUp != Factory::getDbo()->getNullDate()
-            && $node->publishUp != -1
-        ) ? $node->publishUp : null;
+        try {
+            $publicationDate = (
+                !empty($node->publishUp)
+                && $node->publishUp != Factory::getDbo()->getNullDate()
+                && $node->publishUp != -1
+            ) ? $node->publishUp : null;
 
-        if ($publicationDate) {
-            $publicationDate = new DateTime($publicationDate);
+            if ($publicationDate) {
+                $publicationDate = new DateTime($publicationDate);
 
-            if ($this->newsCutoff <= $publicationDate) {
-                $this->newsLimit--;
-                if ($this->newsLimit >= 0) {
-                    return $publicationDate;
+                if ($this->newsCutoff <= $publicationDate) {
+                    $this->newsLimit--;
+                    if ($this->newsLimit >= 0) {
+                        return $publicationDate;
+                    }
                 }
             }
+
+        } catch (Throwable $error) {
+            // Don't care
         }
 
         return null;

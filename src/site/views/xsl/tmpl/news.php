@@ -22,9 +22,19 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\Language\Language;
 use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
+
+/**
+ * @var OSMapViewXsl $this
+ * @var string       $template
+ * @var string       $layout
+ * @var string       $layoutTemplate
+ * @var Language     $lang
+ * @var string       $filetofind
+ */
 
 ?>
 <xsl:stylesheet
