@@ -141,6 +141,9 @@ class OsmapViewXml extends HtmlView
                 'layout' => $this->type,
                 'id'     => $this->sitemap->id,
             ];
+            if ($itemId = $this->app->input->getInt('Itemid')) {
+                $query['Itemid'] = $itemId;
+            }
 
             return sprintf(
                 '<?xml-stylesheet type="text/xsl" href="%s"?>',

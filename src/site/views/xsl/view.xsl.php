@@ -25,7 +25,6 @@
 use Alledia\OSMap\Factory;
 use Alledia\OSMap\Helper\General;
 use Joomla\CMS\Application\SiteApplication;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
@@ -77,12 +76,13 @@ class OsmapViewXsl extends HtmlView
         $this->language = $document->getLanguage();
 
         $menu    = $this->app->getMenu()->getActive();
+        $isOsmap = $menu && $menu->query['option'] == 'com_osmap';
         $params  = $this->app->getParams();
         $type    = General::getSitemapTypeFromInput();
         $sitemap = Factory::getSitemap($this->app->input->getInt('id'), $type);
 
         $title = $params->get('page_title', '');
-        if (($menu->query['option'] ?? null) !== 'com_osmap') {
+        if ($isOsmap == false) {
             $title = $sitemap->name ?: $title;
         }
 
@@ -95,10 +95,8 @@ class OsmapViewXsl extends HtmlView
         } elseif ($this->app->get('sitename_pagetitles', 0) == 2) {
             $title = JText::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
         }
-
         $this->pageTitle = $title;
-
-        if ($params->get('show_page_heading')) {
+        if ($isOsmap && $params->get('show_page_heading')) {
             $this->pageHeading = $params->get('page_heading') ?: $sitemap->name;
         }
 
