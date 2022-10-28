@@ -51,7 +51,7 @@ class Images
 
         // Look for <img> tags
         preg_match_all(
-            '/<img[^>](?=.*(?:src="(?P<src>[^"]*")))?(?=.*(title="(?P<title>[^"]*)"))?(?=.*(alt="(?P<alt>[^"]*)"))?.[^>]*>/i',
+            '/<img[^>](?=.*(?:src="(?P<src>[^"]*)"))?(?=.*(title="(?P<title>[^"]*)"))?(?=.*(alt="(?P<alt>[^"]*)"))?.[^>]*>/i',
             $text,
             $matches1,
             PREG_SET_ORDER
