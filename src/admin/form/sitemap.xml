@@ -10,10 +10,8 @@
     </fieldset>
 
     <fieldset name="menus">
-        <field id="menus"
-               name="menus"
+        <field name="menus"
                type="osmap.menus"
-               class="inputbox"
                labelclass="control-label"
                multiple="multiple"
                array="true"/>

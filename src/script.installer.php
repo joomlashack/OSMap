@@ -24,7 +24,9 @@
 
 use Alledia\Installer\OSMap\Free\AbstractScript;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 $installPath = __DIR__ . (is_dir(__DIR__ . '/admin') ? '/admin' : '');
 require_once $installPath . '/library/Installer/include.php';
