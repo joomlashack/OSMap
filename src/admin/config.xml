@@ -4,43 +4,47 @@
               label="COM_OSMAP_FIELDSET_SITEMAP_SETTINGS_LABEL">
 
         <field name="show_external_links"
+               type="list"
+               layout="joomla.form.field.list-fancy-select"
                label="COM_OSMAP_OPTION_SHOW_EXTERNAL_LINKS_LABEL"
                description="COM_OSMAP_OPTION_SHOW_EXTERNAL_LINKS_DESC"
-               type="list"
                default="0">
-            <option value="1">JYES</option>
             <option value="0">JNO</option>
+            <option value="1">JYES</option>
             <option value="2">COM_OSMAP_OPTION_ONLY_HTML</option>
         </field>
 
         <field name="show_item_uid"
+               type="radio"
+               layout="joomla.form.field.radio.switcher"
                label="COM_OSMAP_OPTION_SHOW_ITEM_UID_LABEL"
                description="COM_OSMAP_OPTION_SHOW_ITEM_UID_DESC"
-               type="radio"
                class="btn-group btn-group-yesno"
                default="0">
-            <option value="1">JYES</option>
             <option value="0">JNO</option>
+            <option value="1">JYES</option>
         </field>
 
         <field name="ignore_duplicated_uids"
+               type="radio"
+               layout="joomla.form.field.radio.switcher"
                label="COM_OSMAP_OPTION_IGNORE_DUPLICATED_UIDS_LABEL"
                description="COM_OSMAP_OPTION_IGNORE_DUPLICATED_UIDS_DESC"
-               type="radio"
                class="btn-group btn-group-yesno"
                default="1">
-            <option value="1">JYES</option>
             <option value="0">JNO</option>
+            <option value="1">JYES</option>
         </field>
 
         <field name="ignore_hidden_menus"
+               type="radio"
+               layout="joomla.form.field.radio.switcher"
                label="COM_OSMAP_OPTION_IGNORE_HIDDEN_MENUS_LABEL"
                description="COM_OSMAP_OPTION_IGNORE_HIDDEN_MENUS_DESC"
-               type="radio"
                class="btn-group btn-group-yesno"
                default="0">
-            <option value="1">JYES</option>
             <option value="0">JNO</option>
+            <option value="1">JYES</option>
         </field>
     </fieldset>
 
