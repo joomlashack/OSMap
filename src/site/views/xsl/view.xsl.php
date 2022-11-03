@@ -95,9 +95,9 @@ class OsmapViewXsl extends HtmlView
         } elseif ($this->app->get('sitename_pagetitles', 0) == 2) {
             $title = JText::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
         }
-        $this->pageTitle = $title;
+        $this->pageTitle = $this->escape($title);
         if ($isOsmap && $params->get('show_page_heading')) {
-            $this->pageHeading = $params->get('page_heading') ?: $sitemap->name;
+            $this->pageHeading = $this->escape($params->get('page_heading') ?: $sitemap->name);
         }
 
         // We're going to cheat Joomla here because some referenced urls MUST remain http/insecure
