@@ -29,8 +29,9 @@ defined('_JEXEC') or die();
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 $installPath = __DIR__ . (is_dir(__DIR__ . '/admin') ? '/admin' : '');
-require_once $installPath . '/library/Installer/include.php';
+include $installPath . '/library/Installer/include.php';
 
 class com_osmapInstallerScript extends AbstractScript
 {
+    protected $debug = true;
 }
