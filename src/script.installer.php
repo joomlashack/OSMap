@@ -33,5 +33,4 @@ include $installPath . '/library/Installer/include.php';
 
 class com_osmapInstallerScript extends AbstractScript
 {
-    protected $debug = true;
 }
