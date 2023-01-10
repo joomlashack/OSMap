@@ -93,7 +93,7 @@ class OsmapViewXsl extends HtmlView
             $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
 
         } elseif ($this->app->get('sitename_pagetitles', 0) == 2) {
-            $title = JText::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
+            $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
         }
         $this->pageTitle = $this->escape($title);
         if ($isOsmap && $params->get('show_page_heading')) {
