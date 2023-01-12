@@ -726,7 +726,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         }
 
         if (static::$prepareContent) {
-            $text = HTMLHelper::_('content.prepare', $text);
+            $text = HTMLHelper::_('content.prepare', $text, null, 'com_content.article');
         }
     }
 }
