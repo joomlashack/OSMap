@@ -2,7 +2,7 @@
 /**
  * @package   OSMap
  * @contact   www.joomlashack.com, help@joomlashack.com
- * @copyright 2021-2022 Joomlashack.com. All rights reserved
+ * @copyright 2021-2023 Joomlashack.com. All rights reserved
  * @license   https://www.gnu.org/licenses/gpl.html GNU/GPL
  *
  * This file is part of OSMap.
