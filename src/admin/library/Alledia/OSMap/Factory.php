@@ -67,34 +67,35 @@ class Factory extends \Alledia\Framework\Factory
      * Returns an instance of the Sitemap class according to the given id and
      * sitemap type.
      *
-     * @param int    $id
+     * @param ?int   $id
      * @param string $type
      *
      * @return SitemapInterface
      * @throws \Exception
      */
-    public static function getSitemap(int $id, string $type = 'standard')
+    public static function getSitemap(?int $id, string $type = 'standard'): ?SitemapInterface
     {
-        switch ($type) {
-            case 'standard':
-                return new Sitemap\Standard($id);
+        if ($id > 0) {
+            switch ($type) {
+                case 'standard':
+                    return new Sitemap\Standard($id);
 
-            case 'images':
-                return new Sitemap\Images($id);
+                case 'images':
+                    return new Sitemap\Images($id);
 
-            case 'news':
-                return new Sitemap\News($id);
-
-            default:
-                return null;
+                case 'news':
+                    return new Sitemap\News($id);
+            }
         }
+
+        return null;
     }
 
     /**
      * Returns an instance of a table. If no prefix is set, we use OSMap's table
      * prefix as default.
      *
-     * @param string $tableName
+     * @param string  $tableName
      * @param ?string $prefix
      *
      * @return Table

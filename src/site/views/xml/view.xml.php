@@ -113,7 +113,7 @@ class OsmapViewXml extends HtmlView
         $this->type    = General::getSitemapTypeFromInput();
         $this->sitemap = Factory::getSitemap($this->app->input->getInt('id'), $this->type);
         if (!$this->sitemap->isPublished) {
-            throw new Exception(Text::_('COM_OSMAP_MSG_SITEMAP_IS_UNPUBLISHED'));
+            throw new Exception(Text::_('COM_OSMAP_MSG_SITEMAP_IS_UNPUBLISHED'), 404);
         }
 
         $this->params      = $this->app->getParams();

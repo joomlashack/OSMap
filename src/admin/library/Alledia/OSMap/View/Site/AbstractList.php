@@ -114,7 +114,7 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
         $this->sitemap = Factory::getSitemap($id);
 
         if (!$this->sitemap->isPublished) {
-            throw new \Exception(Text::_('COM_OSMAP_MSG_SITEMAP_IS_UNPUBLISHED'));
+            throw new \Exception(Text::_('COM_OSMAP_MSG_SITEMAP_IS_UNPUBLISHED'), 404);
         }
 
         $app = Factory::getApplication();
