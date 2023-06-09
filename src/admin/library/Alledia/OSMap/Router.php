@@ -66,24 +66,24 @@ class Router
      */
     public function isInternalURL(?string $url): bool
     {
-        if ($url) {
-            $uri      = Uri::getInstance($url);
-            $base     = $uri->toString(['scheme', 'host', 'port', 'path']);
-            $host     = $uri->toString(['scheme', 'host', 'port']);
-            $path     = $uri->toString(['path']);
-            $baseHost = Uri::getInstance($uri::root())->toString(['host']);
+        $uri      = Uri::getInstance($url);
+        $base     = $uri->toString(['scheme', 'host', 'port', 'path']);
+        $host     = $uri->toString(['scheme', 'host', 'port']);
+        $path     = $uri->toString(['path']);
+        $baseHost = Uri::getInstance($uri::root())->toString(['host']);
 
-            if ($path === $url) {
-                return true;
+        if ($path === $url) {
+            return true;
 
-            } elseif (empty($host) && strpos($path, 'index.php') === 0
-                || !empty($host) && preg_match('#' . preg_quote($uri::root(), '#') . '#', $base)
-                || !empty($host) && $host === $baseHost && strpos($path, 'index.php') !== false
-                || !empty($host) && $base === $host
-                && preg_match('#' . preg_quote($base, '#') . '#', $uri::root())
-            ) {
-                return true;
-            }
+        } elseif (
+            empty($host)
+            && strpos($path, 'index.php') === 0
+            || empty($host) == false && preg_match('#' . preg_quote($uri::root(), '#') . '#', $base)
+            || empty($host) == false && $host === $baseHost && strpos($path, 'index.php') !== false
+            || empty($host) == false && $base === $host
+            && preg_match('#' . preg_quote($base, '#') . '#', $uri::root())
+        ) {
+            return true;
         }
 
         return false;
