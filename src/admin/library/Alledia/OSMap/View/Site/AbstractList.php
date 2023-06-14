@@ -269,7 +269,7 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
         $liClass = $this->debug ? 'osmap-debug-item' : '';
         $liClass .= $this->generalCounter % 2 == 0 ? ' even' : '';
 
-        if (!empty($item->children)) {
+        if (empty($item->children) == false) {
             $liClass .= ' osmap-has-children';
         }
 
@@ -294,7 +294,7 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
             $this->printDebugInfo($item);
         }
 
-        if (!empty($item->children)) {
+        if (empty($item->children) == false) {
             $this->printMenu($item);
         }
 
@@ -315,7 +315,7 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
                 if (
                     isset($menu->menuItemTitle)
                     && $this->showMenuTitles
-                    && !empty($menu->children)
+                    && empty($menu->children) == false
                 ) {
                     if ($this->debug) {
                         $debug = sprintf(
