@@ -39,7 +39,6 @@ defined('_JEXEC') or die();
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-
 class OsmapViewXml extends HtmlView
 {
     /**
