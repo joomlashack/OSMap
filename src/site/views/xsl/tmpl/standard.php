@@ -22,7 +22,6 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Language;
 use Joomla\CMS\Language\Text;
 
