@@ -67,7 +67,8 @@
                    description="COM_OSMAP_SITEMAP_DESCRIPTION_DESC"
                    buttons="true"
                    hide="pagebreak,readmore"
-                   filter="safehtml"/>
+                   filter="safehtml"
+                   showon="show_sitemap_description:1"/>
         </fieldset>
     </fields>
 </metadata>
