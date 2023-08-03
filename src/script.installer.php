@@ -31,6 +31,7 @@ defined('_JEXEC') or die();
 $installPath = __DIR__ . (is_dir(__DIR__ . '/admin') ? '/admin' : '');
 include $installPath . '/library/Installer/include.php';
 
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 class com_osmapInstallerScript extends AbstractScript
 {
 }

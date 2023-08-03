@@ -34,7 +34,10 @@ use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+
+// phpcs:enable PSR1.Files.SideEffects
 
 class AbstractScript extends \Alledia\Installer\AbstractScript
 {

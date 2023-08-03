@@ -22,9 +22,18 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap\Factory;
+use Joomla\CMS\Language\Language;
 
 defined('_JEXEC') or die();
+
+/**
+ * @var OsmapViewXml $this
+ * @var object       $template
+ * @var string       $layout
+ * @var string       $layoutTemplate
+ * @var Language     $lang
+ * @var string       $filetofind
+ */
 
 echo sprintf('<?xml version="1.0" encoding="%s"?>' . "\n", $this->_charset);
 
