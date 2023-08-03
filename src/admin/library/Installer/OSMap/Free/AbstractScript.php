@@ -47,24 +47,9 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
     protected $isXmapDataFound = false;
 
     /**
-     * @var string
-     */
-    protected $previousSchemaVersion = null;
-
-    /**
      * @inheritDoc
      */
-    protected function customPreFlight(string $type, InstallerAdapter $parent): bool
-    {
-        $this->previousSchemaVersion = $this->getSchemaVersion();
-
-        return parent::customPreFlight($type, $parent);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function customPostFlight(string $type, InstallerAdapter $parent)
+    protected function customPostFlight(string $type, InstallerAdapter $parent): void
     {
         if ($type == 'uninstall') {
             return;
@@ -183,7 +168,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
      */
     protected function checkDatabase()
     {
-        if ($this->tableExists('#__osmap_sitemap')) {
+        if ($this->findTable('#__osmap_sitemap')) {
             $this->migrateLegacyDatabase();
 
         } else {
@@ -443,13 +428,13 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
      */
     public function checkDatabaseSchema()
     {
-        if (version_compare($this->previousSchemaVersion, '5', 'ge')) {
+        if (version_compare($this->schemaVersion, '5', 'ge')) {
             return;
         }
 
         $db = $this->dbo;
 
-        $this->sendDebugMessage('Checking database schema updates');
+        $this->sendDebugMessage('Checking database schema updates: v' . $this->schemaVersion);
 
         if ($this->findColumn('#__osmap_items_settings.format')) {
             $db->setQuery(
