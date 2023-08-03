@@ -12,7 +12,6 @@
 
             <field name="id"
                    type="osmap.sitemaps"
-                   default=""
                    required="true"
                    label="COM_OSMAP_SITEMAP"/>
 
@@ -27,23 +26,25 @@
                   label="COM_OSMAP_FIELDSET_SITEMAP_SETTINGS_LABEL">
 
             <field name="add_styling"
-                   label="COM_OSMAP_OPTION_ADD_STYLING_LABEL"
-                   description="COM_OSMAP_OPTION_ADD_STYLING_DESC"
                    type="radio"
                    class="btn-group btn-group-yesno"
+                   layout="joomla.form.field.radio.switcher"
+                   label="COM_OSMAP_OPTION_ADD_STYLING_LABEL"
+                   description="COM_OSMAP_OPTION_ADD_STYLING_DESC"
                    default="1">
-                <option value="1">JYES</option>
                 <option value="0">JNO</option>
+                <option value="1">JYES</option>
             </field>
 
             <field name="debug"
-                   label="COM_OSMAP_OPTION_DEBUG_LABEL"
-                   description="COM_OSMAP_OPTION_DEBUG_DESC"
                    type="radio"
                    class="btn-group btn-group-yesno"
+                   layout="joomla.form.field.radio.switcher"
+                   label="COM_OSMAP_OPTION_DEBUG_LABEL"
+                   description="COM_OSMAP_OPTION_DEBUG_DESC"
                    default="0">
-                <option value="1">JYES</option>
                 <option value="0">JNO</option>
+                <option value="1">JYES</option>
             </field>
 
             <field name="news_publication_name"
