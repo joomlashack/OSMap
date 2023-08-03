@@ -59,7 +59,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
         $xmapConverter = new XmapConverter();
 
         // This attribute will be used by the custom template to display the option to migrate legacy sitemaps
-        $this->isXmapDataFound = $this->tableExists('#__xmap_sitemap') && $xmapConverter->checkXmapDataExists();
+        $this->isXmapDataFound = $this->findTable('#__xmap_sitemap') && $xmapConverter->checkXmapDataExists();
 
         // If Xmap plugins are still available, and we don't have the OSMap plugins yet,
         // save Xmap plugins params to re-apply after install OSMap plugins
@@ -334,11 +334,11 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
 
                                 } else {
                                     $insertObject = (object)[
-                                        'sitemap_id'=>$sitemap->id,
-                                        'uid'=>$item->uid,
-                                        'published'=>1,
-                                        'changefreq'=>$properties['changefreq'] ?? 'weekly',
-                                        'priority'=>$properties['priority'] ?? '0.5'
+                                        'sitemap_id' => $sitemap->id,
+                                        'uid'        => $item->uid,
+                                        'published'  => 1,
+                                        'changefreq' => $properties['changefreq'] ?? 'weekly',
+                                        'priority'   => $properties['priority'] ?? '0.5'
                                     ];
 
                                     $db->insertObject('#__osmap_items_settings', $insertObject);
