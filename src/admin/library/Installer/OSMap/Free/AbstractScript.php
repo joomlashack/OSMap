@@ -96,7 +96,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
      *
      * @return void
      */
-    protected function createDefaultSitemap()
+    protected function createDefaultSitemap(): void
     {
         $db = Factory::getDbo();
 
@@ -133,7 +133,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                 $data = [
                     'name'       => 'Default Sitemap',
                     'is_default' => 1,
-                    'published'  => 1
+                    'published'  => 1,
                 ];
 
                 // Create the sitemap
@@ -166,8 +166,10 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
      *
      * @return void
      */
-    protected function checkDatabase()
+    protected function checkDatabase(): void
     {
+        $this->sendDebugMessage(__METHOD__);
+
         if ($this->findTable('#__osmap_sitemap')) {
             $this->migrateLegacyDatabase();
 
@@ -176,7 +178,10 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
         }
     }
 
-    protected function migrateLegacyDatabase()
+    /**
+     * @return void
+     */
+    protected function migrateLegacyDatabase(): void
     {
         $this->sendDebugMessage('Migrating legacy database');
 
@@ -199,7 +204,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                     'state',
                     'created',
                     'selections',
-                    'excluded_items'
+                    'excluded_items',
                 ])
                 ->from('#__osmap_sitemap');
             $sitemaps = $db->setQuery($query)->loadObjectList();
@@ -216,7 +221,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                         'name'       => $sitemap->title,
                         'is_default' => $sitemap->is_default,
                         'published'  => $sitemap->state,
-                        'created_on' => $sitemap->created
+                        'created_on' => $sitemap->created,
                     ];
                     $db->insertObject('#__osmap_sitemaps', $insertObject);
 
@@ -233,7 +238,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                     'menutype_id' => $menuTypeId,
                                     'priority'    => $menu['priority'],
                                     'changefreq'  => $menu['changefreq'],
-                                    'ordering'    => $menu['ordering']
+                                    'ordering'    => $menu['ordering'],
                                 ];
                                 $db->insertObject('#__osmap_sitemap_menus', $insertObject);
                             }
@@ -252,7 +257,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                 ->from('#__osmap_items_settings')
                                 ->where([
                                     'sitemap_id = ' . $db->quote($sitemap->id),
-                                    'uid = ' . $db->quote($uid)
+                                    'uid = ' . $db->quote($uid),
                                 ]);
                             $count = $db->setQuery($query)->loadResult();
 
@@ -262,7 +267,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                     'uid'        => $uid,
                                     'published'  => 0,
                                     'changefreq' => 'weekly',
-                                    'priority'   => '0.5'
+                                    'priority'   => '0.5',
                                 ];
                                 $db->insertObject('#__osmap_items_settings', $insertObject);
 
@@ -273,7 +278,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                     ->set('published = 0')
                                     ->where([
                                         'sitemap_id = ' . $db->quote($sitemap->id),
-                                        'uid = ' . $db->quote($uid)
+                                        'uid = ' . $db->quote($uid),
                                     ]);
                                 $db->setQuery($query)->execute();
                             }
@@ -285,7 +290,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                         $query         = $db->getQuery(true)
                             ->select([
                                 'uid',
-                                'properties'
+                                'properties',
                             ])
                             ->from('#__osmap_items')
                             ->where('sitemap_id = ' . $db->quote($sitemap->id))
@@ -305,7 +310,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                     ->from('#__osmap_items_settings')
                                     ->where([
                                         'sitemap_id = ' . $db->quote($sitemap->id),
-                                        'uid = ' . $db->quote($item->uid)
+                                        'uid = ' . $db->quote($item->uid),
                                     ]);
                                 $exists = (bool)$db->setQuery($query)->loadResult();
 
@@ -328,7 +333,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                         ->set($fields)
                                         ->where([
                                             'sitemap_id = ' . $db->quote($sitemap->id),
-                                            'uid = ' . $db->quote($item->uid)
+                                            'uid = ' . $db->quote($item->uid),
                                         ]);
                                     $db->setQuery($query)->execute();
 
@@ -338,7 +343,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                         'uid'        => $item->uid,
                                         'published'  => 1,
                                         'changefreq' => $properties['changefreq'] ?? 'weekly',
-                                        'priority'   => $properties['priority'] ?? '0.5'
+                                        'priority'   => $properties['priority'] ?? '0.5',
                                     ];
 
                                     $db->insertObject('#__osmap_items_settings', $insertObject);
@@ -423,12 +428,12 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
     }
 
     /**
-     * Check pre
      * @return void
      */
-    public function checkDatabaseSchema()
+    public function checkDatabaseSchema(): void
     {
         if (version_compare($this->schemaVersion, '5', 'ge')) {
+            $this->sendDebugMessage('No DB Schema updates');
             return;
         }
 
@@ -437,13 +442,19 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
         $this->sendDebugMessage('Checking database schema updates: v' . $this->schemaVersion);
 
         if ($this->findColumn('#__osmap_items_settings.format')) {
-            $db->setQuery(
-                "ALTER TABLE `#__osmap_items_settings` MODIFY `format` TINYINT(1) UNSIGNED NULL DEFAULT '2' COMMENT 'Format of the setting: 1) Legacy Mode - UID Only; 2) Based on menu ID and UID'"
-            )
+            $this->sendDebugMessage('UPDATE: items_settings.format');
+
+            $db->setQuery(join(' ', [
+                'ALTER TABLE `#__osmap_items_settings`',
+                "MODIFY `format` TINYINT(1) UNSIGNED NULL DEFAULT '2'",
+                "COMMENT 'Format of the setting: 1) Legacy Mode - UID Only; 2) Based on menu ID and UID'",
+            ]))
                 ->execute();
         }
 
         if ($this->findColumn('#__osmap_items_settings.url_hash')) {
+            $this->sendDebugMessage('UPDATE: items_settings.url_hash');
+
             $db->setQuery(
                 sprintf(
                     'ALTER TABLE %s CHANGE %s %s CHAR(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT %s',
@@ -458,7 +469,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
 
         $this->dropConstraints([
             '#__osmap_sitemap_menus.fk_sitemaps',
-            '#__osmap_sitemap_menus.fk_sitemaps_menus'
+            '#__osmap_sitemap_menus.fk_sitemaps_menus',
         ]);
 
         $this->addIndexes([
@@ -473,7 +484,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
             '#__osmap_sitemap_menus.idx_sitemap_menus',
             '#__osmap_sitemap_menus.fk_sitemaps_idx',
             '#__osmap_sitemap_menus.ordering_idx',
-            '#__osmap_sitemap_menus.idx_ordering'
+            '#__osmap_sitemap_menus.idx_ordering',
         ]);
     }
 
@@ -494,7 +505,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                 'client_id = ' . $siteApp->getClientId(),
                 sprintf('link LIKE %s', $db->quote('%com_osmap%')),
                 sprintf('link LIKE %s', $db->quote('%view=xml%')),
-                sprintf('link NOT LIKE %s', $db->quote('%format=xml%'))
+                sprintf('link NOT LIKE %s', $db->quote('%format=xml%')),
             ]);
 
         $menus = $db->setQuery($query)->loadObjectList();

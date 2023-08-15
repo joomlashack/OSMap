@@ -35,16 +35,20 @@ use Joomla\CMS\Table\Table;
 
 try {
     $frameworkPath = JPATH_SITE . '/libraries/allediaframework/include.php';
-    if (!(is_file($frameworkPath) && include $frameworkPath)) {
+    if (
+        is_file($frameworkPath) == false
+        || (include $frameworkPath) == false
+    ) {
         $app = Factory::getApplication();
 
         if ($app->isClient('administrator')) {
             $app->enqueueMessage('[OSMap] Joomlashack framework not found', 'error');
         }
+
         return false;
     }
 
-    if (defined('ALLEDIA_FRAMEWORK_LOADED') && !defined('OSMAP_LOADED')) {
+    if (defined('ALLEDIA_FRAMEWORK_LOADED') && defined('OSMAP_LOADED') == false) {
         define('OSMAP_LOADED', 1);
         define('OSMAP_ADMIN_PATH', JPATH_ADMINISTRATOR . '/components/com_osmap');
         define('OSMAP_SITE_PATH', JPATH_SITE . '/components/com_osmap');
@@ -52,7 +56,7 @@ try {
 
         define('OSMAP_LICENSE', is_file(OSMAP_LIBRARY_PATH . '/Alledia/OSMap/Services/Pro.php') ? 'pro' : 'free');
 
-        AutoLoader::register('Alledia\OSMap', OSMAP_LIBRARY_PATH . '/Alledia/OSMap');
+        AutoLoader::register('Alledia', OSMAP_LIBRARY_PATH . '/Alledia');
         AutoLoader::register('Pimple', OSMAP_LIBRARY_PATH . '/Pimple');
 
         PluginHelper::importPlugin('osmap');

@@ -32,7 +32,7 @@ defined('_JEXEC') or die();
 include JPATH_COMPONENT_ADMINISTRATOR . '/include.php';
 
 // Access check
-if (!Factory::getUser()->authorise('core.manage', 'com_osmap')) {
+if (Factory::getUser()->authorise('core.manage', 'com_osmap') == false) {
     throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 404);
 }
 
