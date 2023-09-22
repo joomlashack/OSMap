@@ -107,13 +107,17 @@
                 <folder>administrator/components/com_osmap/library</folder>
             </preflight>
 
-            <extension type="plugin"
-                       group="osmap"
-                       element="com_content"/>
+            <extension type="plugin" group="xmap" element="com_content"/>
 
-            <extension type="plugin"
-                       group="xmap"
-                       element="com_content"/>
+            <extension type="plugin" group="osmap" element="com_content"/>
+            <extension type="plugin" group="osmap" element="com_k2"/>
+            <extension type="plugin" group="osmap" element="com_kunena"/>
+            <extension type="plugin" group="osmap" element="com_sobipro"/>
+            <extension type="plugin" group="osmap" element="com_virtuemart"/>
+            <extension type="plugin" group="osmap" element="jdownloads"/>
+            <extension type="plugin" group="osmap" element="oscampus"/>
+            <extension type="plugin" group="osmap" element="phocagallery"/>
+            <extension type="plugin" group="osmap" element="shacklocations"/>
 
             <folder>administrator/components/com_osmap/models/fields</folder>
             <folder>administrator/components/com_osmap/models/forms</folder>
