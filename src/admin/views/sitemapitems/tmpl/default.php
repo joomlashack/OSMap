@@ -22,7 +22,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -32,25 +32,6 @@ defined('_JEXEC') or die();
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.core');
 HTMLHelper::_('behavior.keepalive');
-HTMLHelper::_('formbehavior.chosen', 'select');
-
-$listFields = json_encode([
-    'frequencies' => HTMLHelper::_('osmap.frequencyList'),
-    'priorities'  => HTMLHelper::_('osmap.priorityList')
-]);
-
-$jscript = <<<JSCRIPT
-;(function($) {
-    $.osmap = $.extend({}, $.osmap);
-    
-    $.osmap.fields = {$listFields};
-})(jQuery);
-JSCRIPT;
-OSMap\Factory::getDocument()->addScriptDeclaration($jscript);
-
-HTMLHelper::_('script', 'com_osmap/sitemapitems.min.js', ['relative' => true]);
-
-$container = OSMap\Factory::getPimpleContainer();
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemapitems&id=' . (int)$this->sitemapId); ?>"
@@ -78,25 +59,5 @@ $container = OSMap\Factory::getPimpleContainer();
     <input type="hidden" name="language" value="<?php echo $this->language; ?>"/>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>
-<script>
-    ;jQuery(function($) {
-        $(function() {
-            $.fn.osmap.loadSitemapItems({
-                baseUri  : '<?php echo $container->uri::root(); ?>',
-                sitemapId: '<?php echo $this->sitemapId; ?>',
-                container: '#osmap-items-list',
-                language : '<?php echo $this->language; ?>',
-                lang     : {
-                    'COM_OSMAP_HOURLY'                    : '<?php echo Text::_('COM_OSMAP_HOURLY'); ?>',
-                    'COM_OSMAP_DAILY'                     : '<?php echo Text::_('COM_OSMAP_DAILY'); ?>',
-                    'COM_OSMAP_WEEKLY'                    : '<?php echo Text::_('COM_OSMAP_WEEKLY'); ?>',
-                    'COM_OSMAP_MONTHLY'                   : '<?php echo Text::_('COM_OSMAP_MONTHLY'); ?>',
-                    'COM_OSMAP_YEARLY'                    : '<?php echo Text::_('COM_OSMAP_YEARLY'); ?>',
-                    'COM_OSMAP_NEVER'                     : '<?php echo Text::_('COM_OSMAP_NEVER'); ?>',
-                    'COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH': '<?php echo Text::_('COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH'); ?>',
-                    'COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH'  : '<?php echo Text::_('COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH'); ?>'
-                }
-            });
-        });
-    });
-</script>
+<?php
+echo $this->loadTemplate('script');
