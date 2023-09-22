@@ -22,43 +22,41 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap;
+use Alledia\OSMap\View\Admin\AbstractList;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-
-class OSMapViewSitemapItems extends OSMap\View\Admin\AbstractList
+class OSMapViewSitemapItems extends AbstractList
 {
     /**
-     * @param string $tpl
-     *
-     * @return void
-     * @throws Exception
+     * @inheritDoc
      */
     public function display($tpl = null)
     {
-        $app             = OSMap\Factory::getApplication();
-        $this->sitemapId = $app->input->getInt('id', 0);
-        $this->language  = $app->input->get('lang', '');
+        $this->sitemapId = $this->app->input->getInt('id', 0);
+        $this->language  = $this->app->input->get('lang', '');
 
         $this->setToolBar();
 
         parent::display($tpl);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function setToolBar($addDivider = true)
     {
-        $isNew = true;
-
         $this->setTitle('COM_OSMAP_PAGE_VIEW_SITEMAP_ITEMS');
 
         ToolbarHelper::apply('sitemapitems.apply');
         ToolbarHelper::save('sitemapitems.save');
 
-        $alt = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
-        ToolbarHelper::cancel('sitemapitems.cancel', $alt);
+        ToolbarHelper::cancel('sitemapitems.cancel');
 
-        parent::setToolBar($addDivider);
+        parent::setToolBar();
     }
 }
