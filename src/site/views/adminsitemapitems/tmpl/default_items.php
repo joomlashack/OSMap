@@ -22,12 +22,13 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
 $count             = 0;
-$showItemUID       = $this->osmapParams->get('show_item_uid', 0);
+$showItemUid       = $this->osmapParams->get('show_item_uid', 0);
 $showExternalLinks = (int)$this->osmapParams->get('show_external_links', 0);
 
 /**
@@ -40,7 +41,7 @@ $showExternalLinks = (int)$this->osmapParams->get('show_external_links', 0);
  *
  * @return bool
  */
-$printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExternalLinks) {
+$printNodeCallback = function (object $item) use (&$count, &$showItemUid, &$showExternalLinks) {
     if (!$item->isInternal) :
         if ($showExternalLinks === 0) :
             // Don't show external links
@@ -75,7 +76,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
     endif;
 
     ?>
-    <tr class="sitemapitem row<?php echo $count; ?> <?php echo ($showItemUID) ? 'with-uid' : ''; ?>"
+    <tr class="sitemapitem row<?php echo $count; ?> <?php echo ($showItemUid) ? 'with-uid' : ''; ?>"
         data-uid="<?php echo $item->uid; ?>"
         data-settings-hash="<?php echo $item->settingsHash; ?>">
 
@@ -98,29 +99,30 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
             <?php
             $notes = $item->getAdminNotesString();
 
-            if (!empty($notes)) :
-                ?>
+            if (!empty($notes)) : ?>
                 <span class="icon-warning hasTooltip osmap-info" title="<?php echo $notes; ?>"></span>
             <?php endif; ?>
         </td>
 
         <td class="sitemapitem-link">
-            <?php
-            if ($item->level > 0) :
-                ?>
+            <?php if ($item->level > 0) : ?>
                 <span class="level-mark">
                     <?php echo str_repeat('—', $item->level); ?>
                 </span>
             <?php endif;
 
-            if (!empty($item->rawLink) && $item->rawLink !== '#' && $item->link !== '#') :
+            if ($item->rawLink !== '#' && $item->link !== '#') :
+                echo HTMLHelper::_(
+                    'link',
+                    $item->rawLink,
+                    $item->rawLink,
+                    [
+                        'target' => '_blank',
+                        'class'  => 'hasTooltip',
+                        'title'  => $item->link,
+                    ]
+                )
                 ?>
-                <a href="<?php echo $item->rawLink; ?>"
-                   target="_blank"
-                   class="hasTooltip"
-                   title="<?php echo $item->link; ?>">
-                    <?php echo $item->rawLink; ?>
-                </a>
                 <span class="icon-new-tab"></span>
 
             <?php else : ?>
@@ -130,7 +132,7 @@ $printNodeCallback = function ($item) use (&$count, &$showItemUID, &$showExterna
             <?php endif; ?>
 
             <?php
-            if ($showItemUID) :
+            if ($showItemUid) :
                 ?>
                 <br>
                 <div class="small osmap-item-uid">
@@ -208,5 +210,4 @@ if (empty($count)) :
     <div class="alert alert-warning">
         <?php echo Text::_('COM_OSMAP_NO_ITEMS'); ?>
     </div>
-<?php
-endif;
+<?php endif;
