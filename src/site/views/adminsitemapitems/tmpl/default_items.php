@@ -27,147 +27,55 @@ use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
-$count             = 0;
 $showItemUid       = $this->osmapParams->get('show_item_uid', 0);
 $showExternalLinks = (int)$this->osmapParams->get('show_external_links', 0);
+$items             = [];
 
+$this->sitemap->traverse(
 /**
- * This method is called while traversing the sitemap items tree, and is
- * used to append the found item to the sitemapItems attribute, which will
- * be used in the view. Will not add ignored items. Duplicate items will
- * be included.
- *
  * @param object $item
  *
  * @return bool
  */
-$printNodeCallback = function (object $item) use (&$count, &$showItemUid, &$showExternalLinks) {
-    if (!$item->isInternal) :
-        if ($showExternalLinks === 0) :
-            // Don't show external links
-            $item->set('ignore', true);
-            $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_IGNORED_EXTERNAL');
+    function (object $item) use (&$items, &$showItemUid, &$showExternalLinks) {
+        if (
+            ($item->isInternal == false && $showExternalLinks === 0)
+            || $item->hasCompatibleLanguage() == false
+        ) :
+            return false;
+        endif;
 
-        elseif ($showExternalLinks === 2) :
+        if ($showExternalLinks === 2) :
             // Display only in the HTML sitemap
             $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_IGNORED_EXTERNAL_HTML');
         endif;
-    endif;
 
-    // Add notes about sitemap visibility
-    if (!$item->visibleForXML) :
-        $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_VISIBLE_HTML_ONLY');
-    endif;
+        // Add notes about sitemap visibility
+        if ($item->visibleForXML == false) :
+            $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_VISIBLE_HTML_ONLY');
+        endif;
 
-    if (!$item->visibleForHTML) :
-        $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_VISIBLE_XML_ONLY');
-    endif;
+        if ($item->visibleForHTML == false) :
+            $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_VISIBLE_XML_ONLY');
+        endif;
 
-    if (!$item->visibleForRobots) :
-        $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_INVISIBLE_FOR_ROBOTS');
-    endif;
+        if ($item->visibleForRobots == false) :
+            $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_INVISIBLE_FOR_ROBOTS');
+        endif;
 
-    if (!$item->parentIsVisibleForRobots) :
-        $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_PARENT_INVISIBLE_FOR_ROBOTS');
-    endif;
+        if ($item->parentIsVisibleForRobots == false) :
+            $item->addAdminNote('COM_OSMAP_ADMIN_NOTE_PARENT_INVISIBLE_FOR_ROBOTS');
+        endif;
 
-    if (!$item->hasCompatibleLanguage() || $item->ignore) :
-        return false;
-    endif;
+        $items[] = $item;
 
-    ?>
-    <tr class="sitemapitem row<?php echo $count; ?> <?php echo ($showItemUid) ? 'with-uid' : ''; ?>"
-        data-uid="<?php echo $item->uid; ?>"
-        data-settings-hash="<?php echo $item->settingsHash; ?>">
+        return true;
+    },
+    false,
+    true
+);
 
-        <td class="center">
-            <div class="sitemapitem-published"
-                 data-original="<?php echo $item->published ? '1' : '0'; ?>"
-                 data-value="<?php echo $item->published ? '1' : '0'; ?>">
-
-                <?php
-                $class = $item->published ? 'publish' : 'unpublish';
-                $title = $item->published
-                    ? 'COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH'
-                    : 'COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH';
-                ?>
-
-                <span title="<?php echo Text::_($title); ?>"
-                      class="hasTooltip icon-<?php echo $class; ?>">
-                    </span>
-            </div>
-            <?php
-            $notes = $item->getAdminNotesString();
-
-            if (!empty($notes)) : ?>
-                <span class="icon-warning hasTooltip osmap-info" title="<?php echo $notes; ?>"></span>
-            <?php endif; ?>
-        </td>
-
-        <td class="sitemapitem-link">
-            <?php if ($item->level > 0) : ?>
-                <span class="level-mark">
-                    <?php echo str_repeat('—', $item->level); ?>
-                </span>
-            <?php endif;
-
-            if ($item->rawLink !== '#' && $item->link !== '#') :
-                echo HTMLHelper::_(
-                    'link',
-                    $item->rawLink,
-                    $item->rawLink,
-                    [
-                        'target' => '_blank',
-                        'class'  => 'hasTooltip',
-                        'title'  => $item->link,
-                    ]
-                )
-                ?>
-                <span class="icon-new-tab"></span>
-
-            <?php else : ?>
-                <span>
-                    <?php echo $item->name ?? ''; ?>
-                </span>
-            <?php endif; ?>
-
-            <?php
-            if ($showItemUid) :
-                ?>
-                <br>
-                <div class="small osmap-item-uid">
-                    <?php echo Text::_('COM_OSMAP_UID'); ?>: <?php echo $item->uid; ?>
-                </div>
-            <?php endif; ?>
-        </td>
-
-        <td class="sitemapitem-name">
-            <?php echo $item->name ?? ''; ?>
-        </td>
-
-        <td class="center">
-            <div class="sitemapitem-priority"
-                 data-original="<?php echo $item->priority; ?>"
-                 data-value="<?php echo sprintf('%03.1f', $item->priority); ?>">
-
-                <?php echo sprintf('%03.1f', $item->priority); ?>
-            </div>
-        </td>
-
-        <td class="center">
-            <div class="sitemapitem-changefreq"
-                 data-original="<?php echo $item->changefreq; ?>"
-                 data-value="<?php echo $item->changefreq; ?>">
-
-                <?php echo Text::_('COM_OSMAP_' . strtoupper($item->changefreq)); ?>
-            </div>
-        </td>
-    </tr>
-    <?php
-    $count++;
-
-    return true;
-};
+$count = count($items);
 ?>
     <table class="adminlist table table-striped" id="itemList">
         <thead>
@@ -196,10 +104,91 @@ $printNodeCallback = function (object $item) use (&$count, &$showItemUid, &$show
 
         <tbody>
         <?php
-        if (is_object($this->sitemap)) :
-            $this->sitemap->traverse($printNodeCallback, false, true);
-        endif;
-        ?>
+        foreach ($items as $item) : ?>
+            <tr class="sitemapitem row<?php echo $count; ?> <?php echo ($showItemUid) ? 'with-uid' : ''; ?>"
+                data-uid="<?php echo $item->uid; ?>"
+                data-settings-hash="<?php echo $item->settingsHash; ?>">
+
+                <td class="center">
+                    <div class="sitemapitem-published"
+                         data-original="<?php echo $item->published ? '1' : '0'; ?>"
+                         data-value="<?php echo $item->published ? '1' : '0'; ?>">
+
+                        <?php
+                        $class = $item->published ? 'publish' : 'unpublish';
+                        $title = $item->published
+                            ? 'COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH'
+                            : 'COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH';
+                        ?>
+
+                        <span title="<?php echo Text::_($title); ?>"
+                              class="hasTooltip icon-<?php echo $class; ?>">
+                    </span>
+                    </div>
+                    <?php
+                    $notes = $item->getAdminNotesString();
+
+                    if (!empty($notes)) : ?>
+                        <span class="icon-warning hasTooltip osmap-info" title="<?php echo $notes; ?>"></span>
+                    <?php endif; ?>
+                </td>
+
+                <td class="sitemapitem-link">
+                    <?php if ($item->level > 0) : ?>
+                        <span class="level-mark"><?php echo str_repeat('—', $item->level); ?></span>
+                    <?php endif;
+
+                    if ($item->rawLink !== '#' && $item->link !== '#') :
+                        echo HTMLHelper::_(
+                            'link',
+                            $item->rawLink,
+                            $item->rawLink,
+                            [
+                                'target' => '_blank',
+                                'class'  => 'hasTooltip',
+                                'title'  => $item->link,
+                            ]
+                        )
+                        ?>
+                        <span class="icon-new-tab"></span>
+
+                    <?php else : ?>
+                        <span><?php echo $item->name ?? ''; ?></span>
+                    <?php endif; ?>
+
+                    <?php
+                    if ($showItemUid) :
+                        ?>
+                        <br>
+                        <div class="small osmap-item-uid">
+                            <?php echo Text::_('COM_OSMAP_UID'); ?>: <?php echo $item->uid; ?>
+                        </div>
+                    <?php endif; ?>
+                </td>
+
+                <td class="sitemapitem-name">
+                    <?php echo $item->name ?? ''; ?>
+                </td>
+
+                <td class="center">
+                    <div class="sitemapitem-priority"
+                         data-original="<?php echo $item->priority; ?>"
+                         data-value="<?php echo sprintf('%03.1f', $item->priority); ?>">
+
+                        <?php echo sprintf('%03.1f', $item->priority); ?>
+                    </div>
+                </td>
+
+                <td class="center">
+                    <div class="sitemapitem-changefreq"
+                         data-original="<?php echo $item->changefreq; ?>"
+                         data-value="<?php echo $item->changefreq; ?>">
+
+                        <?php echo Text::_('COM_OSMAP_' . strtoupper($item->changefreq)); ?>
+                    </div>
+                </td>
+            </tr>
+        <?php endforeach; ?>
         </tbody>
     </table>
     <div><?php echo Text::sprintf('COM_OSMAP_NUMBER_OF_ITEMS_FOUND', $count); ?></div>
