@@ -28,14 +28,13 @@ defined('_JEXEC') or die();
 
 Factory::getApplication()->input->set('tmpl', 'component');
 
-if (!empty($this->message)) : ?>
+if (empty($this->message)) :
+    echo $this->loadTemplate('items');
+
+else : ?>
     <div class="alert alert-warning">
         <?php echo $this->message; ?>
     </div>
 <?php endif;
-
-if (empty($this->message)) {
-    echo $this->loadTemplate('items');
-}
 
 jexit();
