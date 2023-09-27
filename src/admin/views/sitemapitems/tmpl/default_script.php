@@ -31,7 +31,7 @@ HTMLHelper::_('script', 'com_osmap/sitemapitems.min.js', ['relative' => true]);
 
 $jsOptions = json_encode([
     'baseUri'     => Factory::getPimpleContainer()->uri::root(),
-    'sitemapId'   => $this->sitemapId,
+    'sitemapId'   => (int)$this->sitemap->id,
     'container'   => '#osmap-items-list',
     'language'    => $this->language,
     'frequencies' => HTMLHelper::_('osmap.frequencyList'),

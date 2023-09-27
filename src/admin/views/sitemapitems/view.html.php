@@ -22,6 +22,8 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\OSMap\Factory;
+use Alledia\OSMap\Sitemap\Standard;
 use Alledia\OSMap\View\Admin\AbstractList;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
@@ -33,12 +35,24 @@ defined('_JEXEC') or die();
 class OSMapViewSitemapItems extends AbstractList
 {
     /**
+     * @var Standard
+     */
+    protected $sitemap = null;
+
+    /**
+     * @var string
+     */
+    protected $language = null;
+
+    /**
      * @inheritDoc
      */
     public function display($tpl = null)
     {
-        $this->sitemapId = $this->app->input->getInt('id', 0);
-        $this->language  = $this->app->input->get('lang', '');
+        $sitemapId = $this->app->input->getInt('id', 0);
+
+        $this->sitemap  = Factory::getSitemap($sitemapId);
+        $this->language = $this->app->input->get('lang', '');
 
         $this->setToolBar();
 
