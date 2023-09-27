@@ -134,6 +134,9 @@
         $cells.text($cells.data('value'));
     }
 
+    /**
+     * @return void
+     */
     $.osmap.sitemapItems.prototype.initPublishing = function() {
         $('.sitemapitem-published', this.$container).on('click', function() {
             let $this     = $(this),
@@ -154,7 +157,42 @@
                         : Joomla.JText._('COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH')
                 );
 
-            $span.tooltip('fixTitle').tooltip('show');
+            if (typeof $.fn.tooltip.Constructor.VERSION === 'undefined') {
+                // Assume older bootstrap
+                $span.tooltip('fixTitle');
+            }
+
+            $span.attr('data-bs-original-title', $span.attr('title')).tooltip('show');
         });
     }
+
+    /**
+     Joomla.submitbutton = function(task) {
+        if (task === 'sitemapitems.save' || task === 'sitemapitems.apply') {
+            let $updateDataField = $('#update-data'),
+                $updatedLines    = $('.sitemapitem.updated'),
+                data             = [];
+
+            $updateDataField.val('');
+
+            // Grab updated values and build the post data
+            $updatedLines.each(function() {
+                let $tr = $(this);
+
+                data.push({
+                    'uid'          : $tr.data('uid'),
+                    'settings_hash': $tr.data('settings-hash'),
+                    'published'    : $tr.find('.sitemapitem-published').data('value'),
+                    'priority'     : $tr.find('.sitemapitem-priority').data('value'),
+                    'changefreq'   : $tr.find('.sitemapitem-changefreq').data('value')
+                });
+            });
+
+            $updateDataField.val(JSON.stringify(data));
+        }
+
+        Joomla.submitform(task, document.getElementById('adminForm'));
+    };
+     */
+
 })(jQuery);
