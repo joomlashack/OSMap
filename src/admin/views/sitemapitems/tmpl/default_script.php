@@ -27,7 +27,7 @@ use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
-HTMLHelper::_('script', 'com_osmap/sitemapitems.js', ['relative' => true]);
+HTMLHelper::_('script', 'com_osmap/sitemapitems.min.js', ['relative' => true]);
 
 $jsOptions = json_encode([
     'baseUri'     => Factory::getPimpleContainer()->uri::root(),
