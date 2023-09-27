@@ -24,10 +24,11 @@
 
 use Alledia\OSMap\Controller\Form;
 use Alledia\OSMap\Factory;
-use Joomla\CMS\Router\Route;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class OSMapControllerSitemapItems extends Form
 {
@@ -57,20 +58,19 @@ class OSMapControllerSitemapItems extends Form
 
         if ($updateData) {
             $updateData = json_decode($updateData, true);
-
             if ($updateData && is_array($updateData)) {
                 foreach ($updateData as $data) {
                     $row = $model->getTable();
                     $row->load([
                         'sitemap_id'    => $sitemapId,
                         'uid'           => $data['uid'],
-                        'settings_hash' => $data['settings_hash']
+                        'settings_hash' => $data['settings_hash'],
                     ]);
 
                     $data['sitemap_id'] = $sitemapId;
                     $data['format']     = '2';
 
-                    $row->save($data);
+                    $row->save($data) . ': ' . print_r($data, 1);
                 }
             }
         }
@@ -79,7 +79,7 @@ class OSMapControllerSitemapItems extends Form
             $query = [
                 'option' => 'com_osmap',
                 'view'   => 'sitemapitems',
-                'id'     => $sitemapId
+                'id'     => $sitemapId,
             ];
 
             if ($language) {
