@@ -36,6 +36,10 @@ HTMLHelper::_('formbehavior.chosen', 'select');
 $sitemapId = (int)$this->sitemap->id;
 
 ?>
+    <h1>
+        <?php echo Text::sprintf('COM_OSMAP_SITEMAPITEMS_HEADING', $this->escape($this->sitemap->name)); ?>
+    </h1>
+
     <form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemapitems&id=' . $sitemapId); ?>"
           method="post"
           name="adminForm"
