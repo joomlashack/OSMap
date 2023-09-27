@@ -24,6 +24,7 @@
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Version;
 
 defined('_JEXEC') or die();
 
@@ -96,7 +97,7 @@ $count = count($items);
     <table class="adminlist table table-striped" id="itemList">
         <thead>
         <tr>
-            <th style="width: 1%;min-width:55px" class="nowrap center">
+            <th style="width: 1%;min-width:55px" class="text-center center">
                 <?php echo Text::_('COM_OSMAP_HEADING_STATUS'); ?>
             </th>
 
@@ -108,11 +109,11 @@ $count = count($items);
                 <?php echo Text::_('COM_OSMAP_HEADING_TITLE'); ?>
             </th>
 
-            <th class="center">
+            <th class="text-center center">
                 <?php echo Text::_('COM_OSMAP_HEADING_PRIORITY'); ?>
             </th>
 
-            <th class="nowrap center">
+            <th class="text-center center">
                 <?php echo Text::_('COM_OSMAP_HEADING_CHANGE_FREQ'); ?>
             </th>
         </tr>
@@ -125,7 +126,7 @@ $count = count($items);
                 data-uid="<?php echo $item->uid; ?>"
                 data-settings-hash="<?php echo $item->settingsHash; ?>">
 
-                <td class="center">
+                <td class="text-center center">
                     <div class="sitemapitem-published"
                          data-original="<?php echo $item->published ? '1' : '0'; ?>"
                          data-value="<?php echo $item->published ? '1' : '0'; ?>">
@@ -153,6 +154,10 @@ $count = count($items);
                     <?php endif;
 
                     if ($item->rawLink !== '#' && $item->link !== '#') :
+                        if (Version::MAJOR_VERSION < 4) :
+                            echo '<span class="icon-new-tab"></span>';
+                        endif;
+
                         echo HTMLHelper::_(
                             'link',
                             $item->rawLink,
@@ -162,11 +167,9 @@ $count = count($items);
                                 'class'  => 'hasTooltip',
                                 'title'  => $item->link,
                             ]
-                        )
-                        ?>
-                        <span class="icon-new-tab"></span>
+                        );
 
-                    <?php else :
+                    else :
                         echo sprintf('<span>%s</span>', $item->name ?? '');
                     endif;
 
@@ -184,7 +187,7 @@ $count = count($items);
                     <?php echo $item->name ?? ''; ?>
                 </td>
 
-                <td class="center">
+                <td class="text-center center">
                     <div class="sitemapitem-priority"
                          data-original="<?php echo $item->priority; ?>"
                          data-value="<?php echo sprintf('%03.1f', $item->priority); ?>">
@@ -193,7 +196,7 @@ $count = count($items);
                     </div>
                 </td>
 
-                <td class="center">
+                <td class="text-center center">
                     <div class="sitemapitem-changefreq"
                          data-original="<?php echo $item->changefreq; ?>"
                          data-value="<?php echo $item->changefreq; ?>">
@@ -207,9 +210,7 @@ $count = count($items);
     </table>
     <div><?php echo Text::sprintf('COM_OSMAP_NUMBER_OF_ITEMS_FOUND', $count); ?></div>
 
-<?php
-if (empty($count)) :
-    ?>
+<?php if (empty($count)) : ?>
     <div class="alert alert-warning">
         <?php echo Text::_('COM_OSMAP_NO_ITEMS'); ?>
     </div>
