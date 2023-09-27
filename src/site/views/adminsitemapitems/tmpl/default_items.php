@@ -27,6 +27,22 @@ use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
+
+$frequncyOptions = HTMLHelper::_('osmap.frequencyList');
+array_walk(
+    $frequncyOptions,
+    function (string &$text, string $value) {
+        $text = HTMLHelper::_('select.option', $value, $text);
+    }
+);
+
+$priorityOptions = array_map(
+    function (float $priority) {
+        return HTMLHelper::_('select.option', $priority, $priority);
+    },
+    HTMLHelper::_('osmap.priorityList')
+);
+
 $showItemUid       = $this->osmapParams->get('show_item_uid', 0);
 $showExternalLinks = (int)$this->osmapParams->get('show_external_links', 0);
 $items             = [];
@@ -104,8 +120,8 @@ $count = count($items);
 
         <tbody>
         <?php
-        foreach ($items as $item) : ?>
-            <tr class="sitemapitem row<?php echo $count; ?> <?php echo ($showItemUid) ? 'with-uid' : ''; ?>"
+        foreach ($items as $row => $item) : ?>
+            <tr class="sitemapitem <?php echo 'row' . $row; ?> <?php echo ($showItemUid) ? 'with-uid' : ''; ?>"
                 data-uid="<?php echo $item->uid; ?>"
                 data-settings-hash="<?php echo $item->settingsHash; ?>">
 
@@ -126,9 +142,7 @@ $count = count($items);
                     </span>
                     </div>
                     <?php
-                    $notes = $item->getAdminNotesString();
-
-                    if (!empty($notes)) : ?>
+                    if ($notes = $item->getAdminNotesString()) : ?>
                         <span class="icon-warning hasTooltip osmap-info" title="<?php echo $notes; ?>"></span>
                     <?php endif; ?>
                 </td>
@@ -152,18 +166,18 @@ $count = count($items);
                         ?>
                         <span class="icon-new-tab"></span>
 
-                    <?php else : ?>
-                        <span><?php echo $item->name ?? ''; ?></span>
-                    <?php endif; ?>
+                    <?php else :
+                        echo sprintf('<span>%s</span>', $item->name ?? '');
+                    endif;
 
-                    <?php
                     if ($showItemUid) :
-                        ?>
-                        <br>
-                        <div class="small osmap-item-uid">
-                            <?php echo Text::_('COM_OSMAP_UID'); ?>: <?php echo $item->uid; ?>
-                        </div>
-                    <?php endif; ?>
+                        echo sprintf(
+                            '<br><div class="small osmap-item-uid">%s: %s</div>',
+                            Text::_('COM_OSMAP_UID'),
+                            $item->uid
+                        );
+                    endif;
+                    ?>
                 </td>
 
                 <td class="sitemapitem-name">
