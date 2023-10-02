@@ -32,8 +32,15 @@ HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.core');
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('formbehavior.chosen', 'select');
+
+$sitemapId = (int)$this->sitemap->id;
+
 ?>
-    <form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemapitems&id=' . (int)$this->sitemapId); ?>"
+    <h1>
+        <?php echo Text::sprintf('COM_OSMAP_SITEMAPITEMS_HEADING', $this->escape($this->sitemap->name)); ?>
+    </h1>
+
+    <form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemapitems&id=' . $sitemapId); ?>"
           method="post"
           name="adminForm"
           id="adminForm"
@@ -53,7 +60,7 @@ HTMLHelper::_('formbehavior.chosen', 'select');
 
         <input type="hidden" id="menus_ordering" name="jform[menus_ordering]" value=""/>
         <input type="hidden" name="task" value=""/>
-        <input type="hidden" name="id" value="<?php echo $this->sitemapId; ?>"/>
+        <input type="hidden" name="id" value="<?php echo $sitemapId; ?>"/>
         <input type="hidden" name="update-data" id="update-data" value=""/>
         <input type="hidden" name="language" value="<?php echo $this->language; ?>"/>
         <?php echo HTMLHelper::_('form.token'); ?>

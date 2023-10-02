@@ -22,7 +22,6 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\OSMap\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -32,32 +31,38 @@ defined('_JEXEC') or die();
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.core');
 HTMLHelper::_('behavior.keepalive');
+
+$sitemapId = (int)$this->sitemap->id;
+
 ?>
+    <h1>
+        <?php echo Text::sprintf('COM_OSMAP_SITEMAPITEMS_HEADING', $this->escape($this->sitemap->name)); ?>
+    </h1>
 
-<form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemapitems&id=' . (int)$this->sitemapId); ?>"
-      method="post"
-      name="adminForm"
-      id="adminForm"
-      class="form-validate">
-    <div class="row-fluid">
-        <div class="col-12">
-            <div id="osmap-items-container">
-                <div class="osmap-loading">
-                    <span class="icon-loop spin"></span>
-                    <?php echo Text::_('COM_OSMAP_LOADING'); ?>
+    <form action="<?php echo Route::_('index.php?option=com_osmap&view=sitemapitems&id=' . $sitemapId); ?>"
+          method="post"
+          name="adminForm"
+          id="adminForm"
+          class="form-validate">
+        <div class="row-fluid">
+            <div class="col-12">
+                <div id="osmap-items-container">
+                    <div class="osmap-loading">
+                        <span class="icon-loop spin"></span>
+                        <?php echo Text::_('COM_OSMAP_LOADING'); ?>
+                    </div>
+
+                    <div id="osmap-items-list"></div>
                 </div>
-
-                <div id="osmap-items-list"></div>
             </div>
         </div>
-    </div>
 
-    <input type="hidden" id="menus_ordering" name="jform[menus_ordering]" value=""/>
-    <input type="hidden" name="task" value=""/>
-    <input type="hidden" name="id" value="<?php echo $this->sitemapId; ?>"/>
-    <input type="hidden" name="update-data" id="update-data" value=""/>
-    <input type="hidden" name="language" value="<?php echo $this->language; ?>"/>
-    <?php echo HTMLHelper::_('form.token'); ?>
-</form>
+        <input type="hidden" id="menus_ordering" name="jform[menus_ordering]" value=""/>
+        <input type="hidden" name="task" value=""/>
+        <input type="hidden" name="id" value="<?php echo $sitemapId; ?>"/>
+        <input type="hidden" name="update-data" id="update-data" value=""/>
+        <input type="hidden" name="language" value="<?php echo $this->language; ?>"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
+    </form>
 <?php
 echo $this->loadTemplate('script');

@@ -91,7 +91,7 @@ class OSMapViewAdminSitemapItems extends HtmlView
         $server  = new Input(array_change_key_case($_SERVER, CASE_LOWER));
         $referer = parse_url($server->getString('http_referer'));
 
-        if (!empty($referer['query'])) {
+        if (empty($referer['query']) == false) {
             parse_str($referer['query'], $query);
 
             $option = empty($query['option']) ? null : $query['option'];

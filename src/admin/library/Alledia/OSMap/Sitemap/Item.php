@@ -321,7 +321,7 @@ class Item extends CMSObject
                 $this->type,
                 [
                     'separator',
-                    'heading'
+                    'heading',
                 ]
             );
     }

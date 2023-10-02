@@ -102,118 +102,118 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         $db        = Factory::getDbo();
         $container = Factory::getPimpleContainer();
 
-        $linkQuery = parse_url($node->link);
+        $link      = parse_url($node->link);
+        $linkQuery = $link['query'] ?? null;
+        if ($linkQuery) {
+            parse_str(html_entity_decode($linkQuery), $linkVars);
 
-        if (!isset($linkQuery['query'])) {
-            return false;
-        }
+            $view = ArrayHelper::getValue($linkVars, 'view', '');
+            $id   = ArrayHelper::getValue($linkVars, 'id', 0);
 
-        parse_str(html_entity_decode($linkQuery['query']), $linkVars);
+            switch ($view) {
+                case 'archive':
+                    $node->adapterName = 'JoomlaCategory';
+                    $node->uid         = 'joomla.archive.' . $node->id;
+                    $node->expandible  = true;
 
-        $view = ArrayHelper::getValue($linkVars, 'view', '');
-        $id   = ArrayHelper::getValue($linkVars, 'id', 0);
+                    break;
 
-        switch ($view) {
-            case 'archive':
-                $node->adapterName = 'JoomlaCategory';
-                $node->uid         = 'joomla.archive.' . $node->id;
-                $node->expandible  = true;
+                case 'featured':
+                    $node->adapterName = 'JoomlaCategory';
+                    $node->uid         = 'joomla.featured.' . $node->id;
+                    $node->expandible  = true;
 
-                break;
+                    break;
 
-            case 'featured':
-                $node->adapterName = 'JoomlaCategory';
-                $node->uid         = 'joomla.featured.' . $node->id;
-                $node->expandible  = true;
+                case 'categories':
+                case 'category':
+                    $node->adapterName = 'JoomlaCategory';
+                    $node->uid         = 'joomla.category.' . $id;
+                    $node->expandible  = true;
 
-                break;
+                    break;
 
-            case 'categories':
-            case 'category':
-                $node->adapterName = 'JoomlaCategory';
-                $node->uid         = 'joomla.category.' . $id;
-                $node->expandible  = true;
+                case 'article':
+                    $node->adapterName = 'JoomlaArticle';
+                    $node->expandible  = false;
 
-                break;
+                    $paramAddPageBreaks = $params->get('add_pagebreaks', 1);
+                    $paramAddImages     = $params->get('add_images', 1);
 
-            case 'article':
-                $node->adapterName = 'JoomlaArticle';
-                $node->expandible  = false;
+                    $query = $db->getQuery(true)
+                        ->select([
+                            $db->quoteName('created'),
+                            $db->quoteName('modified'),
+                            $db->quoteName('publish_up'),
+                            $db->quoteName('metadata'),
+                            $db->quoteName('attribs'),
+                        ])
+                        ->from($db->quoteName('#__content'))
+                        ->where($db->quoteName('id') . '=' . (int)$id);
 
-                $paramAddPageBreaks = $params->get('add_pagebreaks', 1);
-                $paramAddImages     = $params->get('add_images', 1);
-
-                $query = $db->getQuery(true)
-                    ->select([
-                        $db->quoteName('created'),
-                        $db->quoteName('modified'),
-                        $db->quoteName('publish_up'),
-                        $db->quoteName('metadata'),
-                        $db->quoteName('attribs')
-                    ])
-                    ->from($db->quoteName('#__content'))
-                    ->where($db->quoteName('id') . '=' . (int)$id);
-
-                if ($paramAddPageBreaks || $paramAddImages) {
-                    $query->select([
-                        $db->quoteName('introtext'),
-                        $db->quoteName('fulltext'),
-                        $db->quoteName('images')
-                    ]);
-                }
-
-                $db->setQuery($query);
-
-                if (($item = $db->loadObject()) != null) {
-                    // Set the node UID
-                    $node->uid = 'joomla.article.' . $id;
-
-                    // Set dates
-                    $node->modified  = $item->modified;
-                    $node->created   = $item->created;
-                    $node->publishUp = $item->publish_up;
-
-                    $item->params = $item->attribs;
-
-                    $text = '';
-                    if (isset($item->introtext) && isset($item->fulltext)) {
-                        $text = $item->introtext . $item->fulltext;
+                    if ($paramAddPageBreaks || $paramAddImages) {
+                        $query->select([
+                            $db->quoteName('introtext'),
+                            $db->quoteName('fulltext'),
+                            $db->quoteName('images'),
+                        ]);
                     }
 
-                    static::prepareContent($text, $params);
+                    $db->setQuery($query);
 
-                    if ($paramAddImages) {
-                        $maxImages = $params->get('max_images', 1000);
+                    if (($item = $db->loadObject()) != null) {
+                        // Set the node UID
+                        $node->uid = 'joomla.article.' . $id;
 
-                        $node->images = [];
+                        // Set dates
+                        $node->modified  = $item->modified;
+                        $node->created   = $item->created;
+                        $node->publishUp = $item->publish_up;
 
-                        // Images from text
-                        $node->images = array_merge(
-                            $node->images,
-                            $container->imagesHelper->getImagesFromText($text, $maxImages)
-                        );
+                        $item->params = $item->attribs;
 
-                        // Images from params
-                        if (!empty($item->images)) {
+                        $text = '';
+                        if (isset($item->introtext) && isset($item->fulltext)) {
+                            $text = $item->introtext . $item->fulltext;
+                        }
+
+                        static::prepareContent($text, $params);
+
+                        if ($paramAddImages) {
+                            $maxImages = $params->get('max_images', 1000);
+
+                            $node->images = [];
+
+                            // Images from text
                             $node->images = array_merge(
                                 $node->images,
-                                $container->imagesHelper->getImagesFromParams($item)
+                                $container->imagesHelper->getImagesFromText($text, $maxImages)
                             );
+
+                            // Images from params
+                            if (!empty($item->images)) {
+                                $node->images = array_merge(
+                                    $node->images,
+                                    $container->imagesHelper->getImagesFromParams($item)
+                                );
+                            }
                         }
+
+                        if ($paramAddPageBreaks) {
+                            $node->subnodes   = General::getPagebreaks($text, $node->link, $node->uid);
+                            $node->expandible = (count($node->subnodes) > 0); // This article has children
+                        }
+                    } else {
+                        return false;
                     }
 
-                    if ($paramAddPageBreaks) {
-                        $node->subnodes   = General::getPagebreaks($text, $node->link, $node->uid);
-                        $node->expandible = (count($node->subnodes) > 0); // This article has children
-                    }
-                } else {
-                    return false;
-                }
+                    break;
+            }
 
-                break;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -230,13 +230,13 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     {
         $db = Factory::getDbo();
 
-        $linkQuery = parse_url($parent->link);
-
-        if (!isset($linkQuery['query'])) {
+        $link      = parse_url($parent->link);
+        $linkQuery = $link['query'] ?? null;
+        if ($linkQuery == false) {
             return;
         }
 
-        parse_str(html_entity_decode($linkQuery['query']), $linkVars);
+        parse_str(html_entity_decode($linkQuery), $linkVars);
         $view = ArrayHelper::getValue($linkVars, 'view', '');
         $id   = intval(ArrayHelper::getValue($linkVars, 'id', ''));
 
@@ -276,7 +276,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         $params->set('art_changefreq', $paramArtChangefreq);
 
         // If enabled, loads the page break language
-        if ($paramAddPageBreaks && !defined('OSMAP_PLUGIN_JOOMLA_LOADED')) {
+        if ($paramAddPageBreaks && defined('OSMAP_PLUGIN_JOOMLA_LOADED') == false) {
             // Load it just once
             define('OSMAP_PLUGIN_JOOMLA_LOADED', 1);
 
@@ -334,7 +334,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                             $db->quoteName('metadata'),
                             $db->quoteName('created'),
                             $db->quoteName('modified'),
-                            $db->quoteName('publish_up')
+                            $db->quoteName('publish_up'),
                         ])
                         ->from($db->quoteName('#__content'))
                         ->where($db->quoteName('id') . '=' . $id);
@@ -366,7 +366,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
      * @param int       $catid  the id of the category to be expanded
      * @param Registry  $params parameters for this plugin on Xmap
      * @param int       $itemid the itemid to use for this category's children
-     * @param int       $curlevel
+     * @param int       $currentLevel
      *
      * @return void
      * @throws Exception
@@ -377,7 +377,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         $catid,
         $params,
         $itemid,
-        $curlevel = 0
+        $currentLevel = 0
     ) {
         static::checkMemory();
 
@@ -386,7 +386,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         $where = [
             'a.parent_id = ' . $catid,
             'a.published = 1',
-            'a.extension=' . $db->quote('com_content')
+            'a.extension=' . $db->quote('com_content'),
         ];
 
         if (!$params->get('show_unauth', 0)) {
@@ -404,7 +404,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                 'a.modified_time AS modified',
                 'a.params',
                 'a.metadata',
-                'a.metakey'
+                'a.metakey',
             ])
             ->from('#__categories AS a')
             ->where($where)
@@ -412,11 +412,11 @@ class PlgOSMapJoomla extends Base implements ContentInterface
 
         $items = $db->setQuery($query)->loadObjectList();
 
-        $curlevel++;
+        $currentLevel++;
 
         $maxLevel = $parent->params->get('max_category_level', 100);
 
-        if ($curlevel <= $maxLevel) {
+        if ($currentLevel <= $maxLevel) {
             if (count($items) > 0) {
                 $collector->changeLevel(1);
 
@@ -436,7 +436,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                         'parentIsVisibleForRobots' => $parent->visibleForRobots,
                         'created'                  => $item->created,
                         'modified'                 => $item->modified,
-                        'publishUp'                => $item->created
+                        'publishUp'                => $item->created,
                     ];
 
                     // Keywords
@@ -457,7 +457,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                     $node->link = $linkUri->toString();
 
                     if ($collector->printNode($node)) {
-                        static::expandCategory($collector, $parent, $item->id, $params, $node->itemid, $curlevel);
+                        static::expandCategory($collector, $parent, $item->id, $params, $node->itemid, $currentLevel);
                     }
                 }
 
@@ -505,7 +505,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
             'a.language',
             'a.metakey',
             'a.images',
-            'c.title AS categMetakey'
+            'c.title AS categMetakey',
         ];
         if ($params->get('add_images', 1) || $params->get('add_pagebreaks', 1)) {
             $selectFields[] = 'a.introtext';
@@ -556,11 +556,11 @@ class PlgOSMapJoomla extends Base implements ContentInterface
             'a.publish_up',
             'a.hits',
             'a.title',
-            'a.ordering'
+            'a.ordering',
         ];
         $orderDirOptions = [
             'ASC',
-            'DESC'
+            'DESC',
         ];
 
         $order    = ArrayHelper::getValue($orderOptions, $params->get('article_order', 0), 0);
@@ -597,7 +597,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                     'newsItem'                 => 1,
                     'language'                 => $item->language,
                     'adapterName'              => 'JoomlaArticle',
-                    'parentIsVisibleForRobots' => $parent->visibleForRobots
+                    'parentIsVisibleForRobots' => $parent->visibleForRobots,
                 ];
 
                 $keywords = [];

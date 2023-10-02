@@ -22,59 +22,98 @@
  */
 
 ;(function($) {
-    let configureForm = function(lang) {
-        let $frequencyField = $('<select>'),
-            $priorityField  = $('<select>');
+    $.osmap = $.extend({}, $.osmap);
 
-        $.each($.osmap.fields.frequencies, function(value, text) {
-            $('<option>').attr('value', value).text(text).appendTo($frequencyField)
-        });
+    /**
+     * @param {Object} params
+     */
+    $.osmap.sitemapItems = function(params) {
+        this.$container = $(params.container);
+        this.params     = params;
+        this.url        = params.baseUri.replace(/\/$/, '')
+            + '/index.php?option=com_osmap&view=adminsitemapitems&tmpl=component&id=' + params.sitemapId;
 
-        $.each($.osmap.fields.priorities, function(index, value) {
-            $('<option>').attr('value', value).text(value).appendTo($priorityField);
-        });
-
-        /**
-         * Add field to select priority of an item.
-         */
-        function createPriorityField($tr) {
-            let $div   = $tr.find('.sitemapitem-priority'),
-                $input = $priorityField.clone();
-
-            $input.val($div.data('value'));
-
-            $div.html('');
-            $div.append($input);
-
-            $input.on('change',
-                function() {
-                    let $this = $(this);
-
-                    $this.parent().data('value', $this.val());
-                    $this.parents('tr').addClass('updated');
-                }
-            );
+        if (params.language !== '') {
+            this.url += '&lang=' + params.language;
         }
 
-        /**
-         * Remove the field for priority and add it's value as text of the
-         * parent element
-         */
-        function removePriorityField($tr) {
-            let $div = $tr.find('.sitemapitem-priority');
-
-            $div.text($div.data('value'));
+        // Init the change frequency dropdown template
+        this.$frequencyField = $('<select>');
+        for (let value in params.frequencies) {
+            $('<option>')
+                .attr('value', value)
+                .text(params.frequencies[value])
+                .appendTo(this.$frequencyField)
         }
 
-        // Add the event for the changefreq elements
-        function createChangeFreqField($tr) {
-            let $div   = $tr.find('.sitemapitem-changefreq'),
-                $input = $frequencyField.clone();
+        // Init the priority dropdown template
+        this.$priorityField = $('<select>');
+        for (let value of params.priorities) {
+            $('<option>')
+                .attr('value', value)
+                .text(value)
+                .appendTo(this.$priorityField)
+        }
 
-            $input.val($div.data('value'));
+        this.load();
+    };
 
-            $div.html('');
-            $div.append($input);
+    /**
+     * @return void
+     */
+    $.osmap.sitemapItems.prototype.load = function() {
+        let self = this;
+
+        $.ajax({
+            url    : this.url,
+            async  : true,
+            success: function(data) {
+                self.$container.html(data);
+
+                self.configureForm();
+
+                $('.osmap-loading').remove();
+            }
+        });
+    };
+
+    /**
+     * @return void
+     */
+    $.osmap.sitemapItems.prototype.configureForm = function() {
+        let self      = this,
+            $itemRows = $('tr.sitemapitem', this.$container);
+
+        $itemRows
+            .on('mouseenter', function() {
+                self.setDropdown($('.sitemapitem-priority', this), self.$priorityField);
+                self.setDropdown($('.sitemapitem-changefreq', this), self.$frequencyField);
+
+                $(this).addClass('selected');
+            })
+            .on('mouseleave', function() {
+                self.clearDropdown($('.sitemapitem-priority', this));
+                self.clearDropdown($('.sitemapitem-changefreq', this));
+
+                $(this).removeClass('selected');
+            });
+
+        this.initPublishing();
+
+        $('.hasTooltip').tooltip();
+    };
+
+    /**
+     * @param {jQuery} $cells
+     * @param {jQuery} $template
+     *
+     * @return void
+     */
+    $.osmap.sitemapItems.prototype.setDropdown = function($cells, $template) {
+        $cells.each(function() {
+            let $this  = $(this),
+                $input = $template.clone().val($this.data('value'));
+            $(this).html('').append($input);
 
             $input.on('change', function() {
                     let $this = $(this);
@@ -83,115 +122,76 @@
                     $this.parents('tr').addClass('updated');
                 }
             );
-        }
-
-        function removeChangeFreqField($tr) {
-            let $div = $tr.find('.sitemapitem-changefreq');
-
-            $div.text($div.find('option:selected').text());
-        }
-
-        // Adds the event for a hovered line
-        $('#itemList .sitemapitem').on('hover', function(event) {
-                if (event.target.tagName === 'TD') {
-                    let $tr               = $(event.currentTarget),
-                        $currentSelection = $('#itemList .selected');
-
-                    if ($tr !== $currentSelection) {
-                        // Remove the selected class from the last item
-                        $currentSelection.removeClass('selected');
-                        removePriorityField($currentSelection);
-                        removeChangeFreqField($currentSelection);
-
-                        // Add the selected class to highlight the row and fields
-                        $tr.addClass('selected');
-
-                        createPriorityField($tr);
-                        createChangeFreqField($tr);
-                    }
-                }
-            }
-        );
-
-        // Add the event for the publish status elements
-        $('#itemList .sitemapitem-published').on('click', function() {
-                let $this     = $(this),
-                    newValue  = $this.data('value') === 1 ? 0 : 1,
-                    spanClass = newValue === 1 ? 'publish' : 'unpublish',
-                    $span     = $this.find('span');
-
-                $this.data('value', newValue);
-
-                $this.parents('.sitemapitem').addClass('updated');
-
-                $span.attr('class', '');
-                $span.addClass('icon-' + spanClass);
-
-                // Tooltip
-                $span.attr(
-                    'title',
-                    newValue === 1 ? lang.COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH : lang.COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH
-                );
-
-                $span.tooltip('dispose');
-                $span.tooltip();
-            }
-        );
-
-        Joomla.submitbutton = function(task) {
-            if (task === 'sitemapitems.save' || task === 'sitemapitems.apply') {
-                let $updateDataField = $('#update-data'),
-                    $updatedLines    = $('.sitemapitem.updated'),
-                    data             = [];
-
-                $updateDataField.val('');
-
-                // Grab updated values and build the post data
-                $updatedLines.each(function() {
-                    let $tr = $(this);
-
-                    data.push({
-                        'uid'          : $tr.data('uid'),
-                        'settings_hash': $tr.data('settings-hash'),
-                        'published'    : $tr.find('.sitemapitem-published').data('value'),
-                        'priority'     : $tr.find('.sitemapitem-priority').data('value'),
-                        'changefreq'   : $tr.find('.sitemapitem-changefreq').data('value')
-                    });
-                });
-
-                $updateDataField.val(JSON.stringify(data));
-            }
-
-            Joomla.submitform(task, document.getElementById('adminForm'));
-        };
-
-        // Removes the loading element
-        setTimeout(function() {
-            $('.osmap-loading').remove();
-        }, 1000);
+        });
     };
 
-    $.fn.osmap = {
-        loadSitemapItems: function(params) {
-            let url = params.baseUri.replace(/\/$/, '');
+    /**
+     * @param {jQuery} $cells
+     *
+     * @return void
+     */
+    $.osmap.sitemapItems.prototype.clearDropdown = function($cells) {
+        $cells.text($cells.data('value'));
+    }
 
-            url += '/index.php?option=com_osmap&view=adminsitemapitems&tmpl=component&id=' + params.sitemapId;
+    /**
+     * @return void
+     */
+    $.osmap.sitemapItems.prototype.initPublishing = function() {
+        $('.sitemapitem-published', this.$container).on('click', function() {
+            let $this     = $(this),
+                newValue  = $this.data('value') === 1 ? 0 : 1,
+                spanClass = newValue === 1 ? 'publish' : 'unpublish',
+                $span     = $('span', this);
 
-            if (params.language !== '') {
-                url += '&lang=' + params.language;
+            $this.data('value', newValue);
+            $this.parents('.sitemapitem').addClass('updated');
+
+            $span
+                .removeClass()
+                .addClass('hasTooltip icon-' + spanClass)
+                .attr(
+                    'title',
+                    newValue === 1
+                        ? Joomla.JText._('COM_OSMAP_TOOLTIP_CLICK_TO_UNPUBLISH')
+                        : Joomla.JText._('COM_OSMAP_TOOLTIP_CLICK_TO_PUBLISH')
+                );
+
+            if (typeof $.fn.tooltip.Constructor.VERSION === 'undefined') {
+                // Assume older bootstrap
+                $span.tooltip('fixTitle');
             }
 
-            $.ajax({
-                url    : url,
-                async  : true,
-                success: function(data) {
-                    $(params.container).html(data);
+            $span.attr('data-bs-original-title', $span.attr('title')).tooltip('show');
+        });
+    }
 
-                    configureForm(params.lang);
+    /**
+     * @param {String} task
+     *
+     * @return void
+     */
+    Joomla.submitbutton = function(task) {
+        let form = document.getElementById('adminForm');
 
-                    $('.hasTooltip').tooltip();
-                }
+        if (task === 'sitemapitems.save' || task === 'sitemapitems.apply') {
+            let $updateField  = $('#update-data'),
+                $updatedItems = $('.sitemapitem.updated'),
+                updates       = [];
+
+            $updatedItems.each(function() {
+                updates.push({
+                    'uid'          : this.dataset.uid || null,
+                    'settings_hash': this.dataset.settingsHash || null,
+                    'published'    : $('.sitemapitem-published', this).data('value'),
+                    'priority'     : $('.sitemapitem-priority', this).data('value'),
+                    'changefreq'   : $('.sitemapitem-changefreq', this).data('value')
+                });
             });
+
+            $updateField.val(JSON.stringify(updates));
         }
+
+        Joomla.submitform(task, form);
     };
 })(jQuery);
