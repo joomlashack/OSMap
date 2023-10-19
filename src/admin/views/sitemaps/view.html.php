@@ -31,8 +31,10 @@ use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class OSMapViewSitemaps extends AbstractList
 {
@@ -52,13 +54,12 @@ class OSMapViewSitemaps extends AbstractList
      */
     public function display($tpl = null)
     {
-        /** @var OSMapModelSitemaps $model */
-        $model = $this->getModel();
+        $this->model = $this->getModel();
 
-        $this->items         = $model->getItems();
-        $this->state         = $model->getState();
-        $this->filterForm    = $model->getFilterForm();
-        $this->activeFilters = $model->getActiveFilters();
+        $this->items         = $this->model->getItems();
+        $this->state         = $this->model->getState();
+        $this->filterForm    = $this->model->getFilterForm();
+        $this->activeFilters = $this->model->getActiveFilters();
 
         // We don't need toolbar or submenus in the modal window
         if (stripos($this->getLayout(), 'modal') !== 0) {
