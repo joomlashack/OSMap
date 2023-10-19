@@ -68,6 +68,10 @@ try {
         Form::addFormPath(OSMAP_ADMIN_PATH . '/form');
         HTMLHelper::addIncludePath(OSMAP_ADMIN_PATH . '/helpers/html');
 
+        if (Factory::getApplication()->getName() == 'administrator') {
+            HTMLHelper::_('alledia.fontawesome');
+        }
+
         Log::addLogger(['text_file' => 'com_osmap.errors.php'], Log::ALL, ['com_osmap']);
     }
 

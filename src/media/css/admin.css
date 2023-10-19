@@ -1,3 +1,9 @@
+.admin .page-title [class^="icon-"]:before,
+.admin .page-title [class*=" icon-"]:before {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
 .osmap-menu-options {
   padding: 10px;
   padding-left: 27px;
@@ -38,7 +44,7 @@
 }
 
 .icon-osmap:before {
-  content: '\e252';
+  content: '\f0c1';
 }
 
 #osmap-items-container .small.silver {
@@ -259,7 +265,6 @@ ul.ul_sortable li.ui-sortable-placeholder {
 .sitemapitem-link .icon-new-tab {
   color: #b5b5b5;
 }
-
 
 span.level-mark {
   margin-right: 2px;

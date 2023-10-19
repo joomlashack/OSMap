@@ -43,12 +43,6 @@ trait TraitOSMapView
      */
     protected function setTitle(?string $sub = null, string $icon = 'osmap')
     {
-        $img = HTMLHelper::_('image', "com_osmap/icon-48-{$icon}.png", null, null, true, true);
-        if ($img) {
-            $doc = Factory::getDocument();
-            $doc->addStyleDeclaration(".icon-48-{$icon} { background-image: url({$img}); }");
-        }
-
         $title = Text::_('COM_OSMAP');
         if ($sub) {
             $title .= ': ' . Text::_($sub);
