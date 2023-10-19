@@ -27,6 +27,7 @@ use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die();
 
+HTMLHelper::_('jquery.framework');
 HTMLHelper::_('script', 'com_osmap/sitemapitems.min.js', ['relative' => true]);
 
 $jsOptions = json_encode([
