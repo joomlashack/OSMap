@@ -30,13 +30,14 @@ use Alledia\OSMap\Sitemap\Collector;
 use Alledia\OSMap\Sitemap\Item;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
-JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
-JLoader::register('ContentHelperQuery', JPATH_SITE . '/components/com_content/helpers/query.php');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 /**
  * Handles standard Joomla's Content articles/categories
@@ -329,7 +330,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                     $item->uid = 'joomla.article.' . $id;
 
                     $parent->slug = $item->alias ? ($id . ':' . $item->alias) : $id;
-                    $parent->link = ContentHelperRoute::getArticleRoute($parent->slug, $item->catid);
+                    $parent->link = RouteHelper::getArticleRoute($parent->slug, $item->catid);
 
                     $parent->subnodes = General::getPagebreaks(
                         $item->introtext . $item->fulltext,
@@ -432,7 +433,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                     $node->keywords = $keywords;
 
                     $node->slug   = $item->route ? ($item->id . ':' . $item->route) : $item->id;
-                    $node->link   = ContentHelperRoute::getCategoryRoute($node->slug);
+                    $node->link   = RouteHelper::getCategoryRoute($node->slug);
                     $node->itemid = $itemid;
 
                     // Correct for an issue in Joomla core with occasional empty variables
@@ -604,7 +605,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
 
                 $node->slug    = $item->alias ? ($item->id . ':' . $item->alias) : $item->id;
                 $node->catslug = $item->catid;
-                $node->link    = ContentHelperRoute::getArticleRoute($node->slug, $node->catslug);
+                $node->link    = RouteHelper::getArticleRoute($node->slug, $node->catslug);
 
                 // Set the visibility for XML or HTML sitempas
                 if ($catid == 'featured') {
