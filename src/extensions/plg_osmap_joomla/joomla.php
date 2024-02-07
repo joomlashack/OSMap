@@ -61,9 +61,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     protected static $prepareContent = null;
 
     /**
-     * Returns the unique instance of the plugin
-     *
-     * @return self
+     * @inheritDoc
      */
     public static function getInstance()
     {
@@ -76,9 +74,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     }
 
     /**
-     * Returns the element of the component which this plugin supports.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getComponentElement()
     {
@@ -86,13 +82,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     }
 
     /**
-     * This function is called before a menu item is used. We use it to set the
-     * proper uniqueid for the item
-     *
-     * @param Item     $node   Menu item to be "prepared"
-     * @param Registry $params The extension params
-     *
-     * @return bool
+     * @inheritDoc
      * @throws Exception
      */
     public static function prepareMenuItem($node, $params)
@@ -217,13 +207,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     }
 
     /**
-     * Expands a com_content menu item
-     *
-     * @param Collector $collector
-     * @param Item      $parent
-     * @param Registry  $params
-     *
-     * @return void
+     * @inheritDoc
      * @throws Exception
      */
     public static function getTree($collector, $parent, $params)
@@ -366,19 +350,19 @@ class PlgOSMapJoomla extends Base implements ContentInterface
      * @param int       $catid  the id of the category to be expanded
      * @param Registry  $params parameters for this plugin on Xmap
      * @param int       $itemid the itemid to use for this category's children
-     * @param int       $currentLevel
+     * @param ?int      $currentLevel
      *
      * @return void
      * @throws Exception
      */
     protected static function expandCategory(
-        $collector,
-        $parent,
-        $catid,
-        $params,
-        $itemid,
-        $currentLevel = 0
-    ) {
+        Collector $collector,
+        Item $parent,
+        int $catid,
+        Registry $params,
+        int $itemid,
+        ?int $currentLevel = 0
+    ): void {
         static::checkMemory();
 
         $db = Factory::getDbo();
@@ -482,8 +466,12 @@ class PlgOSMapJoomla extends Base implements ContentInterface
      * @throws Exception
      *
      */
-    protected static function includeCategoryContent($collector, $parent, $catid, $params)
-    {
+    protected static function includeCategoryContent(
+        Collector $collector,
+        Item $parent,
+        $catid,
+        Registry $params
+    ): void {
         static::checkMemory();
 
         $db        = Factory::getDbo();
@@ -684,16 +672,18 @@ class PlgOSMapJoomla extends Base implements ContentInterface
      * @return void
      * @throws Exception
      */
-    protected static function printSubNodes($collector, $parent, $params, $subnodes, $item)
-    {
+    protected static function printSubNodes(
+        Collector $collector,
+        Item $parent,
+        Registry $params,
+        array $subnodes,
+        object $item
+    ): void {
         static::checkMemory();
 
         $collector->changeLevel(1);
 
-        $i = 0;
         foreach ($subnodes as $subnode) {
-            $i++;
-
             $subnode->browserNav = $parent->browserNav;
             $subnode->priority   = $params->get('art_priority');
             $subnode->changefreq = $params->get('art_changefreq');
@@ -714,8 +704,10 @@ class PlgOSMapJoomla extends Base implements ContentInterface
     /**
      * @param string   $text
      * @param Registry $params
+     *
+     * @return void
      */
-    protected static function prepareContent(&$text, Registry $params)
+    protected static function prepareContent(string &$text, Registry $params): void
     {
         if (static::$prepareContent === null) {
             $isPro   = Factory::getExtension('osmap', 'component')->isPro();
