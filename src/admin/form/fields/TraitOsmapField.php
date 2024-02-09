@@ -21,7 +21,10 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 trait TraitOsmapField
 {
@@ -30,7 +33,7 @@ trait TraitOsmapField
      */
     public function setup(SimpleXMLElement $element, $value, $group = null)
     {
-        if (is_callable('parent::setup') && parent::setup($element, $value, $group)) {
+        if (is_callable([parent::class, 'setup']) && parent::setup($element, $value, $group)) {
             $include = JPATH_ADMINISTRATOR . '/components/com_osmap/include.php';
 
             return is_file($include) && include $include;

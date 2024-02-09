@@ -84,7 +84,7 @@ abstract class Admin extends AdminController
      */
     public function checkToken($method = 'post', $redirect = true)
     {
-        if (is_callable('parent::checkToken')) {
+        if (is_callable([parent::class, 'checkToken'])) {
             return parent::checkToken($method, $redirect);
         }
 
