@@ -36,6 +36,15 @@ use Joomla\Utilities\ArrayHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+
+if (class_exists(RouteHelper::class) == false) {
+    $siteContentPath = JPATH_SITE . '/components/com_content/helpers/route.php';
+    if (is_file($siteContentPath)) {
+        require_once $siteContentPath;
+        class_alias(ContentHelperRoute::class, RouteHelper::class);
+    }
+}
+
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
