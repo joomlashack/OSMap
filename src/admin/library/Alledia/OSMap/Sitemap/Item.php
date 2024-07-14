@@ -600,7 +600,7 @@ class Item extends CMSObject
                 if ($this->modified < 0) {
                     $this->modified = null;
                 } else {
-                    $date           = new \JDate($this->modified);
+                    $date           = new Date($this->modified);
                     $this->modified = $date->toISO8601();
                 }
             }
