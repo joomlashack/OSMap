@@ -24,7 +24,7 @@
  */
 
 use Alledia\OSMap\Factory;
-use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 
@@ -101,7 +101,7 @@ class OSMapModelSitemaps extends ListModel
     public function getItems()
     {
         if ($items = parent::getItems()) {
-            $siteApp = CMSApplication::getInstance('site');
+            $siteApp = Factory::getContainer()->get(SiteApplication::class);
             $menus   = $siteApp->getMenu()->getItems('component', 'com_osmap');
 
             foreach ($items as $item) {

@@ -26,7 +26,7 @@
 use Alledia\OSMap\Factory;
 use Alledia\OSMap\Helper\General;
 use Alledia\OSMap\View\Admin\AbstractList;
-use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Multilanguage;
@@ -142,7 +142,7 @@ class OSMapViewSitemaps extends AbstractList
             $query[$type] = 1;
         }
         if ($view == 'xml') {
-            $menu     = CMSApplication::getInstance('site')->getMenu()->getItem($menuId);
+            $menu     = Factory::getContainer()->get(SiteApplication::class)->getMenu()->getItem($menuId);
             $menuView = empty($menu->query['view']) ? null : $menu->query['view'];
 
             if ($view != $menuView) {
