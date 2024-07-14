@@ -25,7 +25,6 @@
 namespace Alledia\Installer\OSMap\Free;
 
 use Alledia\Installer\OSMap\XmapConverter;
-use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
@@ -495,14 +494,13 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
      */
     protected function fixXMLMenus()
     {
-        $db      = $this->dbo;
-        $siteApp = SiteApplication::getInstance('site');
+        $db = $this->dbo;
 
         $query = $db->getQuery(true)
             ->select('id, link')
             ->from('#__menu')
             ->where([
-                'client_id = ' . $siteApp->getClientId(),
+                'client_id = 0',
                 sprintf('link LIKE %s', $db->quote('%com_osmap%')),
                 sprintf('link LIKE %s', $db->quote('%view=xml%')),
                 sprintf('link NOT LIKE %s', $db->quote('%format=xml%')),
