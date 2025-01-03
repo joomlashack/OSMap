@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+    <inlinehelp button="show" />
     <fieldset name="basic"
               label="COM_OSMAP_FIELDSET_SITEMAP_SETTINGS_LABEL">
 
