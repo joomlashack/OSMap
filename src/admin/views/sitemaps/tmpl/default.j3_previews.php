@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   OSMap
  * @contact   www.joomlashack.com, help@joomlashack.com
