@@ -75,7 +75,7 @@
         <namespace>OSMap</namespace>
         <license>free</license>
         <targetplatform>3.9</targetplatform>
-        <phpminimum>7.2</phpminimum>
+        <phpminimum>7.4</phpminimum>
         <previousminimum>4.2.1</previousminimum>
 
         <minify>
