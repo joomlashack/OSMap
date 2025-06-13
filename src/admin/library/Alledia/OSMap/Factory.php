@@ -28,8 +28,9 @@ namespace Alledia\OSMap;
 use Alledia\OSMap\Sitemap\SitemapInterface;
 use Joomla\CMS\Table\Table;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * OSMap Factory

@@ -23,12 +23,13 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 use Alledia\Installer\OSMap\XmapConverter;
 use Alledia\OSMap\Controller\Json;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class OSMapControllerSitemaps extends Json
 {

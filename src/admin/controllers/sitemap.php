@@ -27,8 +27,10 @@ use Alledia\OSMap\Controller\Form;
 use Alledia\OSMap\Factory;
 use Joomla\CMS\Router\Route;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class OSMapControllerSitemap extends Form
 {

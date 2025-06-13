@@ -27,7 +27,9 @@ namespace Alledia\OSMap\Button;
 use Joomla\CMS\Button\ActionButton;
 use Joomla\CMS\Language\Text;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 class DefaultButton extends ActionButton
 {

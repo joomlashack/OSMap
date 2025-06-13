@@ -32,7 +32,9 @@ use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Session\Session;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 abstract class Admin extends AdminController
 {

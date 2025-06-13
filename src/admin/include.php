@@ -23,8 +23,6 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-defined('_JEXEC') or die();
-
 use Alledia\Framework\AutoLoader;
 use Alledia\OSMap\Helper\General;
 use Joomla\CMS\Factory;
@@ -33,6 +31,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Table\Table;
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('_JEXEC') or die();
 
 try {
     $frameworkPath = JPATH_SITE . '/libraries/allediaframework/include.php';

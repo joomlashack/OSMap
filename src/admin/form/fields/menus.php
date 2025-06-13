@@ -28,9 +28,12 @@ use Alledia\OSMap\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\Registry\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
 
 require_once 'TraitOsmapField.php';
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class OsmapFormFieldMenus extends FormField
 {

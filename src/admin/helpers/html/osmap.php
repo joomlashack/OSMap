@@ -27,9 +27,13 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
 
 Table::addIncludePath(JPATH_COMPONENT . '/tables');
+
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 abstract class JHtmlOSMap
 {

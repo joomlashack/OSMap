@@ -25,7 +25,9 @@
 
 namespace Alledia\OSMap;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * A simple class for handling layered variables

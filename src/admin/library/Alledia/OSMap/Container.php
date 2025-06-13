@@ -35,7 +35,9 @@ use Joomla\CMS\User\User;
 use Joomla\Input\Input;
 use ReflectionClass;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Class Container

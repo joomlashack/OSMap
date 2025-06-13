@@ -27,8 +27,9 @@ namespace Alledia\OSMap\Component;
 
 use Joomla\CMS\Component\ComponentHelper;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
+// phpcs:enable PSR1.Files.SideEffects
 
 abstract class Helper extends ComponentHelper
 {
