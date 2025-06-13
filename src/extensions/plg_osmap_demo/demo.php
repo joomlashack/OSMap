@@ -2,7 +2,7 @@
 /**
  * @package   OSMap-Pro
  * @contact   www.joomlashack.com, help@joomlashack.com
- * @copyright 2015-2024 Joomlashack.com. All rights reserved
+ * @copyright 2015-2025 Joomlashack.com. All rights reserved
  * @license   https://www.gnu.org/licenses/gpl.html GNU/GPL
  *
  * This file is part of OSMap-Pro.
