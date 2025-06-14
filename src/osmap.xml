@@ -7,8 +7,8 @@
     <copyright>2016-2025 Joomlashack. All rights reserved.</copyright>
     <license>GNU GPL; see LICENSE file</license>
     <description>COM_OSMAP_DESCRIPTION</description>
-    <version>5.0.17</version>
-    <creationDate>March 08 2024</creationDate>
+    <version>5.0.18b2</version>
+    <creationDate>June 13 2025</creationDate>
     <variant>FREE</variant>
 
     <scriptfile>script.installer.php</scriptfile>
