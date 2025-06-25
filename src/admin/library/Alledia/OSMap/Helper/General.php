@@ -126,28 +126,34 @@ abstract class General
      */
     public static function getPluginsFromDatabase(): array
     {
-        $db = Factory::getPimpleContainer()->db;
+        static $plugins;
+        
+        if ($plugins === null) {
+            $db = Factory::getPimpleContainer()->db;
 
-        // Get all the OSMap and XMap plugins. Get XMap plugins first
-        // then OSMap. Always respecting the ordering.
-        $query = $db->getQuery(true)
-            ->select([
-                'folder',
-                'params',
-                'element'
-            ])
-            ->from('#__extensions')
-            ->where('type = ' . $db->quote('plugin'))
-            ->where(
-                sprintf(
-                    'folder IN (%s)',
-                    join(',', $db->quote(['osmap', 'xmap']))
+            // Get all the OSMap and XMap plugins. Get XMap plugins first
+            // then OSMap. Always respecting the ordering.
+            $query = $db->getQuery(true)
+                ->select([
+                    'folder',
+                    'params',
+                    'element'
+                ])
+                ->from('#__extensions')
+                ->where('type = ' . $db->quote('plugin'))
+                ->where(
+                    sprintf(
+                        'folder IN (%s)',
+                        implode(',', $db->quote(['osmap', 'xmap']))
+                    )
                 )
-            )
-            ->where('enabled = 1')
-            ->order('folder DESC, ordering');
+                ->where('enabled = 1')
+                ->order('folder DESC, ordering');
 
-        return $db->setQuery($query)->loadObjectList();
+            $plugins = $db->setQuery($query)->loadObjectList();
+        }
+        
+        return $plugins;
     }
 
     /**
