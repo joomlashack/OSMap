@@ -42,7 +42,12 @@ abstract class General
     /**
      * @var array
      */
-    protected static array $plugins = [];
+    protected static array $optionPlugins = [];
+
+    /**
+     * @var array
+     */
+    protected static array $dbPlugins;
 
     /**
      * Build the submenu in admin if needed. Triggers the
@@ -131,7 +136,7 @@ abstract class General
     public static function getPluginsForComponent(?string $option): array
     {
         // Check if there is a cached list of plugins for this option
-        if ($option && empty(static::$plugins[$option])) {
+        if ($option && empty(static::$optionPlugins[$option])) {
             $compatiblePlugins = [];
 
             $plugins = static::getPluginsFromDatabase();
@@ -144,10 +149,10 @@ abstract class General
                 }
             }
 
-            static::$plugins[$option] = $compatiblePlugins;
+            static::$optionPlugins[$option] = $compatiblePlugins;
         }
 
-        return static::$plugins[$option] ?? [];
+        return static::$optionPlugins[$option] ?? [];
     }
 
     /**
@@ -159,9 +164,7 @@ abstract class General
      */
     public static function getPluginsFromDatabase(): array
     {
-        static $plugins;
-
-        if ($plugins === null) {
+        if (empty(static::$dbPlugins)) {
             $db = Factory::getPimpleContainer()->db;
 
             // Get all the OSMap and XMap plugins. Get XMap plugins first
@@ -183,10 +186,10 @@ abstract class General
                 ->where('enabled = 1')
                 ->order('folder DESC, ordering');
 
-            $plugins = $db->setQuery($query)->loadObjectList();
+            static::$dbPlugins = $db->setQuery($query)->loadObjectList();
         }
 
-        return $plugins;
+        return static::$dbPlugins;
     }
 
     /**
