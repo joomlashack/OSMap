@@ -27,7 +27,12 @@ use Alledia\OSMap\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
+
 defined('_JEXEC') or die();
+
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class OSMapModelSitemaps extends ListModel
 {
@@ -38,10 +43,68 @@ class OSMapModelSitemaps extends ListModel
             'default',
             'sitemap.published',
             'sitemap.name',
-            'sitemap.id'
+            'sitemap.id',
         ];
 
         parent::__construct($config);
+    }
+
+    /**
+     * Publish/Unpublish method
+     *
+     * @param int|int[] $pks
+     * @param int       $value
+     *
+     * @return  bool
+     */
+    public function publish($pks, int $value = 1): bool
+    {
+        $db = $this->getDbo();
+
+        $pks = array_filter(array_map('intval', $pks));
+
+        $query = $db->getQuery(true)
+            ->set('published = ' . $db->quote($value))
+            ->update('#__osmap_sitemaps')
+            ->where(sprintf('id IN (%s)', join(',', $pks)));
+
+        return $db->setQuery($query)->execute();
+    }
+
+    /**
+     * @param int|int[] $ids
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function delete($ids): bool
+    {
+        $ids = ArrayHelper::toInteger($ids);
+        $db  = $this->getDbo();
+
+        $query = $db->getQuery(true)
+            ->delete('#__osmap_sitemaps')
+            ->where(sprintf('id IN (%s)', join(',', $ids)));
+
+        if ($db->setQuery($query)->execute()) {
+            Factory::getApplication()->enqueueMessage('SITEMAPS: ' . $db->getAffectedRows());
+            $relatedTables = [
+                '#__osmap_sitemap_menus',
+                '#__osmap_items_settings',
+            ];
+
+            foreach ($relatedTables as $table) {
+                $db->setQuery(
+                    $db->getQuery(true)
+                        ->delete($table)
+                        ->where('sitemap_id NOT IN (SELECT id FROM #__osmap_sitemaps)')
+                )->execute();
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -97,6 +160,10 @@ class OSMapModelSitemaps extends ListModel
         parent::populateState($ordering, $direction);
     }
 
+    /**
+     * @inheritDoc
+     * @throws Exception
+     */
     public function getItems()
     {
         if ($items = parent::getItems()) {
@@ -121,63 +188,5 @@ class OSMapModelSitemaps extends ListModel
         }
 
         return $items;
-    }
-
-    /**
-     * Publish/Unpublish method
-     *
-     * @param int[] $pks
-     * @param int   $value
-     *
-     * @return  bool
-     */
-    public function publish($pks, $value = 1)
-    {
-        $db = $this->getDbo();
-
-        $pks = array_filter(array_map('intval', $pks));
-
-        $query = $db->getQuery(true)
-            ->set('published = ' . $db->quote($value))
-            ->update('#__osmap_sitemaps')
-            ->where(sprintf('id IN (%s)', join(',', $pks)));
-
-        return $db->setQuery($query)->execute();
-    }
-
-    /**
-     * @param int[] $ids
-     *
-     * @return bool
-     * @throws Exception
-     */
-    public function delete($ids)
-    {
-        $ids = ArrayHelper::toInteger($ids);
-        $db  = $this->getDbo();
-
-        $query = $db->getQuery(true)
-            ->delete('#__osmap_sitemaps')
-            ->where(sprintf('id IN (%s)', join(',', $ids)));
-
-        if ($db->setQuery($query)->execute()) {
-            Factory::getApplication()->enqueueMessage('SITEMAPS: ' . $db->getAffectedRows());
-            $relatedTables = [
-                '#__osmap_sitemap_menus',
-                '#__osmap_items_settings'
-            ];
-
-            foreach ($relatedTables as $table) {
-                $db->setQuery(
-                    $db->getQuery(true)
-                        ->delete($table)
-                        ->where('sitemap_id NOT IN (SELECT id FROM #__osmap_sitemaps)')
-                )->execute();
-            }
-
-            return true;
-        }
-
-        return false;
     }
 }

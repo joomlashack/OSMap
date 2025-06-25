@@ -44,7 +44,7 @@ class Factory extends \Alledia\Framework\Factory
     /**
      * @var Container
      */
-    protected static $pimpleContainer;
+    protected static Container $pimpleContainer;
 
     /**
      * @var string[]
