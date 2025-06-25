@@ -30,7 +30,7 @@ defined('_JEXEC') or die;
 
 $displayData = [
     'textPrefix' => 'COM_OSMAPS',
-    'formURL'    => 'index.php?option=com_osmaps&view=sitemaps',
+    'formURL'    => 'index.php?option=com_osmap&view=sitemaps',
     'helpURL'    => 'https://www.joomlashack.com/docs/osmaps/start/',
     'icon'       => 'icon-copy article',
 ];
@@ -38,10 +38,10 @@ $displayData = [
 $user = Factory::getApplication()->getIdentity();
 
 if (
-    $user->authorise('core.create', 'com_osmaps')
-    || count($user->getAuthorisedCategories('com_osmaps', 'core.create')) > 0
+    $user->authorise('core.create', 'com_osmap')
+    || count($user->getAuthorisedCategories('com_osmap', 'core.create')) > 0
 ) {
-    $displayData['createURL'] = 'index.php?option=com_osmaps&task=sitemap.add';
+    $displayData['createURL'] = 'index.php?option=com_osmap&task=sitemap.add';
 }
 
 echo LayoutHelper::render('joomla.content.emptystate', $displayData);
