@@ -26,6 +26,10 @@
 namespace Alledia\OSMap;
 
 use Alledia\OSMap\Sitemap\SitemapInterface;
+use Joomla\CMS\Application\AdministratorApplication;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Application\SiteApplication;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -41,6 +45,37 @@ class Factory extends \Alledia\Framework\Factory
      * @var Container
      */
     protected static $pimpleContainer;
+
+    /**
+     * @var string[]
+     */
+    protected static array $applications = [
+        'site'          => SiteApplication::class,
+        'administrator' => AdministratorApplication::class,
+    ];
+
+    /**
+     * @param string $client
+     *
+     * @return CMSApplication
+     *
+     * @throws \Exception
+     */
+    public static function getJoomlaClient(string $client): CMSApplication
+    {
+        $appClass = self::$applications[$client] ?? null;
+
+        if ($appClass) {
+            if (is_callable([static::class, 'getContainer'])) {
+                return parent::getContainer()->get($appClass);
+
+            } else {
+                return CMSApplication::getInstance($client);
+            }
+        }
+
+        throw new \Exception(Text::sprintf('COM_OSMAP_ERROR_APPLICATION', $client));
+    }
 
     /**
      * Get a OSMap container class

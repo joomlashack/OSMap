@@ -142,7 +142,7 @@ class OSMapViewSitemaps extends AbstractList
             $query[$type] = 1;
         }
         if ($view == 'xml') {
-            $menu     = Factory::getContainer()->get(SiteApplication::class)->getMenu()->getItem($menuId);
+            $menu     = Factory::getJoomlaClient('site')->getMenu()->getItem($menuId);
             $menuView = empty($menu->query['view']) ? null : $menu->query['view'];
 
             if ($view != $menuView) {
