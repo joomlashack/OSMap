@@ -29,10 +29,10 @@ use Joomla\CMS\Layout\LayoutHelper;
 defined('_JEXEC') or die;
 
 $displayData = [
-    'textPrefix' => 'COM_OSMAPS',
+    'textPrefix' => 'COM_OSMAP',
     'formURL'    => 'index.php?option=com_osmap&view=sitemaps',
     'helpURL'    => 'https://www.joomlashack.com/docs/osmaps/start/',
-    'icon'       => 'icon-copy article',
+    'icon'       => 'icon-osmap',
 ];
 
 $user = Factory::getApplication()->getIdentity();
