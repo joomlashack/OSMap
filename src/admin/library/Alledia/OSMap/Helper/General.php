@@ -34,11 +34,15 @@ use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+
 // phpcs:enable PSR1.Files.SideEffects
 
 abstract class General
 {
-    protected static $plugins = [];
+    /**
+     * @var array
+     */
+    protected static array $plugins = [];
 
     /**
      * Build the submenu in admin if needed. Triggers the
@@ -68,13 +72,13 @@ abstract class General
             [
                 'text' => 'COM_OSMAP_SUBMENU_SITEMAPS',
                 'link' => 'index.php?option=com_osmap&view=sitemaps',
-                'view' => 'sitemaps'
+                'view' => 'sitemaps',
             ],
             [
                 'text' => 'COM_OSMAP_SUBMENU_EXTENSIONS',
                 'link' => 'index.php?option=com_plugins&view=plugins&filter_folder=osmap',
-                'view' => 'extensions'
-            ]
+                'view' => 'extensions',
+            ],
         ];
 
         Factory::getApplication()->triggerEvent('onOSMapAddAdminSubmenu', [&$submenus]);
@@ -118,6 +122,35 @@ abstract class General
     }
 
     /**
+     * Gets the plugins according to the given option/component
+     *
+     * @param ?string $option
+     *
+     * @return object[]
+     */
+    public static function getPluginsForComponent(?string $option): array
+    {
+        // Check if there is a cached list of plugins for this option
+        if ($option && empty(static::$plugins[$option])) {
+            $compatiblePlugins = [];
+
+            $plugins = static::getPluginsFromDatabase();
+
+            if ($plugins) {
+                foreach ($plugins as $plugin) {
+                    if (static::checkPluginCompatibilityWithOption($plugin, $option)) {
+                        $compatiblePlugins[] = $plugin;
+                    }
+                }
+            }
+
+            static::$plugins[$option] = $compatiblePlugins;
+        }
+
+        return static::$plugins[$option] ?? [];
+    }
+
+    /**
      * Returns a list of plugins from the database. Legacy plugins from XMap
      * will be returned first, then OSMap plugins. Always respecting the
      * ordering.
@@ -127,7 +160,7 @@ abstract class General
     public static function getPluginsFromDatabase(): array
     {
         static $plugins;
-        
+
         if ($plugins === null) {
             $db = Factory::getPimpleContainer()->db;
 
@@ -137,7 +170,7 @@ abstract class General
                 ->select([
                     'folder',
                     'params',
-                    'element'
+                    'element',
                 ])
                 ->from('#__extensions')
                 ->where('type = ' . $db->quote('plugin'))
@@ -152,7 +185,7 @@ abstract class General
 
             $plugins = $db->setQuery($query)->loadObjectList();
         }
-        
+
         return $plugins;
     }
 
@@ -215,35 +248,6 @@ abstract class General
     }
 
     /**
-     * Gets the plugins according to the given option/component
-     *
-     * @param ?string $option
-     *
-     * @return object[]
-     */
-    public static function getPluginsForComponent(?string $option): array
-    {
-        // Check if there is a cached list of plugins for this option
-        if ($option && empty(static::$plugins[$option])) {
-            $compatiblePlugins = [];
-
-            $plugins = static::getPluginsFromDatabase();
-
-            if ($plugins) {
-                foreach ($plugins as $plugin) {
-                    if (static::checkPluginCompatibilityWithOption($plugin, $option)) {
-                        $compatiblePlugins[] = $plugin;
-                    }
-                }
-            }
-
-            static::$plugins[$option] = $compatiblePlugins;
-        }
-
-        return static::$plugins[$option] ?? [];
-    }
-
-    /**
      * Extracts pagebreaks from the given text. Returns a list of subnodes
      * related to each pagebreak.
      *
@@ -257,12 +261,14 @@ abstract class General
     {
         $matches = $subNodes = [];
 
-        if (preg_match_all(
-            '/<hr\s*[^>]*?(?:(?:\s*alt="(?P<alt>[^"]+)")|(?:\s*title="(?P<title>[^"]+)"))+[^>]*>/i',
-            $text,
-            $matches,
-            PREG_SET_ORDER
-        )) {
+        if (
+            preg_match_all(
+                '/<hr\s*[^>]*?(?:\s*alt="(?P<alt>[^"]+)"|\s*title="(?P<title>[^"]+)")+[^>]*>/i',
+                $text,
+                $matches,
+                PREG_SET_ORDER
+            )
+        ) {
             $i = 2;
             foreach ($matches as $match) {
                 if (strpos($match[0], 'class="system-pagebreak"') !== false) {
@@ -307,7 +313,7 @@ abstract class General
             -1,
             '-1',
             $db->getNullDate(),
-            '0000-00-00'
+            '0000-00-00',
         ];
 
         return in_array($date, $invalidDates);
@@ -336,7 +342,7 @@ abstract class General
             $query = $db->getQuery(true)
                 ->select('id')
                 ->from($db->quoteName('#__viewlevels'));
-            $rows = $db->setQuery($query)->loadRowList();
+            $rows  = $db->setQuery($query)->loadRowList();
 
             foreach ($rows as $row) {
                 $levels[] = $row[0];
