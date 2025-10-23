@@ -23,12 +23,16 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+//phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+
+use Alledia\Framework\Joomla\Model\AdminModel;
 use Alledia\OSMap\Factory;
-use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 defined('_JEXEC') or die();
 
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
 
 class OSMapModelSitemap extends AdminModel
 {
@@ -64,10 +68,10 @@ class OSMapModelSitemap extends AdminModel
             $data = $this->getItem();
 
             // Load some defaults for new sitemap
-            $id = $data->get('id');
+            $id = $data->id ?? null;
             if (empty($id)) {
-                $data->set('published', 1);
-                $data->set('created', Factory::getDate()->toSql());
+                $data->published = 1;
+                $data->created   = Factory::getDate()->toSql();
             }
 
             // Load the menus
@@ -85,7 +89,7 @@ class OSMapModelSitemap extends AdminModel
                 foreach ($menus as $menu) {
                     $data->menus[$menu->menutype_id] = [
                         'priority'   => $menu->priority,
-                        'changefreq' => $menu->changefreq
+                        'changefreq' => $menu->changefreq,
                     ];
                 }
             }
