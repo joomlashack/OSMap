@@ -26,10 +26,10 @@
 namespace Alledia\OSMap\Helper;
 
 use Alledia\OSMap\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
+use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
