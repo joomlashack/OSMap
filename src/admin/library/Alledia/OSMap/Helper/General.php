@@ -29,7 +29,6 @@ use Alledia\OSMap\Factory;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
-use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -209,7 +208,7 @@ abstract class General
         $path       = JPATH_PLUGINS . '/' . $plugin->folder . '/' . $plugin->element . '/' . $plugin->element . '.php';
         $compatible = false;
 
-        if (File::exists($path)) {
+        if (is_file($path)) {
             /*
              * Legacy plugins have element == option.
              * But may still not be compatible with
