@@ -23,12 +23,11 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-/**
- * @package         OSMap
- * @subpackage      com_osmap
- */
 class OSMapTableSitemapItems extends JTable
 {
     /**
