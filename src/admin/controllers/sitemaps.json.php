@@ -23,7 +23,6 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Alledia\Installer\OSMap\XmapConverter;
 use Alledia\OSMap\Controller\Json;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -34,10 +33,4 @@ defined('_JEXEC') or die();
 class OSMapControllerSitemaps extends Json
 {
     protected $text_prefix = 'COM_OSMAP_SITEMAP';
-
-    public function migrateXmapData()
-    {
-        $converter = new XmapConverter();
-        $converter->migrateData();
-    }
 }

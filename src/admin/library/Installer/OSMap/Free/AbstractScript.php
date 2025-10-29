@@ -25,14 +25,13 @@
 
 namespace Alledia\Installer\OSMap\Free;
 
-use Alledia\Installer\OSMap\XmapConverter;
 use Joomla\CMS\Factory;
-use Joomla\Filesystem\File;
-use Joomla\Filesystem\Folder;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
@@ -55,17 +54,6 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
             return;
         }
 
-        // Check if XMap is installed, to start a migration
-        $xmapConverter = new XmapConverter();
-
-        // This attribute will be used by the custom template to display the option to migrate legacy sitemaps
-        $this->isXmapDataFound = $this->findTable('#__xmap_sitemap') && $xmapConverter->checkXmapDataExists();
-
-        // If Xmap plugins are still available, and we don't have the OSMap plugins yet,
-        // save Xmap plugins params to re-apply after install OSMap plugins
-        $xmapConverter->saveXmapPluginParamsIfExists();
-
-        // Load Alledia Framework
         require_once JPATH_ADMINISTRATOR . '/components/com_osmap/include.php';
 
         switch ($type) {
@@ -87,8 +75,6 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                 $this->clearLanguageFiles();
                 break;
         }
-
-        $xmapConverter->moveXmapPluginsParamsToOSMapPlugins();
     }
 
     /**
