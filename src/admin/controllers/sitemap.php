@@ -44,7 +44,7 @@ class OSMapControllerSitemap extends Form
 
         if (isset($cid[0])) {
             // Cleanup the is_default field
-            $db = Factory::getDbo();
+            $db = Factory::getDatabase();
 
             $query = $db->getQuery(true)
                 ->set('is_default = 0')

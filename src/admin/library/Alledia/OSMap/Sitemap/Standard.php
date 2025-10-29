@@ -167,7 +167,7 @@ class Standard implements SitemapInterface
      */
     protected function updateLinksCount(int $count)
     {
-        $db = Factory::getDbo();
+        $db = Factory::getDatabase();
 
         $updateObject = (object)[
             'id'          => $this->id,

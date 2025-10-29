@@ -91,7 +91,7 @@ class OsmapFormFieldMenus extends FormField
      */
     protected function getOptions()
     {
-        $db = Factory::getDbo();
+        $db = Factory::getDatabase();
 
         // Get the list of menus from the database
         $query = $db->getQuery(true)

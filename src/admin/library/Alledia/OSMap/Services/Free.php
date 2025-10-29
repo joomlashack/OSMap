@@ -66,7 +66,7 @@ class Free implements ServiceProviderInterface
         };
 
         $pimple['db'] = function () {
-            return Factory::getDbo();
+            return Factory::getDatabase();
         };
 
         $pimple['input'] = function () {

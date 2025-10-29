@@ -407,7 +407,7 @@ class Item extends CMSObject
         // If is an alias, use the Itemid stored in the parameters to get the correct url
         if ($this->type === 'alias') {
             // Get the related menu item's link
-            $db = Factory::getDbo();
+            $db = Factory::getDatabase();
 
             $query = $db->getQuery(true)
                 ->select('link')

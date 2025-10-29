@@ -44,7 +44,7 @@ abstract class Legacy
 
         if (!isset($multilangSiteHomePages)) {
             // Check for Home pages languages.
-            $db    = Factory::getDbo();
+            $db    = Factory::getDatabase();
             $query = $db->getQuery(true)
                 ->select('language')
                 ->select('id')

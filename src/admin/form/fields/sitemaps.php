@@ -56,7 +56,7 @@ class OsmapFormFieldSitemaps extends FormField
     protected function getInput()
     {
         if ($value = $this->value ?: '') {
-            $db = Factory::getDbo();
+            $db = Factory::getDatabase();
             $db->setQuery(
                 $db->getQuery(true)
                     ->select('name')

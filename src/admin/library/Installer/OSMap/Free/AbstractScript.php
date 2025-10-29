@@ -84,7 +84,7 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
      */
     protected function createDefaultSitemap(): void
     {
-        $db = Factory::getDbo();
+        $db = $this->dbo;
 
         // Check if we have any sitemaps, otherwise let's create a default one
         $query      = $db->getQuery(true)

@@ -76,7 +76,7 @@ class OSMapModelSitemap extends AdminModel
 
             // Load the menus
             if ($id) {
-                $db    = Factory::getDbo();
+                $db    = Factory::getDatabase();
                 $query = $db->getQuery(true)
                     ->select('*')
                     ->from('#__osmap_sitemap_menus')

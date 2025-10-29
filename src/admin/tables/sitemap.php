@@ -170,7 +170,7 @@ class OSMapTableSitemap extends Table
      */
     protected function checkDefault()
     {
-        $db = Factory::getDbo();
+        $db = Factory::getDatabase();
 
         // Make sure we have only one default sitemap
         if ($this->get('is_default')) {
@@ -214,7 +214,7 @@ class OSMapTableSitemap extends Table
         $id = (int)$this->id;
 
         if ($id) {
-            $db           = Factory::getDbo();
+            $db           = Factory::getDatabase();
             $ordering     = 1;
             $insertValues = [];
 
@@ -265,7 +265,7 @@ class OSMapTableSitemap extends Table
     {
         if (parent::load($keys, $reset)) {
             // Load the menus information
-            $db       = Factory::getDbo();
+            $db       = Factory::getDatabase();
             $ordering = [];
 
             $query = $db->getQuery(true)

@@ -164,7 +164,7 @@ class OsmapViewXml extends HtmlView
         try {
             $publicationDate = (
                 !empty($node->publishUp)
-                && $node->publishUp != Factory::getDbo()->getNullDate()
+                && $node->publishUp != Factory::getDatabase()->getNullDate()
                 && $node->publishUp != -1
             ) ? $node->publishUp : null;
 

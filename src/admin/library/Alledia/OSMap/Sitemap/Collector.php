@@ -317,7 +317,7 @@ class Collector
      */
     protected function getSitemapMenus(): array
     {
-        $db = Factory::getDbo();
+        $db = Factory::getDatabase();
 
         $query = $db->getQuery(true)
             ->select([
@@ -612,7 +612,7 @@ class Collector
     protected function getItemsSettings(): array
     {
         if (empty($this->itemsSettings)) {
-            $db = Factory::getDbo();
+            $db = Factory::getDatabase();
 
             $query = $db->getQuery(true)
                 ->select([
@@ -659,7 +659,7 @@ class Collector
     protected function getLegacyItemsSettings(): array
     {
         if ($this->legacyItemsSettings === null) {
-            $db = Factory::getDbo();
+            $db = Factory::getDatabase();
 
             $query = $db->getQuery(true)
                 ->select('*')
