@@ -24,16 +24,22 @@
 
 use Alledia\Framework\Factory;
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 trait TraitShack
 {
-    protected static $frameworkLoaded = null;
+    /**
+     * @var ?bool
+     */
+    protected static ?bool $frameworkLoaded = null;
 
     /**
      * @return bool
      */
-    protected function isPro()
+    protected function isPro(): bool
     {
         if ($this->isFrameworkLoaded()) {
             $license = Factory::getExtension('osmap', 'component');
@@ -49,7 +55,7 @@ trait TraitShack
     protected function isFrameworkLoaded()
     {
         if (static::$frameworkLoaded === null) {
-            if (!defined('ALLEDIA_FRAMEWORK_LOADED')) {
+            if (defined('ALLEDIA_FRAMEWORK_LOADED') == false) {
                 $path = JPATH_SITE . '/libraries/allediaframework/include.php';
                 if (is_file($path)) {
                     require_once $path;

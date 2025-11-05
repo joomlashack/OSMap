@@ -32,6 +32,7 @@ use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Language\Language;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User\User;
+use Joomla\Database\DatabaseDriver;
 use Joomla\Input\Input;
 use ReflectionClass;
 
@@ -44,24 +45,24 @@ defined('_JEXEC') or die();
  *
  * @package OSMap
  *
- * @property WebApplication  $app
- * @property JDatabaseDriver $db
- * @property Input           $input
- * @property User            $user
- * @property Language        $language
- * @property Profiler        $profiler
- * @property Router          $router
- * @property Uri             $uri
- * @property Images          $imagesHelper
+ * @property WebApplication                 $app
+ * @property JDatabaseDriver|DatabaseDriver $db
+ * @property Input                          $input
+ * @property User                           $user
+ * @property Language                       $language
+ * @property Profiler                       $profiler
+ * @property Router                         $router
+ * @property Uri                            $uri
+ * @property Images                         $imagesHelper
  *
- * @method WebApplication   getApp()
- * @method JDatabaseDriver  getDb()
- * @method Input            getInput()
- * @method User             getUser()
- * @method Language         getLanguage()
- * @method Profiler         getProfiler()
- * @method Router           getRouter()
- * @method Uri              getUri()
+ * @method WebApplication                  getApp()
+ * @method JDatabaseDriver|DatabaseDriver  getDb()
+ * @method Input                           getInput()
+ * @method User                            getUser()
+ * @method Language                        getLanguage()
+ * @method Profiler                        getProfiler()
+ * @method Router                          getRouter()
+ * @method Uri                             getUri()
  *
  */
 class Container extends \Pimple\Container

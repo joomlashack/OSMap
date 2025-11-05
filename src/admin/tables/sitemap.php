@@ -28,7 +28,10 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class OSMapTableSitemap extends Table
 {
@@ -88,7 +91,7 @@ class OSMapTableSitemap extends Table
     public $menus_ordering = '';
 
     /**
-     * @param JDatabaseDriver $db
+     * @inheritDoc
      */
     public function __construct($db)
     {
@@ -145,7 +148,7 @@ class OSMapTableSitemap extends Table
             'menus',
             'menus_priority',
             'menus_changefreq',
-            'menus_ordering'
+            'menus_ordering',
         ];
         $menus    = [];
         foreach ($menuKeys as $menuKey) {
@@ -233,7 +236,7 @@ class OSMapTableSitemap extends Table
                     'menutype_id' => (int)$menuId,
                     'priority'    => (float)$priority[$index],
                     'changefreq'  => $db->quote($changeFreq[$index]),
-                    'ordering'    => $ordering++
+                    'ordering'    => $ordering++,
                 ];
             }
 

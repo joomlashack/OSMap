@@ -58,7 +58,7 @@ class OSMapTableSitemapItems extends Table
     public $priority = 5;
 
     /**
-     * @param JDatabaseDriver
+     * @inheritDoc
      */
     public function __construct($db)
     {
