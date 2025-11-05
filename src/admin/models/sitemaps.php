@@ -23,8 +23,8 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Alledia\Framework\Joomla\Model\AbstractListModel;
 use Alledia\OSMap\Factory;
-use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 
 // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
@@ -34,7 +34,7 @@ defined('_JEXEC') or die();
 // phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-class OSMapModelSitemaps extends ListModel
+class OSMapModelSitemaps extends AbstractListModel
 {
     public function __construct($config = [])
     {

@@ -25,7 +25,7 @@
 
 //phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-use Alledia\Framework\Joomla\Model\AdminModel;
+use Alledia\Framework\Joomla\Model\AbstractAdminModel;
 use Alledia\OSMap\Factory;
 use Joomla\CMS\Table\Table;
 
@@ -34,7 +34,7 @@ defined('_JEXEC') or die();
 
 // phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
 
-class OSMapModelSitemap extends AdminModel
+class OSMapModelSitemap extends AbstractAdminModel
 {
     /**
      * @inheritDoc

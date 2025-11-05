@@ -23,7 +23,7 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Alledia\Framework\Joomla\Model\AbstractBaseDatabaseModel;
 use Joomla\CMS\Table\Table;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -31,7 +31,7 @@ defined('_JEXEC') or die();
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
-class OSMapModelSitemapItems extends BaseDatabaseModel
+class OSMapModelSitemapItems extends AbstractBaseDatabaseModel
 {
     public function getTable($name = 'SitemapItems', $prefix = 'OSMapTable', $options = [])
     {
