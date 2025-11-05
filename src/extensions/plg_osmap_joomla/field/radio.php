@@ -22,18 +22,22 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Joomla\CMS\Form\FormHelper;
+use Alledia\Framework\Joomla\Form\Field\RadioField;
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 defined('_JEXEC') or die();
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 require_once __DIR__ . '/TraitShack.php';
 
-FormHelper::loadFieldClass('radio');
-
-class ShackFormFieldRadio extends JFormFieldRadio
+class ShackFormFieldRadio extends RadioField
 {
     use TraitShack;
 
+    /**
+     * @inheritDoc
+     */
     public function setup(SimpleXMLElement $element, $value, $group = null)
     {
         return $this->isPro() && parent::setup($element, $value, $group);
