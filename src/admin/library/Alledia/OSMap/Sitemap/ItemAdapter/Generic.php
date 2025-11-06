@@ -49,7 +49,7 @@ class Generic implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function checkVisibilityForRobots()
+    public function checkVisibilityForRobots(): bool
     {
         // Always visible for the Free version
         return true;

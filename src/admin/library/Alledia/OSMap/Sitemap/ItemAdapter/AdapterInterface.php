@@ -35,5 +35,5 @@ interface AdapterInterface
      *
      * @return bool
      */
-    public function checkVisibilityForRobots();
+    public function checkVisibilityForRobots(): bool;
 }
