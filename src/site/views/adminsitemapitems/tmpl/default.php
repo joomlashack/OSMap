@@ -38,4 +38,4 @@ else : ?>
     </div>
 <?php endif;
 
-jexit();
+Factory::getApplication()->close();

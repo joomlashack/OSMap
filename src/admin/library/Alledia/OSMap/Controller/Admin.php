@@ -34,6 +34,7 @@ use Joomla\CMS\Session\Session;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+
 // phpcs:enable PSR1.Files.SideEffects
 
 abstract class Admin extends AdminController
@@ -91,7 +92,7 @@ abstract class Admin extends AdminController
             return parent::checkToken($method, $redirect);
         }
 
-        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        Session::checkToken() or Factory::getApplication()->close(Text::_('JINVALID_TOKEN'));
 
         return true;
     }

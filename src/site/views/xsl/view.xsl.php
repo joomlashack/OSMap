@@ -107,6 +107,6 @@ class OsmapViewXsl extends HtmlView
 
         parent::display($tpl);
 
-        jexit();
+        Factory::getApplication()->close();
     }
 }
