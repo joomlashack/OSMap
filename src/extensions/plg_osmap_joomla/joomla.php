@@ -38,6 +38,7 @@ use Joomla\Utilities\ArrayHelper;
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
 
+// @TODO: Framework creates alias for this
 if (class_exists(RouteHelper::class) == false) {
     $siteContentPath = JPATH_SITE . '/components/com_content/helpers/route.php';
     if (is_file($siteContentPath)) {
