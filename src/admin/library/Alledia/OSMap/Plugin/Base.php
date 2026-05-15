@@ -107,18 +107,6 @@ abstract class Base extends CMSPlugin
                 // We've ended up with limited memory, allow for checking
                 static::$memoryLimit = $c($limit);
             }
-
-            echo '<pre>';
-            print_r([
-                'limit'         => number_format($limit),
-                'max'           => number_format($maxMemory),
-                'ini_get'       => ini_get('memory_limit'),
-                'ini_get2'      => number_format($c(ini_get('memory_limit'))),
-                'memoryLimit'   => number_format(static::$memoryLimit),
-                'memoryMinimum' => number_format(static::$memoryMinimum),
-            ]);
-            echo '</pre>';
-            die;
         }
     }
 
