@@ -49,7 +49,7 @@
         </field>
 
         <field name="max_memory"
-               type="list"
+               type="osmap.maxmemory"
                layout="joomla.form.field.list-fancy-select"
                label="COM_OSMAP_MAX_MEMORY_LABEL"
                description="COM_OSMAP_MAX_MEMORY_DESC"
