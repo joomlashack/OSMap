@@ -47,6 +47,20 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
         </field>
+
+        <field name="max_memory"
+               type="list"
+               layout="joomla.form.field.list-fancy-select"
+               label="COM_OSMAP_MAX_MEMORY_LABEL"
+               description="COM_OSMAP_MAX_MEMORY_DESC"
+               default="-1">
+            <option value="0">COM_OSMAP_OPTION_NO_CHANGE</option>
+            <option value="-1">COM_OSMAP_OPTION_UNLIMITED</option>
+            <option value="128M">COM_OSMAP_OPTION_128M</option>
+            <option value="256M">COM_OSMAP_OPTION_256M</option>
+            <option value="512M">COM_OSMAP_OPTION_512M</option>
+            <option value="1G">COM_OSMAP_OPTION_1G</option>
+        </field>
     </fieldset>
 
     <fieldset name="permissions"

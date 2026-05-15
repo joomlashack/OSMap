@@ -26,24 +26,37 @@
 namespace Alledia\OSMap\Plugin;
 
 use Alledia\Framework\Exception;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 defined('_JEXEC') or die();
+
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 abstract class Base extends CMSPlugin
 {
     /**
-     * @var int
+     * @var ?int
      */
-    protected static $memoryLimit = null;
+    protected static ?int $memoryLimit = null;
 
     /**
      * Minimum memory in MB required to continue on sites with limited memory
      *
      * @var int
      */
-    protected static $memoryMinimum = 4;
+    protected static int $memoryMinimum = 4;
+
+    /**
+     * @var array
+     */
+    protected static array $magnitudes = [
+        'K' => 1024,
+        'M' => 1024 * 1024,
+        'G' => 1024 * 1024 * 1024,
+    ];
 
     /**
      * @inheritDoc
@@ -65,23 +78,47 @@ abstract class Base extends CMSPlugin
     protected static function fixMemoryLimit()
     {
         if (static::$memoryLimit === null) {
-            $limit = @ini_set('memory_limit', -1);
+            // Convert minimum to megabytes
+            static::$memoryMinimum *= static::$magnitudes['M'];
+            static::$memoryLimit   = false;
 
-            if (empty($limit)) {
-                $mags  = [
-                    'K' => 1024,
-                    'M' => 1024 * 1024,
-                    'G' => 1024 * 1024 * 1024
-                ];
-                $limit = ini_get('memory_limit');
-                $regex = sprintf('/(\d*)([%s])/', join(array_keys($mags)));
-                if (preg_match($regex, $limit, $match)) {
-                    $limit = $match[1] * $mags[$match[2]];
+            $c = function ($shorthand) {
+                if (is_string($shorthand) && is_numeric($shorthand) == false) {
+                    $regex = sprintf('/(\d*)([%s])/', join(array_keys(static::$magnitudes)));
+                    if (preg_match($regex, $shorthand, $match)) {
+                        return $match[1] * static::$magnitudes[$match[2]];
+                    }
                 }
 
-                static::$memoryLimit   = $limit;
-                static::$memoryMinimum *= $mags['M'];
+                return $shorthand ?: 0;
+            };
+
+            $maxMemory = $c(ComponentHelper::getParams('com_osmap')->get('max_memory', -1));
+
+            $limit = $c(ini_get('memory_limit'));
+            if ($maxMemory && ($limit < $maxMemory || $maxMemory < 0)) {
+                // Request more memory than currently configured
+                @ini_set('memory_limit', $maxMemory);
+
+                $limit = $c(ini_get('memory_limit'));
             }
+
+            if ($limit > 0) {
+                // We've ended up with limited memory, allow for checking
+                static::$memoryLimit = $c($limit);
+            }
+
+            echo '<pre>';
+            print_r([
+                'limit'         => number_format($limit),
+                'max'           => number_format($maxMemory),
+                'ini_get'       => ini_get('memory_limit'),
+                'ini_get2'      => number_format($c(ini_get('memory_limit'))),
+                'memoryLimit'   => number_format(static::$memoryLimit),
+                'memoryMinimum' => number_format(static::$memoryMinimum),
+            ]);
+            echo '</pre>';
+            die;
         }
     }
 
