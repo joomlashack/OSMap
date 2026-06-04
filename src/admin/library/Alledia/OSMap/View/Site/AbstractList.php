@@ -181,7 +181,7 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
                 'menuItemTitle' => $node->menuItemTitle,
                 'menuItemType'  => $node->menuItemType,
                 'level'         => -1,
-                'children'      => []
+                'children'      => [],
             ];
 
             // Add the menu to the main list of items
