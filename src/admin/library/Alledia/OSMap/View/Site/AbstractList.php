@@ -212,7 +212,9 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
         }
 
         // Add this item to its parent children list
-        $this->lastItemsPerLevel[$queueItem->level - 1]->children[] = $queueItem;
+        if (isset($this->lastItemsPerLevel[$queueItem->level - 1])) {
+            $this->lastItemsPerLevel[$queueItem->level - 1]->children[] = $queueItem;
+        }
 
         // Add this item as the last one on the level
         $this->lastItemsPerLevel[$queueItem->level] = $queueItem;
