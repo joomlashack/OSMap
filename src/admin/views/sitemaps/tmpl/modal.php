@@ -121,10 +121,22 @@ $formAction = [
                                         [
                                             'style'   => 'cursor: pointer;',
                                             'onclick' => sprintf(
-                                                "if (window.parent) window.parent.%s('%s', '%s');",
+                                                'if (window.parent) window.parent.%s(%s, %s);',
                                                 $function,
-                                                $item->id,
-                                                $this->escape($item->name)
+                                                json_encode(
+                                                    (string) $item->id,
+                                                    JSON_HEX_TAG
+                                                    | JSON_HEX_AMP
+                                                    | JSON_HEX_APOS
+                                                    | JSON_HEX_QUOT
+                                                ),
+                                                json_encode(
+                                                    $item->name,
+                                                    JSON_HEX_TAG
+                                                    | JSON_HEX_AMP
+                                                    | JSON_HEX_APOS
+                                                    | JSON_HEX_QUOT
+                                                )
                                             )
                                         ]
                                     );
