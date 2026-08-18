@@ -120,16 +120,12 @@ $formAction = [
                                         $this->escape($item->name),
                                         [
                                             'style'   => 'cursor: pointer;',
+
+                                            // Encode the sitemap name as a JavaScript string to safely handle quotes and other special characters.
                                             'onclick' => sprintf(
-                                                'if (window.parent) window.parent.%s(%s, %s);',
+                                                "if (window.parent) window.parent.%s('%s', %s);",
                                                 $function,
-                                                json_encode(
-                                                    (string) $item->id,
-                                                    JSON_HEX_TAG
-                                                    | JSON_HEX_AMP
-                                                    | JSON_HEX_APOS
-                                                    | JSON_HEX_QUOT
-                                                ),
+                                                $item->id,
                                                 json_encode(
                                                     $item->name,
                                                     JSON_HEX_TAG
