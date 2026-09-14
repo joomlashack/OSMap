@@ -121,12 +121,18 @@ $formAction = [
                                         [
                                             'style'   => 'cursor: pointer;',
 
-                                            // Encode the sitemap name as a valid JavaScript string.
-                                            'onclick' => sprintf(
-                                                "if (window.parent) window.parent.%s('%s', %s);",
-                                                $function,
-                                                $item->id,
-                                                json_encode($item->name)
+                                            // Encode the sitemap name as a valid JavaScript string, then
+                                            // HTML-escape the whole attribute value: json_encode() produces
+                                            // double quotes, which otherwise close the onclick="..." attribute
+                                            // early and corrupt the tag (and the inline script after it).
+                                            'onclick' => htmlspecialchars(
+                                                sprintf(
+                                                    "if (window.parent) window.parent.%s('%s', %s);",
+                                                    $function,
+                                                    (int) $item->id,
+                                                    json_encode($item->name)
+                                                ),
+                                                ENT_QUOTES
                                             )
                                         ]
                                     );
