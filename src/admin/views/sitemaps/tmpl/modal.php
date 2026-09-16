@@ -121,12 +121,17 @@ $formAction = [
                                         [
                                             'style'   => 'cursor: pointer;',
 
-                                            // Encode the sitemap name as a valid JavaScript string.
+                                            // Encode the sitemap name as a JavaScript string, then escape
+                                            // it for use inside the HTML onclick attribute.
                                             'onclick' => sprintf(
                                                 "if (window.parent) window.parent.%s('%s', %s);",
                                                 $function,
                                                 $item->id,
-                                                json_encode($item->name)
+                                                htmlspecialchars(
+                                                    json_encode($item->name),
+                                                    ENT_QUOTES | ENT_SUBSTITUTE,
+                                                    'UTF-8'
+                                                )
                                             )
                                         ]
                                     );
