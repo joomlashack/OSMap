@@ -131,6 +131,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
                 case 'category':
                     $node->adapterName = 'JoomlaCategory';
                     $node->uid         = 'joomla.category.' . $id;
+                    $node->contentId   = (int)$id;
                     $node->expandible  = true;
 
                     break;
