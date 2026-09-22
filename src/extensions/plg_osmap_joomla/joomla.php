@@ -235,7 +235,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
 
         parse_str(html_entity_decode($linkQuery), $linkVars);
         $view = ArrayHelper::getValue($linkVars, 'view', '');
-        $id   = intval(ArrayHelper::getValue($linkVars, 'id', ''));
+        $id   = (int)ArrayHelper::getValue($linkVars, 'id', '');
 
         /*
          * Parameters Initialisation
@@ -283,7 +283,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         switch ($view) {
             case 'category':
                 if (empty($id)) {
-                    $id = intval($params->get('id', 0));
+                    $id = (int)$params->get('id', 0);
                 }
 
                 if ($paramExpandCategories && $id) {

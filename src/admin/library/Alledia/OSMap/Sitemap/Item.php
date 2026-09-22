@@ -27,13 +27,16 @@ namespace Alledia\OSMap\Sitemap;
 
 use Alledia\OSMap\Factory;
 use Alledia\OSMap\Helper\General;
+use Alledia\OSMap\Sitemap\ItemAdapter\GenericPro;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\Registry\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
 
 /**
  * Sitemap item
@@ -253,7 +256,7 @@ class Item extends CMSObject
 
         if (
             $this->adapterName === 'Generic'
-            && class_exists('\\Alledia\\OSMap\\Sitemap\\ItemAdapter\\GenericPro')
+            && class_exists(GenericPro::class)
         ) {
             $this->adapterName = 'GenericPro';
         }
