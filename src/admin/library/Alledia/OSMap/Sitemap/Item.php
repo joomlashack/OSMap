@@ -251,7 +251,10 @@ class Item extends CMSObject
     {
         parent::__construct($itemData);
 
-        if (class_exists('\\Alledia\\OSMap\\Sitemap\\ItemAdapter\\GenericPro')) {
+        if (
+            $this->adapterName === 'Generic'
+            && class_exists('\\Alledia\\OSMap\\Sitemap\\ItemAdapter\\GenericPro')
+        ) {
             $this->adapterName = 'GenericPro';
         }
 
