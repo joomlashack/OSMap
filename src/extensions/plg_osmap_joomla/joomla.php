@@ -138,6 +138,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
 
                 case 'article':
                     $node->adapterName = 'JoomlaArticle';
+                    $node->contentId   = (int)$id;
                     $node->expandible  = false;
 
                     $paramAddPageBreaks = $params->get('add_pagebreaks', 1);
