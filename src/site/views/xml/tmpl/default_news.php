@@ -50,7 +50,7 @@ $printNodeCallback = function (Item $node) {
         && $node->parentIsVisibleForRobots
         && $node->visibleForXML
         && $node->isInternal
-        && trim($node->fullLink) != ''
+        && trim((string)$node->fullLink) != ''
         && $node->hasCompatibleLanguage();
 
     /** @var DateTime $publicationDate */

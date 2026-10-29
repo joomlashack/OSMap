@@ -41,11 +41,6 @@ defined('_JEXEC') or die();
 class AbstractScript extends \Alledia\Installer\AbstractScript
 {
     /**
-     * @var bool
-     */
-    protected $isXmapDataFound = false;
-
-    /**
      * @inheritDoc
      */
     protected function customPostFlight(string $type, InstallerAdapter $parent): void

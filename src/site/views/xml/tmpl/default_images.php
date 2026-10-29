@@ -48,7 +48,7 @@ $printNodeCallback = function (Item $node) use ($ignoreDuplicates) {
         && $node->parentIsVisibleForRobots
         && $node->visibleForXML
         && $node->isInternal
-        && trim($node->fullLink) != ''
+        && trim((string)$node->fullLink) != ''
         && $node->hasCompatibleLanguage();
 
     if ($display && !empty($node->images)) {

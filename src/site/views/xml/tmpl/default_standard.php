@@ -49,7 +49,7 @@ $printNodeCallback = function (Item $node) use ($showExternalLinks, $ignoreDupli
         && $node->visibleForRobots
         && $node->parentIsVisibleForRobots
         && $node->visibleForXML
-        && trim($node->fullLink) != '';
+        && trim((string)$node->fullLink) != '';
 
     if ($display && !$node->isInternal) {
         // Show external links

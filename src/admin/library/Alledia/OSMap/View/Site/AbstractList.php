@@ -237,10 +237,10 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
         echo '<div class="osmap-debug-box">'
             . sprintf('<div><span>#:</span>&nbsp;%s</div>', $this->generalCounter)
             . sprintf($debugRow, Text::_('COM_OSMAP_UID'), $node->uid)
-            . sprintf($debugRow, Text::_('COM_OSMAP_FULL_LINK'), htmlspecialchars($node->fullLink))
-            . sprintf($debugRow, Text::_('COM_OSMAP_RAW_LINK'), htmlspecialchars($node->rawLink))
-            . sprintf($debugRow, Text::_('COM_OSMAP_LINK'), htmlspecialchars($node->link))
-            . sprintf($debugRow, Text::_('COM_OSMAP_MODIFIED'), htmlspecialchars($node->modified))
+            . sprintf($debugRow, Text::_('COM_OSMAP_FULL_LINK'), htmlspecialchars((string)$node->fullLink))
+            . sprintf($debugRow, Text::_('COM_OSMAP_RAW_LINK'), htmlspecialchars((string)$node->rawLink))
+            . sprintf($debugRow, Text::_('COM_OSMAP_LINK'), htmlspecialchars((string)$node->link))
+            . sprintf($debugRow, Text::_('COM_OSMAP_MODIFIED'), htmlspecialchars((string)$node->modified))
             . sprintf($debugRow, Text::_('COM_OSMAP_LEVEL'), $node->level)
             . sprintf($debugRow, Text::_('COM_OSMAP_DUPLICATE'), Text::_($node->duplicate ? 'JYES' : 'JNO'))
             . sprintf(

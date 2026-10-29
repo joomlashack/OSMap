@@ -34,7 +34,6 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User\User;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Input\Input;
-use ReflectionClass;
 
 // phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
@@ -84,75 +83,6 @@ class Container extends \Pimple\Container
                 return $this[$key];
             }
         }
-        return null;
-    }
-
-    /**
-     * Get instance of a class using parameter autodetect
-     *
-     * @param string $className
-     *
-     * @return object
-     * @throws \Exception
-     */
-    public function getInstance($className)
-    {
-        $class = new ReflectionClass($className);
-        if ($instance = $this->getServiceEntry($class)) {
-            return $instance;
-        }
-
-        $dependencies = [];
-        if (!is_null($class->getConstructor())) {
-            $params = $class->getConstructor()->getParameters();
-            foreach ($params as $param) {
-                $dependentClass = $param->getClass();
-                if ($dependentClass) {
-                    $dependentClassName  = $dependentClass->name;
-                    $dependentReflection = new ReflectionClass($dependentClassName);
-                    if ($dependentReflection->isInstantiable()) {
-                        //use recursion to get dependencies
-                        $dependencies[] = $this->getInstance($dependentClassName);
-                    } elseif ($dependentReflection->isInterface()) {
-                        // Interfaces need to be pre-registered in the container
-                        if ($concrete = $this->getServiceEntry($dependentReflection, true)) {
-                            $dependencies[] = $concrete;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $class->newInstanceArgs($dependencies);
-    }
-
-    /**
-     * Find a service in the container based on class name
-     * Classes can be registered either through their short name
-     * or full class name. Short name take precedence.
-     *
-     * @param ReflectionClass $class
-     * @param bool            $require
-     *
-     * @return object|null
-     * @throws \Exception
-     */
-    protected function getServiceEntry(ReflectionClass $class, $require = false)
-    {
-        $key = strtolower($class->getShortName());
-        if (isset($this[$key])) {
-            return $this[$key];
-        }
-
-        $name = $class->getName();
-        if (isset($this[$name])) {
-            return $this[$name];
-        }
-
-        if ($require) {
-            throw new \Exception($class->getName() . ' -  is not registered in the container');
-        }
-
         return null;
     }
 }

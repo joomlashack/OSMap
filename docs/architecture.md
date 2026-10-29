@@ -157,7 +157,7 @@ Besides the content-plugin methods (see [plugins.md](plugins.md)), OSMap trigger
 `src/script.installer.php` defines `com_osmapInstallerScript`, which extends `Alledia\Installer\OSMap\Free\AbstractScript`, which extends ShackInstaller's `AbstractScript`. ShackInstaller installs the related extensions and removes obsolete ones, as declared in the manifest. OSMap's post-flight step adds:
 
 - a "Default Sitemap", created when no sitemaps exist. Every site menu is assigned to it, with priority 0.5 and changefreq `weekly`.
-- migration from Xmap, or from OSMap versions before 4, including legacy UID conversion. Xmap is disabled once its data has been migrated.
+- migration from OSMap versions before 4 (the legacy `#__osmap_sitemap` tables), including legacy UID conversion. Xmap data migration was removed in v5.1.1.
 - schema checks and repairs (`checkDatabaseSchema()`)
 - adding `&format=xml` to existing XML sitemap menu items, and deleting OSMap language files from the core `language/` folders
 
