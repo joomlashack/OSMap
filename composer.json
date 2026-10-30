@@ -27,5 +27,41 @@
         "php"          : ">=7.4",
         "ext-json"     : "*",
         "ext-simplexml": "*"
+    },
+    "scripts"          : {
+        "test"       : [
+            "@composer --working-dir=tests install --no-interaction --quiet",
+            "@php tests/vendor/bin/phpunit"
+        ],
+        "lint"       : [
+            "@composer --working-dir=tests install --no-interaction --quiet",
+            "@php tests/vendor/bin/phpcs --standard=PSR12 --extensions=php -sp --ignore='tests/vendor/*,tests/_output/*' src tests"
+        ],
+        "lint:fix"   : [
+            "@composer --working-dir=tests install --no-interaction --quiet",
+            "@php tests/vendor/bin/phpcbf --standard=PSR12 --extensions=php --ignore='tests/vendor/*,tests/_output/*' src tests"
+        ],
+        "lint:compat": [
+            "@composer --working-dir=tests install --no-interaction --quiet",
+            "@php tests/vendor/bin/phpcs --standard=PHPCompatibility --runtime-set testVersion 7.4- --extensions=php -sp src"
+        ],
+        "analyse"    : [
+            "@composer --working-dir=tests install --no-interaction --quiet",
+            "@php tests/vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "check"      : [
+            "@lint",
+            "@lint:compat",
+            "@analyse",
+            "@test"
+        ]
+    },
+    "scripts-descriptions": {
+        "test"       : "Install test dependencies into tests/vendor and run the PHPUnit suite",
+        "lint"       : "Check src and tests against the PSR-12 coding standard",
+        "lint:fix"   : "Automatically fix PSR-12 violations that phpcbf can correct",
+        "lint:compat": "Check src for code that doesn't run on PHP 7.4 or later",
+        "analyse"    : "Run PHPStan static analysis on src against a Joomla checkout",
+        "check"      : "Run lint, lint:compat, analyse and test, stopping at the first failure"
     }
 }

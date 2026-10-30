@@ -6,10 +6,13 @@
 build.properties
 vendor/
 composer.lock
+phpunit.xml
+phpstan.neon
 
 !.gitignore
 !.gitkeep
 !.htaccess
+!tests/composer.lock
 
 # Icon must ends with two \r.
 Icon

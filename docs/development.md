@@ -65,11 +65,87 @@ Language files are loaded from the component and plugin folders. The installer d
 
 Install the full package once first, so that the framework library, the database tables and the plugin records exist.
 
+## Tests, coding standard and static analysis
+
+Run these from the repository root. Each one installs the test tooling into `tests/vendor` first.
+
+- `composer test` runs the [PHPUnit](https://phpunit.de/) unit tests in `tests/Unit`.
+- `composer lint` checks `src` and `tests` against PSR-12 with PHP_CodeSniffer.
+- `composer lint:fix` automatically fixes the violations that phpcbf can correct.
+- `composer lint:compat` checks `src` with PHPCompatibility for code that doesn't run on
+  PHP 7.4 or later. The tools and IDEs run on newer PHP than the supported minimum.
+- `composer analyse` runs [PHPStan](https://phpstan.org/) on `src` (see
+  [Static analysis](#static-analysis)).
+- `composer check` runs `lint`, `lint:compat`, `analyse` and `test` in that order,
+  stopping at the first failure. Run it before committing.
+
+Test dependencies live in `tests/composer.json`, separate from the shipped code. To update
+them, run `composer --working-dir=tests update`, never a root `composer update`, and commit
+`tests/composer.lock`. The tooling needs PHP 8.2 or newer to run.
+
+### External checkouts
+
+The tests and PHPStan need three checkouts that aren't part of this repository:
+
+| Checkout          | Environment variable  | Property in `build.properties` |
+|-------------------|-----------------------|--------------------------------|
+| ShackFramework    | `SHACKFRAMEWORK_PATH` | `project.ShackFramework.path`  |
+| ShackInstaller    | `SHACKINSTALLER_PATH` | `project.ShackInstaller.path`  |
+| Joomla 4 or later | `JOOMLA_PATH`         | `project.Joomla.path`          |
+
+`Tests\Support\Paths` looks for each one in the environment variable, then the property in
+`build.properties`, then ShackBuilder's `global.properties`, the same as the build. The Joomla
+checkout can be any Joomla source tree or site with `libraries/vendor` installed. The build
+doesn't use it.
+
+### Unit tests
+
+OSMap's classes extend Joomla and ShackFramework classes, so `tests/bootstrap.php` loads them
+from the external checkouts. It registers only the `Joomla\*` namespaces from the Joomla
+checkout. Joomla's own composer autoloader would also load Joomla's copy of PHPUnit. Nothing
+boots a Joomla application, so tests cover code that runs without one:
+
+- `Tests\Support\Fixtures\TestFactory::setPimpleContainer()` replaces the container
+  `Factory::getPimpleContainer()` returns, with only the services a test needs.
+- `Tests\Support\Fixtures\SiteUri::setSite()` sets the site root that `Uri::root()` and
+  `Uri::getInstance()` return. Call `SiteUri::reset()` in `tearDown()`.
+- `Tests\Support\Fixtures\NullDateDatabase` stands in for the database where code only
+  asks for `getNullDate()`.
+- `Sitemap\Item` is built from a Joomla menu item, so `ItemTest` creates items without the
+  constructor and sets the properties it needs.
+
+PHPUnit fails on deprecations, notices and warnings raised by code in `src`, but not on those
+raised inside Joomla. To run the tests against another Joomla version, set `JOOMLA_PATH`:
+
+```sh
+JOOMLA_PATH=/path/to/joomla4 composer test
+```
+
+### Static analysis
+
+`phpstan.neon.dist` runs PHPStan at level 1 for PHP 7.4 to 8.5 against the external
+checkouts. `tests/phpstan/bootstrap.php` defines the constants Joomla and `include.php`
+create at runtime, and `tests/phpstan/stubs.php` declares Joomla 3 classes that newer
+versions dropped. Analyse against Joomla 4 or later. Against Joomla 3, PHPStan reports the
+Joomla 4+ classes that OSMap only uses behind version checks.
+
+The `ignoreErrors` list covers reports that are wrong for Joomla code, each with a comment
+explaining why. One example is `$this` and protected members in layouts, which Joomla
+includes from inside the view. Fix new reports rather than adding to the list.
+
 ## Repository layout
 
 ```
 build.xml, build.dist.properties   Phing entry point and the property template
+composer.json                      Package metadata and the test, lint and analyse scripts
+phpunit.xml.dist, phpstan.neon.dist  PHPUnit and PHPStan configuration
 osmap.mwb                          MySQL Workbench model of the database schema
+tests/
+  composer.json                    Test tooling (PHPUnit, PHPStan, PHP_CodeSniffer)
+  bootstrap.php                    PHPUnit bootstrap
+  Unit/                            Unit tests
+  Support/                         Paths helper and test fixtures
+  phpstan/                         PHPStan bootstrap, stubs and checkout paths
 src/
   osmap.xml                        Component manifest (version, files, related extensions, obsolete files)
   script.installer.php             Installer entry point
@@ -89,7 +165,7 @@ src/
 
 ## Coding conventions
 
-- Follow PSR-12. Files that need exceptions use `// phpcs:disable` comments, for example the legacy non-namespaced MVC classes.
+- Follow PSR-12. Files that need exceptions use `// phpcs:disable` comments, for example the legacy non-namespaced MVC classes. `composer lint` checks this.
 - Start every PHP file with the standard GPL file header (`@package OSMap`, copyright lines, license text), followed by `defined('_JEXEC') or die();`.
 - New core classes go under `src/admin/library/Alledia/OSMap/` in the `Alledia\OSMap` namespace. They are autoloaded. MVC classes (controllers, models, views, tables) use Joomla's legacy naming, such as `OSMapModelSitemap` and `OSMapTableSitemap`.
 - Prefer getting Joomla services through `Alledia\OSMap\Factory` (`getApplication()`, `getDatabase()`, `getDispatcher()`, …) or the Pimple container (`Factory::getPimpleContainer()->db`, `->input`, …). These calls work the same on Joomla 3 and Joomla 4+.

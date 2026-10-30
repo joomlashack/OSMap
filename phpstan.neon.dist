@@ -1,0 +1,54 @@
+includes:
+    - tests/phpstan/paths.php
+
+parameters:
+    level: 1
+    # Supported PHP versions, from the <alledia> block in src/osmap.xml
+    phpVersion:
+        min: 70400
+        max: 80599
+    tmpDir: tests/_output/phpstan
+    paths:
+        - src
+    bootstrapFiles:
+        - tests/phpstan/bootstrap.php
+    scanFiles:
+        - tests/phpstan/stubs.php
+    # Some of these only apply to some Joomla versions, see JOOMLA_PATH
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        # Joomla includes layouts from inside the view, so $this is the view object,
+        # protected members are in scope, and views allow dynamic properties
+        -
+            message: '#^Variable \$this might not be defined\.$#'
+            identifier: variable.undefined
+            paths:
+                - src/*/views/*/tmpl/*
+        -
+            identifier: property.protected
+            paths:
+                - src/*/views/*/tmpl/*
+        -
+            identifier: method.protected
+            paths:
+                - src/*/views/*/tmpl/*
+        # Pro classes are only used when Pro is installed over this component
+        -
+            message: '#Alledia\\OSMap\\Services\\Pro#'
+            identifier: class.notFound
+        # Paths built from JPATH_* constants only exist inside a Joomla install
+        -
+            identifier: requireOnce.fileNotFound
+        -
+            identifier: include.fileNotFound
+        # Joomla 3 returns false from loadForm() and Table::getInstance(), though
+        # both are typed as objects
+        -
+            identifier: empty.variable
+            paths:
+                - src/admin/models/sitemap.php
+                - src/admin/library/Alledia/OSMap/Sitemap/Standard.php
+        # Nothing extends Configuration, so new static() always builds a Configuration
+        -
+            identifier: new.static
+            path: src/admin/library/Alledia/OSMap/Configuration.php
