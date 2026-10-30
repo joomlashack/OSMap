@@ -461,7 +461,6 @@ class Item extends CMSObject
                 $home = $homes[$tag] ?? $homes['*'];
 
                 $this->fullLink = $container->router->routeURL('index.php?Itemid=' . $home->id, true);
-
             } else {
                 $this->fullLink = $container->uri::root();
             }

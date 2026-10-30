@@ -25,7 +25,9 @@
 
 namespace Alledia\OSMap\Sitemap\ItemAdapter;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 interface AdapterInterface
 {

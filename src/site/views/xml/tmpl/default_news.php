@@ -29,6 +29,9 @@ use Joomla\Utilities\ArrayHelper;
 
 defined('_JEXEC') or die();
 
+// Joomla includes this layout from inside the view, so closures have $this
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewClosure.ThisFoundOutsideClass
+
 /**
  * @var OSMapViewXml $this
  * @var string       $template

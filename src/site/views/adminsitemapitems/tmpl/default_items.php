@@ -169,7 +169,6 @@ $count = count($items);
                                 'title'  => $item->link,
                             ]
                         );
-
                     else :
                         echo sprintf('<span>%s</span>', $item->name ?? '');
                     endif;

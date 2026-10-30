@@ -183,7 +183,6 @@ class OSMapTableSitemap extends Table
                 ->set('is_default = 0');
 
             $db->setQuery($query)->execute();
-
         } else {
             // Check if we have another default sitemap. If not, force this as default
             $query = $db->getQuery(true)

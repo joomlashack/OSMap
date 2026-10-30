@@ -32,8 +32,9 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
+// phpcs:enable PSR1.Files.SideEffects
 
 class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
 {
@@ -122,7 +123,6 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
         if ($title = $this->params->def('page_title')) {
             if ($app->get('sitename_pagetitles', 0) == 1) {
                 $title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
-
             } elseif ($app->get('sitename_pagetitles', 0) == 2) {
                 $title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
             }
@@ -234,13 +234,14 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
     public function printDebugInfo($node)
     {
         $debugRow = '<div><span>%s:</span>&nbsp;%s</div>';
+        $flags    = ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401;
         echo '<div class="osmap-debug-box">'
             . sprintf('<div><span>#:</span>&nbsp;%s</div>', $this->generalCounter)
             . sprintf($debugRow, Text::_('COM_OSMAP_UID'), $node->uid)
-            . sprintf($debugRow, Text::_('COM_OSMAP_FULL_LINK'), htmlspecialchars((string)$node->fullLink))
-            . sprintf($debugRow, Text::_('COM_OSMAP_RAW_LINK'), htmlspecialchars((string)$node->rawLink))
-            . sprintf($debugRow, Text::_('COM_OSMAP_LINK'), htmlspecialchars((string)$node->link))
-            . sprintf($debugRow, Text::_('COM_OSMAP_MODIFIED'), htmlspecialchars((string)$node->modified))
+            . sprintf($debugRow, Text::_('COM_OSMAP_FULL_LINK'), htmlspecialchars((string)$node->fullLink, $flags))
+            . sprintf($debugRow, Text::_('COM_OSMAP_RAW_LINK'), htmlspecialchars((string)$node->rawLink, $flags))
+            . sprintf($debugRow, Text::_('COM_OSMAP_LINK'), htmlspecialchars((string)$node->link, $flags))
+            . sprintf($debugRow, Text::_('COM_OSMAP_MODIFIED'), htmlspecialchars((string)$node->modified, $flags))
             . sprintf($debugRow, Text::_('COM_OSMAP_LEVEL'), $node->level)
             . sprintf($debugRow, Text::_('COM_OSMAP_DUPLICATE'), Text::_($node->duplicate ? 'JYES' : 'JNO'))
             . sprintf(
@@ -283,13 +284,16 @@ class AbstractList extends \Alledia\Framework\Joomla\View\Site\AbstractList
         // Some items are just separator, without a link. Do not print as link then
         if (trim($item->rawLink ?? '') === '') {
             $type = $item->type ?? 'separator';
-            echo sprintf('<span class="osmap-item-%s">%s</span>', $type, htmlspecialchars($item->name));
-
+            echo sprintf(
+                '<span class="osmap-item-%s">%s</span>',
+                $type,
+                htmlspecialchars($item->name, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401)
+            );
         } else {
             echo sprintf(
                 '<a href="%s" target="_self" class="osmap-link">%s</a>',
                 $item->rawLink,
-                htmlspecialchars($item->name)
+                htmlspecialchars($item->name, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401)
             );
         }
 

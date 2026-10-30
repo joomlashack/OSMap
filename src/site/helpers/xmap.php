@@ -23,6 +23,8 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// phpcs:disable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 defined('_JEXEC') or die();
 
 use Alledia\OSMap;

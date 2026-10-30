@@ -33,7 +33,9 @@ use Joomla\CMS\Uri\Uri;
 use Pimple\Container as Pimple;
 use Pimple\ServiceProviderInterface;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Class Services

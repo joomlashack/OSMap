@@ -28,7 +28,10 @@ use Alledia\OSMap\Sitemap\Collector;
 use Alledia\OSMap\Sitemap\Item;
 use Joomla\Registry\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class PlgOsmapDemo extends Base
 {

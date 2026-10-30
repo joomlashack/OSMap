@@ -89,10 +89,8 @@ class OsmapViewXsl extends HtmlView
 
         if (empty($title)) {
             $title = $this->app->get('sitename');
-
         } elseif ($this->app->get('sitename_pagetitles', 0) == 1) {
             $title = Text::sprintf('JPAGETITLE', $this->app->get('sitename'), $title);
-
         } elseif ($this->app->get('sitename_pagetitles', 0) == 2) {
             $title = Text::sprintf('JPAGETITLE', $title, $this->app->get('sitename'));
         }

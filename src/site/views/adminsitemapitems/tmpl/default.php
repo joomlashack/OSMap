@@ -31,7 +31,6 @@ Factory::getApplication()->input->set('tmpl', 'component');
 
 if (empty($this->message)) :
     echo $this->loadTemplate('items');
-
 else : ?>
     <div class="alert alert-warning">
         <?php echo $this->message; ?>

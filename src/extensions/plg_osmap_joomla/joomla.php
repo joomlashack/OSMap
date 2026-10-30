@@ -107,7 +107,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
         $link      = parse_url($node->link);
         $linkQuery = $link['query'] ?? null;
         if ($linkQuery) {
-            parse_str(html_entity_decode($linkQuery), $linkVars);
+            parse_str(html_entity_decode($linkQuery, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401), $linkVars);
 
             $view = ArrayHelper::getValue($linkVars, 'view', '');
             $id   = ArrayHelper::getValue($linkVars, 'id', 0);
@@ -234,7 +234,7 @@ class PlgOSMapJoomla extends Base implements ContentInterface
             return;
         }
 
-        parse_str(html_entity_decode($linkQuery), $linkVars);
+        parse_str(html_entity_decode($linkQuery, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401), $linkVars);
         $view = ArrayHelper::getValue($linkVars, 'view', '');
         $id   = (int)ArrayHelper::getValue($linkVars, 'id', '');
 

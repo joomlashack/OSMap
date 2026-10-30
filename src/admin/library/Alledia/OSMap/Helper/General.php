@@ -116,10 +116,8 @@ abstract class General
 
         if ($input->getBool('images', false)) {
             return 'images';
-
         } elseif ($input->getBool('news', false)) {
             return 'news';
-
         } else {
             return 'standard';
         }
@@ -290,7 +288,6 @@ abstract class General
                     $i++;
                 }
             }
-
         }
 
         return $subNodes;
@@ -351,7 +348,6 @@ abstract class General
             foreach ($rows as $row) {
                 $levels[] = $row[0];
             }
-
         } else {
             // Only shows returns the level for the current user
             $levels = Factory::getUser()->getAuthorisedViewLevels();
@@ -412,7 +408,6 @@ abstract class General
             return $reflection->isStatic()
                 ? call_user_func_array([$class, $method], $params)
                 : call_user_func_array([$instance, $method], $params);
-
         } catch (\Exception $error) {
             // Just ignore this?
         }

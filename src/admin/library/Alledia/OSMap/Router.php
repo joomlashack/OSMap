@@ -30,8 +30,9 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
-
+// phpcs:enable PSR1.Files.SideEffects
 
 class Router
 {
@@ -75,7 +76,6 @@ class Router
 
         if ($path === $url) {
             return true;
-
         } elseif (
             empty($host)
             && strpos($path, 'index.php') === 0
@@ -128,7 +128,6 @@ class Router
         if ($path[0] == '/') {
             $scheme = ['scheme', 'user', 'pass', 'host', 'port'];
             $path   = Uri::getInstance()->toString($scheme) . $path;
-
         } elseif ($this->isRelativeUri($path)) {
             $path = Uri::root() . $path;
         }

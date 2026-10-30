@@ -27,7 +27,9 @@ namespace Alledia\OSMap\Sitemap;
 
 use Alledia\OSMap;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 class Images extends Standard
 {

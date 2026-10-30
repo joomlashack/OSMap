@@ -122,7 +122,9 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                         <tbody>
                         <?php
                         foreach ($this->items as $i => $this->item) :
-                            $editLink = Route::_('index.php?option=com_osmap&view=sitemap&layout=edit&id=' . $this->item->id);
+                            $editLink = Route::_(
+                                'index.php?option=com_osmap&view=sitemap&layout=edit&id=' . $this->item->id
+                            );
                             ?>
                             <tr class="<?php echo 'row' . ($i % 2); ?>">
                                 <td class="text-center">

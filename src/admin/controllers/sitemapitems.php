@@ -90,7 +90,6 @@ class OSMapControllerSitemapItems extends Form
             }
 
             $this->setRedirect('index.php?' . http_build_query($query));
-
         } else {
             $this->setRedirect('index.php?option=com_osmap&view=sitemaps');
         }

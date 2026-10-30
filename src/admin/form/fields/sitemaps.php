@@ -80,7 +80,8 @@ class OsmapFormFieldSitemaps extends FormField
             'function' => $function
         ];
 
-        $link = 'index.php?' . htmlspecialchars(http_build_query($linkQuery));
+        $link = 'index.php?'
+            . htmlspecialchars(http_build_query($linkQuery), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 
         return HTMLHelper::_(
             'alledia.renderModal',

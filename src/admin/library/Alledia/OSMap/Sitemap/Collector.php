@@ -30,7 +30,9 @@ use Alledia\OSMap\Helper\General;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Registry\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Sitemap items collector
@@ -730,7 +732,6 @@ class Collector
                 $item->changefreq = $this->tmpItemDefaultSettings['changefreq'];
                 $item->priority   = $this->tmpItemDefaultSettings['priority'];
             }
-
         } else {
             // Apply the custom settings
             $item->changefreq = $settings['changefreq'] ?? 'weekly';

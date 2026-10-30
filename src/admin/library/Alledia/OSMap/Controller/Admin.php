@@ -63,10 +63,8 @@ abstract class Admin extends AdminController
 
         if (isset($this->taskMap[$task])) {
             $doTask = $this->taskMap[$task];
-
         } elseif (isset($this->taskMap['__default'])) {
             $doTask = $this->taskMap['__default'];
-
         } else {
             throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_TASK_NOT_FOUND', $task), 404);
         }

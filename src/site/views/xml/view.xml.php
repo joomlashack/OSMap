@@ -178,7 +178,6 @@ class OsmapViewXml extends HtmlView
                     }
                 }
             }
-
         } catch (Throwable $error) {
             // Don't care
         }

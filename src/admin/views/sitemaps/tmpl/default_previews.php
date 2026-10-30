@@ -91,7 +91,7 @@ foreach ($languages as $idx => $language) :
             Text::_('COM_OSMAP_IMAGES_LINK'),
             [
                 'target' => '_blank',
-                'aria-describedby'=>'tip-images-' . $idx
+                'aria-describedby' => 'tip-images-' . $idx
             ]
         );
         ?>
@@ -100,5 +100,5 @@ foreach ($languages as $idx => $language) :
         </div>
     </span>
     <br>
-<?php
+    <?php
 endforeach;

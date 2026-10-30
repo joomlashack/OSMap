@@ -31,7 +31,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 trait TraitOSMapView
 {
@@ -71,8 +73,8 @@ trait TraitOSMapView
         Factory::getApplication()->triggerEvent(
             'osmapOnAfterSetToolBar',
             [
-            strtolower(str_replace('OSMapView', '', $this->getName()))
-        ]
+                strtolower(str_replace('OSMapView', '', $this->getName()))
+            ]
         );
     }
 }

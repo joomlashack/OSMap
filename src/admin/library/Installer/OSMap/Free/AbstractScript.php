@@ -153,7 +153,6 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
 
         if ($this->findTable('#__osmap_sitemap')) {
             $this->migrateLegacyDatabase();
-
         } else {
             $this->checkDatabaseSchema();
         }
@@ -251,7 +250,6 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                     'priority'   => '0.5',
                                 ];
                                 $db->insertObject('#__osmap_items_settings', $insertObject);
-
                             } else {
                                 // Update the setting
                                 $query = $db->getQuery(true)
@@ -317,7 +315,6 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
                                             'uid = ' . $db->quote($item->uid),
                                         ]);
                                     $db->setQuery($query)->execute();
-
                                 } else {
                                     $insertObject = (object)[
                                         'sitemap_id' => $sitemap->id,
@@ -344,7 +341,6 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
             $db->setQuery($query)->execute();
 
             $db->transactionCommit();
-
         } catch (\Throwable $error) {
             $this->sendErrorMessage($error);
             $db->transactionRollback();
@@ -438,7 +434,8 @@ class AbstractScript extends \Alledia\Installer\AbstractScript
 
             $db->setQuery(
                 sprintf(
-                    'ALTER TABLE %s CHANGE %s %s CHAR(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT %s',
+                    'ALTER TABLE %s CHANGE %s %s CHAR(32)'
+                    . ' CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT %s',
                     $db->quoteName('#__osmap_items_settings'),
                     $db->quoteName('url_hash'),
                     $db->quoteName('settings_hash'),

@@ -31,7 +31,10 @@ use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class OSMapViewAdminSitemapItems extends HtmlView
 {
@@ -73,7 +76,6 @@ class OSMapViewAdminSitemapItems extends HtmlView
             // Load the sitemap instance
             $this->sitemap     = Factory::getSitemap($id);
             $this->osmapParams = ComponentHelper::getParams();
-
         } catch (Exception $e) {
             $this->message = $e->getMessage();
         }

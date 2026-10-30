@@ -40,7 +40,6 @@ echo sprintf('<?xml version="1.0" encoding="%s"?>' . "\n", $this->_charset);
 
 if (empty($this->message)) {
     echo $this->loadTemplate($this->type);
-
 } else {
     echo '<message>' . $this->message . '</message>';
 }

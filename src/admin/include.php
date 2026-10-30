@@ -76,7 +76,6 @@ try {
 
         Log::addLogger(['text_file' => 'com_osmap.errors.php'], Log::ALL, ['com_osmap']);
     }
-
 } catch (Throwable $error) {
     Factory::getApplication()->enqueueMessage('[OSMap] Unable to initialize: ' . $error->getMessage(), 'error');
 

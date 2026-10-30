@@ -68,7 +68,6 @@ class Factory extends \Alledia\Framework\Factory
         if ($appClass) {
             if (is_callable([static::class, 'getContainer'])) {
                 return parent::getContainer()->get($appClass);
-
             } else {
                 return CMSApplication::getInstance($client);
             }

@@ -30,7 +30,9 @@ use Alledia\OSMap\View\TraitOSMapView;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('_JEXEC') or die();
+// phpcs:enable PSR1.Files.SideEffects
 
 class AbstractForm extends \Alledia\Framework\Joomla\View\Admin\AbstractForm
 {
