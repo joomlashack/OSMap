@@ -41,6 +41,6 @@ trait TraitOsmapField
             return is_file($include) && include $include;
         }
 
-        return $this->enabled;
+        return false;
     }
 }

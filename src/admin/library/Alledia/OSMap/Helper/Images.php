@@ -52,7 +52,8 @@ class Images
 
         // Look for <img> tags
         preg_match_all(
-            '/<img[^>](?=.*(?:src="(?P<src>[^"]*)"))?(?=.*(title="(?P<title>[^"]*)"))?(?=.*(alt="(?P<alt>[^"]*)"))?.[^>]*>/i',
+            '/<img[^>](?=[^>]*(?:src="(?P<src>[^"]*)"))?(?=[^>]*(title="(?P<title>[^"]*)"))?'
+            . '(?=[^>]*(alt="(?P<alt>[^"]*)"))?.[^>]*>/i',
             $text,
             $matches1,
             PREG_SET_ORDER
@@ -60,7 +61,8 @@ class Images
 
         // Look for <a> tags with href to images
         preg_match_all(
-            '/<a[^>](?=.*(?:href="(?P<src>[^"]+\.(gif|png|jpg|jpeg))"))(?=.*(title="(?P<title>[^"]*)"))?.[^>]*>/i',
+            '/<a[^>](?=[^>]*(?:href="(?P<src>[^"]+\.(gif|png|jpg|jpeg))"))'
+            . '(?=[^>]*(title="(?P<title>[^"]*)"))?.[^>]*>/i',
             $text,
             $matches2,
             PREG_SET_ORDER
@@ -125,7 +127,7 @@ class Images
             $images[]  = (object)[
                 'src'   => $container->router->convertRelativeUriToFullUri($imagesParam->image_fulltext),
                 'title' => $imagesParam->image_fulltext_caption
-                    ?: ($ignoreAlt ? null : $imagesParam->image_fulltext_all)
+                    ?: ($ignoreAlt ? null : $imagesParam->image_fulltext_alt)
             ];
         }
 

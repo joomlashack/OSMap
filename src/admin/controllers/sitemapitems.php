@@ -39,6 +39,8 @@ class OSMapControllerSitemapItems extends Form
     public function cancel($key = null)
     {
         $this->setRedirect('index.php?option=com_osmap&view=sitemaps');
+
+        return true;
     }
 
     /**
@@ -92,5 +94,7 @@ class OSMapControllerSitemapItems extends Form
         } else {
             $this->setRedirect('index.php?option=com_osmap&view=sitemaps');
         }
+
+        return true;
     }
 }

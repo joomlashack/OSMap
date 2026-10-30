@@ -55,7 +55,7 @@ $this->sitemap->traverse(
  *
  * @return bool
  */
-    function (object $item) use (&$items, &$showItemUid, &$showExternalLinks) {
+    function (object $item) use (&$items, &$showExternalLinks) {
         if (
             ($item->isInternal == false && $showExternalLinks === 0)
             || $item->hasCompatibleLanguage() == false

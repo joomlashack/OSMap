@@ -275,9 +275,11 @@ abstract class General
             foreach ($matches as $match) {
                 if (strpos($match[0], 'class="system-pagebreak"') !== false) {
                     $link = $baseLink . '&limitstart=' . ($i - 1);
+                    // An attribute missing before a matched one is captured as empty
+                    $name = ($match['alt'] ?? '') ?: ($match['title'] ?? '');
 
                     $subNode = (object)[
-                        'name'       => $match['alt'] ?? $match['title'] ?? Text::sprintf('Page #', $i),
+                        'name'       => $name ?: Text::sprintf('Page #', $i),
                         'uid'        => $uid . '.' . ($i - 1),
                         'expandible' => false,
                         'link'       => $link,
