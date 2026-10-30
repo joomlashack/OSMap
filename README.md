@@ -1,4 +1,4 @@
-[![Joomlashack](https://www.joomlashack.com/images/logo_circle_small.png)](https://www.joomlashack.com)
+[![Joomlashack](images/logo_circle_small.png)](https://www.joomlashack.com)
 
 OSMap
 ============
@@ -20,7 +20,7 @@ OSMap Free includes the **OSMap - Joomla** plugin for core articles and categori
 
 ## Requirements
 
-- Joomla 3.9 or newer
+- Joomla 3.10 or newer
 - PHP 7.4 or newer
 
 The last release compatible with Joomla 2.5 was v3.3.0.

@@ -32,10 +32,6 @@ parameters:
             identifier: method.protected
             paths:
                 - src/*/views/*/tmpl/*
-        # Pro classes are only used when Pro is installed over this component
-        -
-            message: '#Alledia\\OSMap\\Services\\Pro#'
-            identifier: class.notFound
         # Paths built from JPATH_* constants only exist inside a Joomla install
         -
             identifier: requireOnce.fileNotFound

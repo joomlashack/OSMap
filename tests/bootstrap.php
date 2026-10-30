@@ -36,8 +36,6 @@ $joomla    = Paths::joomla();
 define('_JEXEC', 1);
 define('JPATH_PLATFORM', $joomla . '/libraries');
 
-define('OSMAP_LICENSE', 'free');
-
 // Pimple and the Alledia\Framework classes come from ShackFramework at runtime
 require_once $framework . '/src/vendor/autoload.php';
 require_once $framework . '/src/Framework/AutoLoader.php';

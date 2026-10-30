@@ -23,12 +23,10 @@
  * along with OSMap.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Alledia\OSMap\Services;
+namespace Alledia\OSMap;
 
 use Alledia\Framework\Profiler;
-use Alledia\OSMap\Factory;
 use Alledia\OSMap\Helper\Images;
-use Alledia\OSMap\Router;
 use Joomla\CMS\Uri\Uri;
 use Pimple\Container as Pimple;
 use Pimple\ServiceProviderInterface;
@@ -51,7 +49,7 @@ defined('_JEXEC') or die();
  *
  * @package OSMap
  */
-class Free implements ServiceProviderInterface
+class Services implements ServiceProviderInterface
 {
     /**
      * Registers services on the given container.

@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-OSMap (Free) is a Joomla sitemap component (`com_osmap`), descended from Xmap. It supports Joomla 3.9+ and Joomla 4/5 from a single codebase, with PHP 7.4 as the minimum. The `<alledia>` block in `src/osmap.xml` is the authoritative source for these values. The requirements in README.md are out of date.
+OSMap (Free) is a Joomla sitemap component (`com_osmap`), descended from Xmap. It supports Joomla 3.10+ and Joomla 4/5 from a single codebase, with PHP 7.4 as the minimum. The `<alledia>` block in `src/osmap.xml` (`<targetplatform>`, `<phpminimum>`) is the authoritative source for these values.
 
-A separate OSMap Pro repository extends this code. Pro is detected at runtime when `admin/library/Alledia/OSMap/Services/Pro.php` exists (see `OSMAP_LICENSE` in `src/admin/include.php`). Free code checks for Pro classes such as `GenericPro` with `class_exists()`. Keep these hooks intact.
+A separate OSMap Pro repository (`../OSMap-Pro`) extends this code. Its build copies this `src/` and then copies Pro's `src/` over it, so Pro files at the same path replace free ones. That includes `src/osmap.xml` and `src/admin/config.xml`: mirror changes to those files in Pro. Free code finds Pro through `isPro()` (which reads the manifest `<license>`) and through class names: `GenericPro`, plus the `JoomlaArticle` and `JoomlaCategory` adapters. Keep these hooks intact. See "Free and Pro" in `docs/development.md`.
 
 Developer documentation lives in `docs/`: `development.md` (build, conventions, releases), `architecture.md` (generation pipeline, data model, events) and `plugins.md` (writing `osmap` content plugins). Update these files when you change the behavior they describe.
 
@@ -41,7 +41,7 @@ Every entry point (site `osmap.php`, admin `osmap.php`, plugins) requires `src/a
 The code uses legacy, non-namespaced Joomla MVC: `controller.php`, `controllers/`, `models/`, `views/`, and `tables/` with `OSMap*` class prefixes. The OSMap base classes for controllers and views live in `admin/library/Alledia/OSMap/{Controller,View}` and extend ShackFramework classes.
 
 ### Service container
-`Alledia\OSMap\Factory` extends the framework Factory. `Factory::getPimpleContainer()` builds a Pimple `Container` and registers `Services\Free` (or `Services\Pro`), which provides `app`, `db`, `input`, `user`, `language`, `router`, `uri`, `profiler`, and `imagesHelper`. The `Container` class adds magic access (`$container->db`, `$container->getDb()`). `Factory::getSitemap($id, $type)` returns `Sitemap\Standard`, `Images`, or `News`.
+`Alledia\OSMap\Factory` extends the framework Factory. `Factory::getPimpleContainer()` builds a Pimple `Container` and registers `Services`, which provides `app`, `db`, `input`, `user`, `language`, `router`, `uri`, `profiler`, and `imagesHelper`. The `Container` class adds magic access (`$container->db`, `$container->getDb()`). `Factory::getSitemap($id, $type)` returns `Sitemap\Standard`, `Images`, or `News`.
 
 ### Sitemap generation
 1. A `Sitemap\*` object's `traverse($callback)` creates a `Sitemap\Collector`.

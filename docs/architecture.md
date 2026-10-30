@@ -7,7 +7,7 @@ OSMap builds sitemaps from Joomla menus. You assign one or more menus to a sitem
 Every entry point requires `administrator/components/com_osmap/include.php`. That includes the site and admin `osmap.php` files, the `Plugin\Base` constructor and the installer. The bootstrap:
 
 1. loads the Joomlashack framework from `libraries/allediaframework/include.php`. If the framework is missing, it stops with an admin error.
-2. defines `OSMAP_LOADED`, `OSMAP_ADMIN_PATH`, `OSMAP_SITE_PATH`, `OSMAP_LIBRARY_PATH` and `OSMAP_LICENSE` (`free` or `pro`).
+2. defines `OSMAP_LOADED`, `OSMAP_ADMIN_PATH`, `OSMAP_SITE_PATH` and `OSMAP_LIBRARY_PATH`.
 3. registers autoloading for `Alledia\…` from `admin/library/Alledia` and for `Pimple`.
 4. imports the `osmap` plugin group, loads language files, and adds Joomla include paths for tables, forms, fields and HTML helpers.
 5. registers the `com_osmap` log category.
@@ -18,7 +18,7 @@ Both clients then dispatch through legacy Joomla MVC: `BaseController::getInstan
 
 `Alledia\OSMap\Factory` extends `Alledia\Framework\Factory`, which smooths over differences between Joomla versions. It adds:
 
-- `getPimpleContainer()`: a singleton `Alledia\OSMap\Container`, which is a Pimple container. The `Services\Free` provider (or `Services\Pro`) fills it with:
+- `getPimpleContainer()`: a singleton `Alledia\OSMap\Container`, which is a Pimple container. The `Services` provider fills it with:
 
   | Key            | Service                                   |
   |----------------|-------------------------------------------|

@@ -56,8 +56,6 @@ try {
         define('OSMAP_SITE_PATH', JPATH_SITE . '/components/com_osmap');
         define('OSMAP_LIBRARY_PATH', OSMAP_ADMIN_PATH . '/library');
 
-        define('OSMAP_LICENSE', is_file(OSMAP_LIBRARY_PATH . '/Alledia/OSMap/Services/Pro.php') ? 'pro' : 'free');
-
         AutoLoader::register('Alledia', OSMAP_LIBRARY_PATH . '/Alledia');
         AutoLoader::register('Pimple', OSMAP_LIBRARY_PATH . '/Pimple');
 

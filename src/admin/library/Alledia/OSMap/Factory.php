@@ -88,10 +88,7 @@ class Factory extends \Alledia\Framework\Factory
 
             $container = new Container(['configuration' => new Configuration($config)]);
 
-            // Load the Service class according to the current license
-            $serviceClass = '\\Alledia\\OSMap\\Services\\' . ucfirst(OSMAP_LICENSE);
-
-            $container->register(new $serviceClass());
+            $container->register(new Services());
 
             static::$pimpleContainer = $container;
         }

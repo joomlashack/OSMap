@@ -5,7 +5,7 @@ This guide covers setting up, building and changing OSMap Free. For how the code
 ## Requirements
 
 - PHP 7.4 or newer with the `json` and `simplexml` extensions
-- Joomla 3.9 or newer
+- Joomla 3.10 or newer
 - [Phing](https://www.phing.info/), to build installable packages
 - Local clones of the Joomlashack build and support repositories:
   - **ShackBuilder**: the Phing build scripts
@@ -193,13 +193,17 @@ One codebase supports both:
 
 ### Free and Pro
 
-OSMap Pro is built from a separate repository on top of this code. Free code finds Pro at runtime:
+OSMap Pro is built from a separate repository (OSMap-Pro) on top of this code. The Pro build copies this repository's `src/` first and then copies Pro's `src/` over it. Any Pro file at the same path completely replaces the free one.
 
-- `OSMAP_LICENSE` is `pro` when `library/Alledia/OSMap/Services/Pro.php` exists. `Factory::getPimpleContainer()` then registers `Services\Pro` instead of `Services\Free`.
-- `Sitemap\Item` uses the `GenericPro` item adapter when that class exists.
-- Plugins can call `Factory::getExtension('osmap', 'component')->isPro()`.
+Free code finds Pro at runtime:
 
-Don't remove these checks. When you change a signature in `Services\Free`, `Sitemap\*`, `ItemAdapter\*` or the plugin base classes, keep in mind that Pro extends them.
+- `Factory::getExtension('osmap', 'component')->isPro()` reads `<license>` from the installed manifest. Use this check for Pro-only behavior.
+- `Sitemap\Item` uses the `GenericPro` item adapter when that class exists. `Item::setAdapter()` resolves the `JoomlaArticle` and `JoomlaCategory` adapter names that `plg_osmap_joomla` sets, and falls back to `Generic` when those Pro classes are missing.
+- Pro overrides the site `html` view so that it extends `View\Site\AbstractListPro`.
+
+Don't remove these checks. Pro resolves classes by name, so renaming or changing a signature in `Sitemap\*`, `ItemAdapter\*`, `View\Site\AbstractList` or the plugin base classes can break Pro without an error.
+
+Pro ships its own `src/osmap.xml` and `src/admin/config.xml`, which replace the free ones. When you change either file here, make the same change in Pro. The Pro manifest differs only in its variant, update server, license, Pro plugins and `<obsolete>` list. It also leaves out `<minify>`, because the builder minifies files in the source tree of the repository being built, and `sitemapitems.js` exists only in this one.
 
 ## Database changes
 
@@ -222,7 +226,7 @@ When you delete or rename a file or folder, also add it to the `<obsolete>` bloc
 
 To prepare a release:
 
-1. Update `<version>` and `<creationDate>` in `src/osmap.xml`.
+1. Update `<version>` and `<creationDate>` in `src/osmap.xml`. OSMap Pro releases use the same version number.
 2. Add any SQL update file named for that version.
 3. Build the package with `phing` and test installing it fresh and as an upgrade on Joomla 3 and Joomla 4+.
 
