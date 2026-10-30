@@ -26,14 +26,16 @@ namespace Tests\Unit;
 
 use Alledia\OSMap\Helper\Images;
 use Alledia\OSMap\Router;
-use PHPUnit\Framework\TestCase;
+use Codeception\Test\Unit;
 use Tests\Support\Fixtures\SiteUri;
 use Tests\Support\Fixtures\TestFactory;
 
-class ImagesTest extends TestCase
+class ImagesTest extends Unit
 {
     protected function setUp(): void
     {
+        parent::setUp();
+
         SiteUri::setSite('https://www.example.com');
         TestFactory::setPimpleContainer(['router' => new Router()]);
     }
@@ -41,6 +43,8 @@ class ImagesTest extends TestCase
     protected function tearDown(): void
     {
         SiteUri::reset();
+
+        parent::tearDown();
     }
 
     public function testGetImagesFromText()

@@ -25,12 +25,12 @@
 namespace Tests\Unit;
 
 use Alledia\OSMap\Helper\General;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Codeception\Attribute\DataProvider;
+use Codeception\Test\Unit;
 use Tests\Support\Fixtures\NullDateDatabase;
 use Tests\Support\Fixtures\TestFactory;
 
-class GeneralTest extends TestCase
+class GeneralTest extends Unit
 {
     public function testGetPagebreaks()
     {

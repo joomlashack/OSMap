@@ -45,9 +45,9 @@ AutoLoader::register('Alledia\\Framework', $framework . '/src/Framework');
 
 /*
  * OSMap classes extend Joomla classes, so they load from a Joomla checkout. Joomla's
- * own composer autoloader would also bring in its copy of PHPUnit, so only the
- * Joomla namespaces are registered, after the test autoloader. Joomla 3 registers
- * Joomla\CMS with its own loader instead of composer.
+ * own composer autoloader would also bring in its copy of PHPUnit, which Codeception
+ * runs on, so only the Joomla namespaces are registered, after the test autoloader.
+ * Joomla 3 registers Joomla\CMS with its own loader instead of composer.
  */
 $joomlaNamespaces = array_filter(
     require $joomla . '/libraries/vendor/composer/autoload_psr4.php',

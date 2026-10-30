@@ -69,7 +69,8 @@ Install the full package once first, so that the framework library, the database
 
 Run these from the repository root. Each one installs the test tooling into `tests/vendor` first.
 
-- `composer test` runs the [PHPUnit](https://phpunit.de/) unit tests in `tests/Unit`.
+- `composer test` runs the [Codeception](https://codeception.com/) unit tests in
+  `tests/Unit`.
 - `composer lint` checks `src` and `tests` against PSR-12 with PHP_CodeSniffer.
 - `composer lint:fix` automatically fixes the violations that phpcbf can correct.
 - `composer lint:compat` checks `src` with PHPCompatibility for code that doesn't run on
@@ -102,7 +103,8 @@ doesn't use it.
 
 OSMap's classes extend Joomla and ShackFramework classes, so `tests/bootstrap.php` loads them
 from the external checkouts. It registers only the `Joomla\*` namespaces from the Joomla
-checkout. Joomla's own composer autoloader would also load Joomla's copy of PHPUnit. Nothing
+checkout. Joomla's own composer autoloader would also load Joomla's copy of PHPUnit, which
+Codeception runs on. Nothing
 boots a Joomla application, so tests cover code that runs without one:
 
 - `Tests\Support\Fixtures\TestFactory::setPimpleContainer()` replaces the container
@@ -114,11 +116,14 @@ boots a Joomla application, so tests cover code that runs without one:
 - `Sitemap\Item` is built from a Joomla menu item, so `ItemTest` creates items without the
   constructor and sets the properties it needs.
 
-PHPUnit fails on deprecations, notices and warnings raised by code in `src`, but not on those
-raised inside Joomla. To run the tests against another Joomla version, set `JOOMLA_PATH`:
+`codeception.yml` turns every PHP error, deprecations included, into a test failure, so a
+deprecation in `src` fails `composer test`. Codeception can't limit this to `src`, so Joomla's
+own deprecations fail tests too when the PHP version is newer than the Joomla checkout
+supports, such as Joomla 4 on PHP 8.4. To run the tests against another Joomla version, set
+`JOOMLA_PATH`, using a PHP version that Joomla supports:
 
 ```sh
-JOOMLA_PATH=/path/to/joomla4 composer test
+JOOMLA_PATH=/path/to/joomla4 php8.3 tests/vendor/bin/codecept run
 ```
 
 ### Static analysis
@@ -138,11 +143,11 @@ includes from inside the view. Fix new reports rather than adding to the list.
 ```
 build.xml, build.dist.properties   Phing entry point and the property template
 composer.json                      Package metadata and the test, lint and analyse scripts
-phpunit.xml.dist, phpstan.neon.dist  PHPUnit and PHPStan configuration
+codeception.yml, phpstan.neon.dist  Codeception and PHPStan configuration
 osmap.mwb                          MySQL Workbench model of the database schema
 tests/
-  composer.json                    Test tooling (PHPUnit, PHPStan, PHP_CodeSniffer)
-  bootstrap.php                    PHPUnit bootstrap
+  composer.json                    Test tooling (Codeception, PHPStan, PHP_CodeSniffer)
+  bootstrap.php, Unit.suite.yml    Codeception bootstrap and unit suite
   Unit/                            Unit tests
   Support/                         Paths helper and test fixtures
   phpstan/                         PHPStan bootstrap, stubs and checkout paths

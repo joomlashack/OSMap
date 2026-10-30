@@ -25,10 +25,10 @@
 namespace Tests\Unit;
 
 use Alledia\OSMap\Container;
-use PHPUnit\Framework\TestCase;
+use Codeception\Test\Unit;
 use stdClass;
 
-class ContainerTest extends TestCase
+class ContainerTest extends Unit
 {
     public function testMagicGetResolvesServices()
     {

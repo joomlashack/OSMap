@@ -1,0 +1,17 @@
+namespace: Tests
+support_namespace: Support
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/Support/Data
+    support: tests/Support
+    envs: tests/_envs
+actor_suffix: Tester
+bootstrap: bootstrap.php
+settings:
+    colors: true
+    # Fail tests on any PHP error, deprecations included. Joomla's own deprecations count
+    # too, so run against a Joomla version that supports the PHP version
+    error_level: E_ALL
+    convert_deprecations_to_exceptions: true
+    memory_limit: 1024M

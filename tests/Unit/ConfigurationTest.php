@@ -25,9 +25,9 @@
 namespace Tests\Unit;
 
 use Alledia\OSMap\Configuration;
-use PHPUnit\Framework\TestCase;
+use Codeception\Test\Unit;
 
-class ConfigurationTest extends TestCase
+class ConfigurationTest extends Unit
 {
     protected function createConfiguration(): Configuration
     {

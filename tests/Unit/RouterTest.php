@@ -25,20 +25,24 @@
 namespace Tests\Unit;
 
 use Alledia\OSMap\Router;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Codeception\Attribute\DataProvider;
+use Codeception\Test\Unit;
 use Tests\Support\Fixtures\SiteUri;
 
-class RouterTest extends TestCase
+class RouterTest extends Unit
 {
     protected function setUp(): void
     {
+        parent::setUp();
+
         SiteUri::setSite('https://www.example.com');
     }
 
     protected function tearDown(): void
     {
         SiteUri::reset();
+
+        parent::tearDown();
     }
 
     public static function sanitizeProvider(): array

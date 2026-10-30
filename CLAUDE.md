@@ -12,7 +12,7 @@ Developer documentation lives in `docs/`: `development.md` (build, conventions, 
 
 ## Build
 
-`composer check` runs the coding standard (`lint`), PHP 7.4 compatibility (`lint:compat`), PHPStan (`analyse`) and the PHPUnit tests (`test`). Run it before committing. The tools install into `tests/vendor` from `tests/composer.json`. They load classes from ShackFramework, ShackInstaller and a Joomla 4+ checkout (`project.Joomla.path` in `build.properties`, or `JOOMLA_PATH`). `docs/development.md` covers the setup and test fixtures.
+`composer check` runs the coding standard (`lint`), PHP 7.4 compatibility (`lint:compat`), PHPStan (`analyse`) and the Codeception unit tests (`test`). Run it before committing. The tools install into `tests/vendor` from `tests/composer.json`. They load classes from ShackFramework, ShackInstaller and a Joomla 4+ checkout (`project.Joomla.path` in `build.properties`, or `JOOMLA_PATH`). `docs/development.md` covers the setup and test fixtures.
 
 Packages are built with **Phing** and the external **ShackBuilder** tool:
 

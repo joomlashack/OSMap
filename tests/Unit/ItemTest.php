@@ -26,18 +26,20 @@ namespace Tests\Unit;
 
 use Alledia\OSMap\Router;
 use Alledia\OSMap\Sitemap\Item;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Codeception\Attribute\DataProvider;
+use Codeception\Test\Unit;
 use ReflectionClass;
 use ReflectionMethod;
 use Tests\Support\Fixtures\NullDateDatabase;
 use Tests\Support\Fixtures\SiteUri;
 use Tests\Support\Fixtures\TestFactory;
 
-class ItemTest extends TestCase
+class ItemTest extends Unit
 {
     protected function setUp(): void
     {
+        parent::setUp();
+
         SiteUri::setSite('https://www.example.com');
         TestFactory::setPimpleContainer([
             'db'     => new NullDateDatabase(),
@@ -48,6 +50,8 @@ class ItemTest extends TestCase
     protected function tearDown(): void
     {
         SiteUri::reset();
+
+        parent::tearDown();
     }
 
     /**

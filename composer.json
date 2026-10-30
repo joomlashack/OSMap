@@ -31,15 +31,15 @@
     "scripts"          : {
         "test"       : [
             "@composer --working-dir=tests install --no-interaction --quiet",
-            "@php tests/vendor/bin/phpunit"
+            "@php tests/vendor/codeception/codeception/codecept run"
         ],
         "lint"       : [
             "@composer --working-dir=tests install --no-interaction --quiet",
-            "@php tests/vendor/bin/phpcs --standard=PSR12 --extensions=php -sp --ignore='tests/vendor/*,tests/_output/*' src tests"
+            "@php tests/vendor/bin/phpcs --standard=PSR12 --extensions=php -sp --ignore='tests/vendor/*,tests/_output/*,tests/Support/_generated/*' src tests"
         ],
         "lint:fix"   : [
             "@composer --working-dir=tests install --no-interaction --quiet",
-            "@php tests/vendor/bin/phpcbf --standard=PSR12 --extensions=php --ignore='tests/vendor/*,tests/_output/*' src tests"
+            "@php tests/vendor/bin/phpcbf --standard=PSR12 --extensions=php --ignore='tests/vendor/*,tests/_output/*,tests/Support/_generated/*' src tests"
         ],
         "lint:compat": [
             "@composer --working-dir=tests install --no-interaction --quiet",
@@ -57,7 +57,7 @@
         ]
     },
     "scripts-descriptions": {
-        "test"       : "Install test dependencies into tests/vendor and run the PHPUnit suite",
+        "test"       : "Install test dependencies into tests/vendor and run the Codeception suite",
         "lint"       : "Check src and tests against the PSR-12 coding standard",
         "lint:fix"   : "Automatically fix PSR-12 violations that phpcbf can correct",
         "lint:compat": "Check src for code that doesn't run on PHP 7.4 or later",
